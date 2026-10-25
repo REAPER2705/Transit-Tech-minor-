@@ -1,16 +1,20 @@
 {
   "name": "transit-tech-minor-",
   "version": "1.0.0",
-  "description": "",
+  "description": "TransitTech - Smart Campus Mobility Management System",
   "main": "index.js",
   "scripts": {
+    "install-all": "npm install && cd client && npm install",
+    "build": "cd client && npm run build",
+    "dev": "cd client && npm run dev",
+    "preview": "cd client && npm run preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/REAPER2705/Transit-Tech-minor-.git"
   },
-  "keywords": [],
+  "keywords": ["transit", "campus", "mobility", "react", "vite"],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
