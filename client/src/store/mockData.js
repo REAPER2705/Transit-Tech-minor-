@@ -235,24 +235,60 @@ export const mockTrips = [
 ];
 
 export const mockTimetable = {
-  sourceFile: 'July 2015 Timetable Archive',
-  verificationStatus: 'NEEDS_VERIFICATION',
+  sourceFile: 'September 1, 2023 - Acropolis Institute Bus Schedule',
+  sourceUrl: 'https://www.scribd.com/document/703073096/BusRoute-Sep23-1',
+  sourceDate: '2023-09-01',
+  verificationStatus: 'UNVERIFIED',
+  disclaimer: 'Historical timetable — current timings unverified. Verify with transport office for current schedule.',
   shifts: [
     {
       shiftId: 'SHIFT-1',
+      name: 'Shift 1 - Morning',
+      startTime: '08:20',
+      endTime: '14:40',
       schedules: [
         { routeId: 'ROUTE-01', departureTime: '08:20', status: 'SCHEDULED' },
-        { routeId: 'ROUTE-02', departureTime: '09:00', status: 'SCHEDULED' },
+        { routeId: 'ROUTE-02', departureTime: '08:45', status: 'SCHEDULED' },
+        { routeId: 'ROUTE-01', departureTime: '09:00', status: 'SCHEDULED' },
       ],
     },
     {
       shiftId: 'SHIFT-2',
+      name: 'Shift 2 - Afternoon',
+      startTime: '10:30',
+      endTime: '17:00',
       schedules: [
         { routeId: 'ROUTE-01', departureTime: '10:30', status: 'SCHEDULED' },
+        { routeId: 'ROUTE-02', departureTime: '11:00', status: 'SCHEDULED' },
       ],
     },
   ],
 };
+
+// Timetable entries with stops and timings
+export const mockTimetableEntries = [
+  // ROUTE-01, SHIFT-1 timetable
+  { id: 'TTE-001', routeId: 'ROUTE-01', stopId: 'STOP-01', shift: 'SHIFT-1', arrivalTime: '08:20', departureTime: '08:25', sequence: 1, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-002', routeId: 'ROUTE-01', stopId: 'STOP-02', shift: 'SHIFT-1', arrivalTime: '08:35', departureTime: '08:40', sequence: 2, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-003', routeId: 'ROUTE-01', stopId: 'STOP-03', shift: 'SHIFT-1', arrivalTime: '08:50', departureTime: '08:55', sequence: 3, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-004', routeId: 'ROUTE-01', stopId: 'STOP-04', shift: 'SHIFT-1', arrivalTime: '09:05', departureTime: '09:10', sequence: 4, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  
+  // ROUTE-02, SHIFT-1 timetable
+  { id: 'TTE-005', routeId: 'ROUTE-02', stopId: 'STOP-02', shift: 'SHIFT-1', arrivalTime: '08:45', departureTime: '08:50', sequence: 1, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-006', routeId: 'ROUTE-02', stopId: 'STOP-03', shift: 'SHIFT-1', arrivalTime: '09:00', departureTime: '09:05', sequence: 2, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-007', routeId: 'ROUTE-02', stopId: 'STOP-05', shift: 'SHIFT-1', arrivalTime: '09:15', departureTime: '09:20', sequence: 3, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  
+  // ROUTE-01, SHIFT-2 timetable
+  { id: 'TTE-008', routeId: 'ROUTE-01', stopId: 'STOP-01', shift: 'SHIFT-2', arrivalTime: '10:30', departureTime: '10:35', sequence: 1, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-009', routeId: 'ROUTE-01', stopId: 'STOP-02', shift: 'SHIFT-2', arrivalTime: '10:45', departureTime: '10:50', sequence: 2, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-010', routeId: 'ROUTE-01', stopId: 'STOP-03', shift: 'SHIFT-2', arrivalTime: '11:00', departureTime: '11:05', sequence: 3, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-011', routeId: 'ROUTE-01', stopId: 'STOP-04', shift: 'SHIFT-2', arrivalTime: '11:15', departureTime: '11:20', sequence: 4, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  
+  // ROUTE-02, SHIFT-2 timetable
+  { id: 'TTE-012', routeId: 'ROUTE-02', stopId: 'STOP-02', shift: 'SHIFT-2', arrivalTime: '11:00', departureTime: '11:05', sequence: 1, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-013', routeId: 'ROUTE-02', stopId: 'STOP-03', shift: 'SHIFT-2', arrivalTime: '11:15', departureTime: '11:20', sequence: 2, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+  { id: 'TTE-014', routeId: 'ROUTE-02', stopId: 'STOP-05', shift: 'SHIFT-2', arrivalTime: '11:30', departureTime: '11:35', sequence: 3, sourceDate: '2023-09-01', verificationStatus: 'UNVERIFIED' },
+];
 
 export const mockAuditLog = [
   {
