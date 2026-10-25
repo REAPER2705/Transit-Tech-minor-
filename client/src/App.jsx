@@ -1,8 +1,8 @@
 import React from 'react';
 import Header from './components/common/Header';
 import PassengerPortalComplete from './portals/PassengerPortalComplete';
-import StaffPortal from './portals/StaffPortal';
-import AdminPortal from './portals/AdminPortal';
+import StaffPortalComplete from './portals/StaffPortalComplete';
+import AdminPortalComplete from './portals/AdminPortalComplete';
 import { useAppStore } from './store/appStore';
 
 export default function App() {
@@ -13,8 +13,8 @@ export default function App() {
       <Header />
       <main className="pt-20 pb-16">
         {currentPortal === 'passenger' && <PassengerPortalComplete />}
-        {currentPortal === 'staff' && <StaffPortal />}
-        {currentPortal === 'admin' && <AdminPortal />}
+        {currentPortal === 'staff' && <StaffPortalComplete />}
+        {currentPortal === 'admin' && <AdminPortalComplete />}
       </main>
     </div>
   );
