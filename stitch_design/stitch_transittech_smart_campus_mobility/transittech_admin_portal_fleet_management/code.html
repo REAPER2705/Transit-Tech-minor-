@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-container-highest":"#dae2fd","on-background":"#131b2e","on-secondary-fixed-variant":"#3323cc","background":"#faf8ff","error-container":"#ffdad6","on-surface-variant":"#434655","on-secondary":"#ffffff","outline":"#737686","tertiary-container":"#007d55","on-secondary-fixed":"#0f0069","inverse-on-surface":"#eef0ff","primary":"#004ac6","secondary-fixed":"#e2dfff","on-primary-fixed-variant":"#003ea8","tertiary-fixed-dim":"#4edea3","on-tertiary-container":"#bdffdb","on-primary-container":"#eeefff","surface-tint":"#0053db","on-error-container":"#93000a","inverse-surface":"#283044","on-surface":"#131b2e","surface":"#faf8ff","secondary-fixed-dim":"#c3c0ff","tertiary":"#006242","primary-fixed":"#dbe1ff","surface-variant":"#dae2fd","surface-container-high":"#e2e7ff","surface-container":"#eaedff","secondary":"#4b41e1","on-tertiary":"#ffffff","surface-container-lowest":"#ffffff","surface-container-low":"#f2f3ff","on-primary-fixed":"#00174b","secondary-container":"#645efb","error":"#ba1a1a","inverse-primary":"#b4c5ff","surface-dim":"#d2d9f4","on-tertiary-fixed":"#002113","outline-variant":"#c3c6d7","tertiary-fixed":"#6ffbbe","surface-bright":"#faf8ff","on-primary":"#ffffff","on-secondary-container":"#fffbff","primary-fixed-dim":"#b4c5ff","primary-container":"#2563eb","on-error":"#ffffff","on-tertiary-fixed-variant":"#005236"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin-tablet":"1.5rem","space-xs":"0.25rem","margin":"1rem","space-xl":"2.5rem","space-sm":"0.5rem","gutter-desktop":"1.5rem","space-lg":"1.5rem","space-md":"1rem","margin-desktop":"2.5rem","gutter":"1.25rem"},"fontFamily":{"headline-md":["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"telemetry-metric":["Plus Jakarta Sans"],"headline-xl-mobile":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"]},"fontSize":{"headline-md":["1.25rem",{"lineHeight":"1.75rem","letterSpacing":"-0.01em","fontWeight":"600"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.06em","fontWeight":"700"}],"display-lg-mobile":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"800"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.04em","fontWeight":"600"}],"headline-lg":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-xl":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"telemetry-metric":["1.5rem",{"lineHeight":"1.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.015em","fontWeight":"700"}],"body-md":["0.9375rem",{"lineHeight":"1.5rem","fontWeight":"400"}],"body-sm":["0.8125rem",{"lineHeight":"1.25rem","fontWeight":"400"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","fontWeight":"400"}],"display-lg":["3.5rem",{"lineHeight":"4rem","letterSpacing":"-0.025em","fontWeight":"800"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-margin-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[20px]">directions_bus</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-on-surface leading-none">TransitTech</span><span class="font-label-sm text-label-sm text-outline tracking-wider uppercase mt-0.5">AITR Campus • Indore</span></div></div><nav class="hidden xl:flex items-center gap-space-xs" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-lg"><a class="px-space-md py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="passenger-portal" href="#">Passenger Portal</a><a class="px-space-md py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="transport-staff-portal" href="#">Transport Staff Portal</a><a aria-current="page" class="px-space-md py-space-xs transition-colors bg-primary-container text-on-primary font-label-lg rounded-lg" data-path="admin-portal" href="#">Admin Portal</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-space-sm px-space-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-label-md font-label-md w-56 justify-between cursor-pointer hover:bg-surface-container transition-colors"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[18px] text-outline">search</span><span>Search routes, stops...</span></div><kbd class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface text-[10px] font-bold font-mono">⌘K</kbd></div><div class="hidden lg:flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="text-on-surface font-semibold">Shift 1:</span><span>08:20 AM - 02:40 PM</span></div><button aria-label="Notifications" class="relative p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden sm:flex flex-col items-end"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-primary-fixed-variant uppercase tracking-wider">Passenger</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-surface-container-highest" src="https://lh3.googleusercontent.com/aida/AEtjO1Vdh_2i6-ypCuO_DrFRnRtqbUdO9N7FQV1H_vClIaEcZAS7qSvmcTVYVSK2orFHc3RIPYMPtU1EOerBtfUpPcqxpdZTcZeOncSICWtuzVmUpeuvhDdiHSid5Pon6bhjzUzwrhxuhUC21GdPFomd1nxHh5siVav2It53HUVvqZr7YhoDEzcbHDMeuc6pbSKPmkxgt1FpTkCydOqxtA26a_FOoMCaVA9Xc3s4n65RILNrKg7ksolY5LDDuRw22oI1vqPHECrEd_XqlhQ"/></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-14rem)]"><div class="flex flex-col w-full">
+<!-- Top Command Ribbon & Operational Context Banner -->
+<section class="w-full px-margin-desktop py-space-md bg-surface-container-low">
+<div class="w-full flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md">
+<div class="flex flex-col md:flex-row md:items-center gap-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+            TRANSPORT ADMINISTRATOR
+          </span>
+<span class="font-body-sm text-body-sm text-outline">|</span>
+<span class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">domain</span>
+            Acropolis Institute (AITR) Manglia Bypass Depot
+          </span>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface">SYS-OPS REV: 2025.4.19</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> GPS TELEMETRY SYNCED
+          </span>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-space-sm w-full xl:w-auto">
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-colors flex items-center gap-1.5 shadow-sm" id="btn-export-dispatch">
+<span class="material-symbols-outlined text-[18px]">download</span> Export Daily Roster
+        </button>
+<button class="px-space-md py-2 rounded-lg bg-error-container hover:bg-error hover:text-on-error text-on-error-container font-label-lg text-label-lg transition-colors flex items-center gap-1.5 shadow-sm" id="btn-emergency-broadcast">
+<span class="material-symbols-outlined text-[18px]">cell_tower</span> Dispatch Broadcast
+        </button>
+<button class="px-space-md py-2 rounded-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-lg text-label-lg transition-colors flex items-center gap-1.5 shadow-md" id="open-publish-modal">
+<span class="material-symbols-outlined text-[18px]">verified</span> Verify &amp; Publish Master Portal
+        </button>
+</div>
+</div>
+</section>
+<!-- Main Administrative Canvas -->
+<div class="w-full px-margin-desktop py-space-xl space-y-space-xl">
+<!-- Section 1: KPI Telemetry Bento Matrix -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-md">
+<!-- KPI 1: Active Fleet -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline">Active Fleet Network</span>
+<span class="w-8 h-8 rounded-lg bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">directions_bus</span>
+</span>
+</div>
+<div class="my-space-md">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface">38</span>
+<span class="font-headline-md text-headline-md text-outline">/ 42</span>
+</div>
+<p class="font-body-sm text-body-sm text-tertiary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> 90.4% Operational Readiness
+          </p>
+</div>
+<!-- Progress Bar Segmented -->
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden flex gap-0.5">
+<div class="bg-tertiary h-full w-[85%] rounded-full"></div>
+<div class="bg-secondary-container h-full w-[5%]"></div>
+<div class="bg-error-container h-full w-[10%]"></div>
+</div>
+</div>
+<!-- KPI 2: Shift 1 Active Status -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between relative">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline">Shift 1 Operations</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm uppercase font-bold">Active</span>
+</div>
+<div class="my-space-md">
+<div class="font-telemetry-metric text-telemetry-metric text-on-surface">08:20 AM – 02:40 PM</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span> 26 Dedicated Morning Routes
+          </p>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>Inbound Pickups Concluded</span>
+<span class="text-tertiary font-bold">On Schedule</span>
+</div>
+</div>
+<!-- KPI 3: Shift 2 Standby Status -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between relative">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline">Shift 2 Standby</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm uppercase font-bold">Armed</span>
+</div>
+<div class="my-space-md">
+<div class="font-telemetry-metric text-telemetry-metric text-on-surface">10:30 AM – 05:00 PM</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">departure_board</span> 16 Afternoon Rotations
+          </p>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>Staging Departure</span>
+<span class="text-on-surface font-bold">T-Minus 42 Min</span>
+</div>
+</div>
+<!-- KPI 4: Pending Stop Modifications -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between relative">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline">Stop-Change Requests</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+</span>
+</div>
+<div class="my-space-md">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-error">7</span>
+<span class="font-body-sm text-body-sm text-outline">Pending Review</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Indore Bypass &amp; Ring Road Clusters
+          </p>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-outline">Safety Clearance:</span>
+<span class="text-error font-semibold flex items-center gap-1">Action Req.</span>
+</div>
+</div>
+<!-- KPI 5: Verification Warning -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between relative border-l-4 border-l-error">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline">Legacy Verification</span>
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-ping"></span>
+</div>
+<div class="my-space-md">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface">14</span>
+<span class="font-body-sm text-body-sm text-error font-semibold">Unverified</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Source: July 2015 Transit Ledger
+          </p>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-outline">Publication Guard:</span>
+<span class="text-primary font-bold">Lock Active</span>
+</div>
+</div>
+</section>
+<!-- Section 2: Visual Campus Transit Depot Overview (Context Anchor) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<div class="lg:col-span-8 p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col md:flex-row gap-space-lg items-center">
+<div class="w-full md:w-1/2 h-56 rounded-lg overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Acropolis Institute of Technology and Research campus exterior in Indore featuring warm terracotta orange and beige modern institutional multi-story academic buildings, lush manicured front lawn with neatly trimmed ornamental shrubs, wide paved access road, and bright daytime sunny sky reflecting educational campus mobility hub." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuufXekciwjl6pejt5EuQzj4S4VIVgQuaJ-vEgHsryQYsXXAyIit_Xk41X3yv8jfd8-ZRPO5fIVm8K_4lrAMW1SYnpTfmlzWSuzKy5i632o_WUShbKnCJufHcpxf8yfek7D5LybC3Dc6UgOGutV9N4FfVdemKAjAkQBcoxByRlSoKlyV3Yrl5Atkyy-TMJ3qgYwO0vvZ2q3STrmDVhG7lm5bvU23mxDxBtW7IvbT82xHDLPQfpNKYiVg"/>
+<div class="absolute bottom-2 left-2 px-2 py-1 rounded bg-inverse-surface/85 backdrop-blur-md text-inverse-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary-fixed">location_on</span>
+            AITR Main Campus Gateway &amp; Ring Parking
+          </div>
+</div>
+<div class="w-full md:w-1/2 flex flex-col justify-between h-full space-y-space-sm">
+<div>
+<div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm uppercase">
+              Operational Fleet Depot
+            </div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mt-2">Bypass Terminal Fleet Coordination</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+              Serving undergraduate, postgraduate, and faculty transport schedules across Indore metropolis, Rau, Dewas Naka, and Vijay Nagar corridors.
+            </p>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="p-space-sm rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-outline uppercase block">Campus Fleet Capacity</span>
+<span class="font-headline-md text-headline-md text-on-surface">2,184 Seats</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-outline uppercase block">Active GPS Trackers</span>
+<span class="font-headline-md text-headline-md text-tertiary">38 Units (95%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Dispatch Telemetry Dial / Sparkline -->
+<div class="lg:col-span-4 p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Peak Congestion &amp; Fleet Flow</span>
+<span class="font-label-sm text-label-sm text-outline">Real-Time Sensor Array</span>
+</div>
+<!-- Inline SVG Area Flow Chart -->
+<div class="w-full my-space-md">
+<svg class="w-full h-24 text-primary" fill="none" stroke="currentColor" viewbox="0 0 320 100">
+<defs>
+<lineargradient id="fleetGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="currentColor" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="currentColor" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q40,65 80,45 T160,20 T240,40 T320,70 L320,100 L0,100 Z" fill="url(#fleetGradient)" stroke="none"></path>
+<path d="M0,80 Q40,65 80,45 T160,20 T240,40 T320,70" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- Data Points -->
+<circle class="fill-surface stroke-primary" cx="80" cy="45" r="4" stroke-width="2"></circle>
+<circle class="fill-surface stroke-primary" cx="160" cy="20" r="4" stroke-width="2"></circle>
+<circle class="fill-surface stroke-primary" cx="240" cy="40" r="4" stroke-width="2"></circle>
+</svg>
+<div class="flex justify-between text-label-sm font-label-sm text-outline px-1">
+<span>07:30 AM (Inbound)</span>
+<span class="font-bold text-primary">08:15 AM (Peak Peak)</span>
+<span>02:40 PM (Shift 1 Out)</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">speed</span>
+<span class="font-label-md text-label-md text-on-surface">Average Bypass Corridor Speed</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">41.8 km/h</span>
+</div>
+</div>
+</section>
+<!-- Section 3: Isolated Shift Import Center -->
+<section class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md space-y-space-md">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Isolated Shift Import Center</h2>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-bold uppercase">Safe Mode</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Prevent accidental timetable cross-contamination with shift-isolated parsing engines.</p>
+</div>
+<!-- Strict Shift Isolation Toggle Button Group -->
+<div class="flex items-center p-1 bg-surface-container rounded-lg">
+<button class="shift-toggle-btn px-space-md py-1.5 rounded-md font-label-md text-label-md font-bold transition-all bg-primary-container text-on-primary shadow-sm flex items-center gap-1.5" id="toggle-shift-1" type="button">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span> Shift 1 Import (08:20 AM)
+          </button>
+<button class="shift-toggle-btn px-space-md py-1.5 rounded-md font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface flex items-center gap-1.5" id="toggle-shift-2" type="button">
+<span class="w-2 h-2 rounded-full bg-outline"></span> Shift 2 Import (10:30 AM)
+          </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-stretch">
+<!-- Drag & Drop Staging Area -->
+<div class="lg:col-span-5 p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-center items-center text-center group cursor-pointer hover:bg-surface-container transition-all">
+<div class="w-14 h-14 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center mb-space-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]">upload_file</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Drop Master CSV / Excel Timetable</span>
+<span class="font-body-sm text-body-sm text-outline mt-1">Accepts UTF-8 formatted CSV or XLSX exports from Institutional ERP</span>
+<div class="mt-space-md flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm">ISO-2015 SCHEMA</span>
+<span class="px-2.5 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">MAX 5MB</span>
+</div>
+<p class="mt-space-md font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1" id="shift-context-badge">
+<span class="material-symbols-outlined text-[16px]">lock</span> Currently Targeting: Shift 1 Routing Matrix
+          </p>
+</div>
+<!-- Real-time File Validation & Conflict Check Preview -->
+<div class="lg:col-span-7 flex flex-col justify-between bg-surface-container-lowest p-space-md rounded-xl">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]">task_alt</span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Validation Buffer &amp; Conflict Verification</span>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-bold">
+              ✓ No Active Vehicle Overlap Detected
+            </span>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+<tr>
+<th class="px-space-sm py-2">Bus Identifier</th>
+<th class="px-space-sm py-2">Stated Capacity</th>
+<th class="px-space-sm py-2">Route Origin</th>
+<th class="px-space-sm py-2">Terminus</th>
+<th class="px-space-sm py-2">Conflict Status</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-sm">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-sm py-2 font-bold font-mono text-primary">G-47</td>
+<td class="px-space-sm py-2">50 + 2 Pax</td>
+<td class="px-space-sm py-2">Mhow Naka (07:15)</td>
+<td class="px-space-sm py-2">AITR Gate 1</td>
+<td class="px-space-sm py-2 text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Validated
+                  </td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-sm py-2 font-bold font-mono text-primary">G-39</td>
+<td class="px-space-sm py-2">50 + 2 Pax</td>
+<td class="px-space-sm py-2">Rajwada Circle (07:25)</td>
+<td class="px-space-sm py-2">AITR Gate 2</td>
+<td class="px-space-sm py-2 text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Validated
+                  </td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-sm py-2 font-bold font-mono text-primary">G-34</td>
+<td class="px-space-sm py-2">50 + 2 Pax</td>
+<td class="px-space-sm py-2">Annapurna Temple (07:10)</td>
+<td class="px-space-sm py-2">AITR Gate 1</td>
+<td class="px-space-sm py-2 text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Validated
+                  </td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-sm py-2 font-bold font-mono text-primary">G-41</td>
+<td class="px-space-sm py-2">50 + 2 Pax</td>
+<td class="px-space-sm py-2">Bengali Square (07:35)</td>
+<td class="px-space-sm py-2">AITR Main Square</td>
+<td class="px-space-sm py-2 text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Validated
+                  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pt-space-sm flex items-center justify-between">
+<span class="text-outline font-label-sm text-label-sm">Parser Engine: AITR-V2 (Strict Non-Destructive Ingest)</span>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-highest hover:bg-surface-variant text-on-surface font-label-md text-label-md font-bold transition-colors">
+              Execute Isolated Ingestion
+            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Legacy Timetable Verification & Publication Panel -->
+<section class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md space-y-space-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pb-space-sm">
+<div>
+<div class="flex flex-wrap items-center gap-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Legacy Timetable Verification &amp; Publication</h2>
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> Legacy Schedule - Admin Verification Required
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Archival Roster Source: <span class="font-semibold text-on-surface">July 2015 Timetable Ledger</span>. Fleet identifiers must map to current road registration codes before passenger application visibility is granted.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1 bg-surface-container px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant">
+<span>Filter Shift:</span>
+<select class="bg-transparent font-bold text-on-surface outline-none cursor-pointer">
+<option>All Pending (14 Routes)</option>
+<option>Shift 1 Only (9)</option>
+<option>Shift 2 Only (5)</option>
+</select>
+</div>
+<button class="px-space-md py-1.5 rounded-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md transition-all shadow-sm flex items-center gap-1" id="batch-verify-trigger">
+<span class="material-symbols-outlined text-[16px]">done_all</span> Batch Certify
+          </button>
+</div>
+</div>
+<!-- Verification Grid -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-surface-container text-on-surface font-label-sm text-label-sm uppercase tracking-wider">
+<tr>
+<th class="px-space-md py-3">Bus Identifier</th>
+<th class="px-space-md py-3">Official RTO Registration</th>
+<th class="px-space-md py-3">Vehicle Capacity Model</th>
+<th class="px-space-md py-3">Legacy Route Stops</th>
+<th class="px-space-md py-3">Audit State</th>
+<th class="px-space-md py-3 text-right">Verification Action</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-sm" id="legacy-table-body">
+<!-- Row 1: G-47 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G47</span>
+                Bus G-47
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-2811</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Mhow Naka → Gangwal Bus Stand → Malwa Mill → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Needs Signoff
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<button class="row-verify-btn px-3 py-1 rounded bg-secondary-fixed hover:bg-secondary hover:text-on-secondary text-on-secondary-fixed font-label-sm text-label-sm font-bold transition-all shadow-sm">
+                  Verify &amp; Unlock
+                </button>
+</td>
+</tr>
+<!-- Row 2: G-39 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G39</span>
+                Bus G-39
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-3104</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Rajwada → High Court → Palasia Square → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Needs Signoff
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<button class="row-verify-btn px-3 py-1 rounded bg-secondary-fixed hover:bg-secondary hover:text-on-secondary text-on-secondary-fixed font-label-sm text-label-sm font-bold transition-all shadow-sm">
+                  Verify &amp; Unlock
+                </button>
+</td>
+</tr>
+<!-- Row 3: G-34 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G34</span>
+                Bus G-34
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-1992</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Annapurna → Bhanwarkuan → Teen Imli → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Admin Verified
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<span class="text-tertiary font-label-sm text-label-sm font-bold flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[16px]">lock_open</span> Ready to Publish
+                </span>
+</td>
+</tr>
+<!-- Row 4: G-41 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G41</span>
+                Bus G-41
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-4210</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Bengali Square → Pipliyahana → World Cup Sq → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Needs Signoff
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<button class="row-verify-btn px-3 py-1 rounded bg-secondary-fixed hover:bg-secondary hover:text-on-secondary text-on-secondary-fixed font-label-sm text-label-sm font-bold transition-all shadow-sm">
+                  Verify &amp; Unlock
+                </button>
+</td>
+</tr>
+<!-- Row 5: G-7 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G07</span>
+                Bus G-7
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-0809</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Vijay Nagar → Sukhlia → MR 10 Toll → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Needs Signoff
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<button class="row-verify-btn px-3 py-1 rounded bg-secondary-fixed hover:bg-secondary hover:text-on-secondary text-on-secondary-fixed font-label-sm text-label-sm font-bold transition-all shadow-sm">
+                  Verify &amp; Unlock
+                </button>
+</td>
+</tr>
+<!-- Row 6: G-30 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G30</span>
+                Bus G-30
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-3012</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                LIG Colony → Patnipura → Pardesipura → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Needs Signoff
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<button class="row-verify-btn px-3 py-1 rounded bg-secondary-fixed hover:bg-secondary hover:text-on-secondary text-on-secondary-fixed font-label-sm text-label-sm font-bold transition-all shadow-sm">
+                  Verify &amp; Unlock
+                </button>
+</td>
+</tr>
+<!-- Row 7: G-17 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G17</span>
+                Bus G-17
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-1721</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Geeta Bhawan → Navlakha → Musakhedi → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Admin Verified
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<span class="text-tertiary font-label-sm text-label-sm font-bold flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[16px]">lock_open</span> Ready to Publish
+                </span>
+</td>
+</tr>
+<!-- Row 8: G-16 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
+<span class="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">G16</span>
+                Bus G-16
+              </td>
+<td class="px-space-md py-3 font-mono font-semibold text-on-surface">MP-09-FA-1605</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">50 + 2 High Capacity</span>
+</td>
+<td class="px-space-md py-3 text-on-surface-variant">
+                Dewas Naka Depot → Niranjanpur → Bypass Cross → AITR
+              </td>
+<td class="px-space-md py-3">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Needs Signoff
+                </span>
+</td>
+<td class="px-space-md py-3 text-right">
+<button class="row-verify-btn px-3 py-1 rounded bg-secondary-fixed hover:bg-secondary hover:text-on-secondary text-on-secondary-fixed font-label-sm text-label-sm font-bold transition-all shadow-sm">
+                  Verify &amp; Unlock
+                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section 5: Live Fleet & Shift Assignment Grid -->
+<section class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md space-y-space-md">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Live Fleet &amp; Shift Assignment Grid</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time driver credentials, conductor pairing, and onboard GPS telemetry pulse.</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-2 px-space-md py-1.5 rounded-lg bg-surface-container-low text-on-surface font-body-sm">
+<span class="material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="bg-transparent text-body-sm outline-none placeholder:text-outline w-44" placeholder="Filter driver code, bus..." type="text"/>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Telemetry: 10s auto-refresh</span>
+</div>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-surface-container text-on-surface font-label-sm text-label-sm uppercase">
+<tr>
+<th class="px-space-md py-3">Vehicle ID</th>
+<th class="px-space-md py-3">Current Status</th>
+<th class="px-space-md py-3">Driver Assignment</th>
+<th class="px-space-md py-3">Conductor Pairing</th>
+<th class="px-space-md py-3">Assigned Shift</th>
+<th class="px-space-md py-3">Occupancy</th>
+<th class="px-space-md py-3 text-right">Telemetry Heartbeat</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-sm">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary">G-47 (MP-09-FA-2811)</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span> On Route (Bypass)
+                </span>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">DRIVER</span>
+<span class="font-mono font-semibold">DRV-102 (R. Sharma)</span>
+</div>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">CONDUCTOR</span>
+<span class="font-mono font-semibold">CND-102 (K. Verma)</span>
+</div>
+</td>
+<td class="px-space-md py-3 font-semibold text-on-surface">Shift 1 (08:20 AM)</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[78%]"></div>
+</div>
+<span class="font-mono text-xs text-outline">39/52</span>
+</div>
+</td>
+<td class="px-space-md py-3 text-right font-mono text-xs text-tertiary font-bold">
+                100% SIGNAL • 2s ago
+              </td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary">G-39 (MP-09-FA-3104)</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span> Campus Terminal
+                </span>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">DRIVER</span>
+<span class="font-mono font-semibold">DRV-108 (S. Patel)</span>
+</div>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">CONDUCTOR</span>
+<span class="font-mono font-semibold">CND-108 (M. Chouhan)</span>
+</div>
+</td>
+<td class="px-space-md py-3 font-semibold text-on-surface">Shift 1 (08:20 AM)</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[94%]"></div>
+</div>
+<span class="font-mono text-xs text-outline">47/52</span>
+</div>
+</td>
+<td class="px-space-md py-3 text-right font-mono text-xs text-tertiary font-bold">
+                98% SIGNAL • 4s ago
+              </td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary">G-34 (MP-09-FA-1992)</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Staging Bay 4
+                </span>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">DRIVER</span>
+<span class="font-mono font-semibold">DRV-114 (A. Joshi)</span>
+</div>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">CONDUCTOR</span>
+<span class="font-mono font-semibold">CND-114 (D. Singh)</span>
+</div>
+</td>
+<td class="px-space-md py-3 font-semibold text-on-surface">Shift 2 (10:30 AM)</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-outline h-full w-[0%]"></div>
+</div>
+<span class="font-mono text-xs text-outline">0/52</span>
+</div>
+</td>
+<td class="px-space-md py-3 text-right font-mono text-xs text-on-surface-variant font-bold">
+                STANDBY • 12s ago
+              </td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-3 font-bold font-mono text-primary">G-41 (MP-09-FA-4210)</td>
+<td class="px-space-md py-3">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span> On Route (Pipliyahana)
+                </span>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">DRIVER</span>
+<span class="font-mono font-semibold">DRV-120 (V. Malviya)</span>
+</div>
+</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">CONDUCTOR</span>
+<span class="font-mono font-semibold">CND-120 (R. Yadav)</span>
+</div>
+</td>
+<td class="px-space-md py-3 font-semibold text-on-surface">Shift 1 (08:20 AM)</td>
+<td class="px-space-md py-3">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[82%]"></div>
+</div>
+<span class="font-mono text-xs text-outline">41/52</span>
+</div>
+</td>
+<td class="px-space-md py-3 text-right font-mono text-xs text-tertiary font-bold">
+                100% SIGNAL • 1s ago
+              </td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section 6: Audit Log & Change History (Immutable Ledger) -->
+<section class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md space-y-space-md">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Immutable System Audit Log</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cryptographically signed logs for capacity adjustments, driver reassignments, and roster publishing.</p>
+</div>
+<span class="px-3 py-1 rounded bg-surface-container text-on-surface font-mono text-label-sm">
+          SHA-256 LEDGER: ACTIVE
+        </span>
+</div>
+<div class="space-y-space-xs">
+<!-- Log Item 1 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-space-sm hover:bg-surface-container transition-colors">
+<div class="flex items-start md:items-center gap-space-sm">
+<span class="w-8 h-8 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">
+                Timetable Verification Sign-off: Bus G-34 (Annapurna - AITR)
+              </p>
+<div class="flex flex-wrap items-center gap-2 font-label-sm text-label-sm text-outline mt-0.5">
+<span class="text-primary font-bold">Action: SCHEDULE_CERTIFY</span>
+<span>•</span>
+<span>Role: <strong class="text-on-surface">Transport Administrator (ADM-04)</strong></span>
+<span>•</span>
+<span>Target: Legacy July 2015 Migration</span>
+</div>
+</div>
+</div>
+<div class="font-mono text-label-sm text-label-sm text-outline md:text-right">
+<span>2025-04-19 07:14:22 IST</span>
+<span class="block text-tertiary">HASH: 4b9f..210a</span>
+</div>
+</div>
+<!-- Log Item 2 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-space-sm hover:bg-surface-container transition-colors">
+<div class="flex items-start md:items-center gap-space-sm">
+<span class="w-8 h-8 rounded bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">
+                Driver Reassignment: Bus G-39 reassigned to DRV-108 (S. Patel)
+              </p>
+<div class="flex flex-wrap items-center gap-2 font-label-sm text-label-sm text-outline mt-0.5">
+<span class="text-secondary font-bold">Action: CREW_DISPATCH_REBIND</span>
+<span>•</span>
+<span>Role: <strong class="text-on-surface">Transport Administrator (ADM-02)</strong></span>
+<span>•</span>
+<span>Reason: Medical Leave Replacement</span>
+</div>
+</div>
+</div>
+<div class="font-mono text-label-sm text-label-sm text-outline md:text-right">
+<span>2025-04-19 06:40:09 IST</span>
+<span class="block text-tertiary">HASH: 8e12..aa41</span>
+</div>
+</div>
+<!-- Log Item 3 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-space-sm hover:bg-surface-container transition-colors">
+<div class="flex items-start md:items-center gap-space-sm">
+<span class="w-8 h-8 rounded bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">airline_seat_recline_normal</span>
+</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">
+                Seating Threshold Override: Fleet G-Series fixed to 50 + 2 Pax Format
+              </p>
+<div class="flex flex-wrap items-center gap-2 font-label-sm text-label-sm text-outline mt-0.5">
+<span class="text-tertiary font-bold">Action: CAPACITY_NORM_LOCK</span>
+<span>•</span>
+<span>Role: <strong class="text-on-surface">Transport Administrator (ADM-01)</strong></span>
+<span>•</span>
+<span>Standardized to MP State Transit Guideline</span>
+</div>
+</div>
+</div>
+<div class="font-mono text-label-sm text-label-sm text-outline md:text-right">
+<span>2025-04-18 18:05:43 IST</span>
+<span class="block text-tertiary">HASH: c23d..9190</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Verification & Publication Modal Sheet (Controlled via JS) -->
+<div class="fixed inset-0 z-50 hidden bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-4" id="publish-modal">
+<div class="w-full max-w-2xl bg-surface-container-lowest rounded-xl shadow-xl p-space-xl space-y-space-md animate-in fade-in zoom-in duration-150">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">publish</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Publish Verified Timetable</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Push certified bus schedules to passenger mobile portal</p>
+</div>
+</div>
+<button class="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" id="close-publish-modal">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-low space-y-space-sm">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-outline">Publication Scope:</span>
+<span class="font-bold text-on-surface">AITR Passenger Application (Shift 1 &amp; Shift 2)</span>
+</div>
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-outline">Ready Verified Routes:</span>
+<span class="text-tertiary font-bold">28 Routes Ready</span>
+</div>
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-outline">Legacy Unverified Routes:</span>
+<span class="text-error font-bold">14 Routes will remain HIDDEN</span>
+</div>
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-outline">Admin Role Credentials:</span>
+<span class="text-primary font-bold">ADM-TRANS-SUPER-01</span>
+</div>
+</div>
+<div class="p-space-md rounded-lg bg-error-container text-on-error-container text-body-sm font-body-sm flex items-start gap-2">
+<span class="material-symbols-outlined text-[20px] shrink-0 mt-0.5">policy</span>
+<p>
+<strong>Security Protocol:</strong> Publishing will replace current passenger timetables instantly. Unverified routes from the July 2015 source cannot be accessed by students until signed off by the Transport Administrator.
+        </p>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-sm">
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-colors" id="cancel-publish-modal">
+          Cancel &amp; Retain Draft
+        </button>
+<button class="px-space-lg py-2 rounded-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-lg text-label-lg transition-colors flex items-center gap-1.5 shadow-md" id="confirm-publish-action">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span> Confirm &amp; Push Live
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive Logic Micro-Scripts -->
+<script>
+    // Shift Isolation Center Toggle Interaction
+    const btnShift1 = document.getElementById('toggle-shift-1');
+    const btnShift2 = document.getElementById('toggle-shift-2');
+    const shiftBadge = document.getElementById('shift-context-badge');
+
+    if (btnShift1 && btnShift2 && shiftBadge) {
+      btnShift1.addEventListener('click', () => {
+        btnShift1.className = 'shift-toggle-btn px-space-md py-1.5 rounded-md font-label-md text-label-md font-bold transition-all bg-primary-container text-on-primary shadow-sm flex items-center gap-1.5';
+        btnShift2.className = 'shift-toggle-btn px-space-md py-1.5 rounded-md font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface flex items-center gap-1.5';
+        shiftBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">lock</span> Currently Targeting: Shift 1 Routing Matrix (08:20 AM)';
+      });
+
+      btnShift2.addEventListener('click', () => {
+        btnShift2.className = 'shift-toggle-btn px-space-md py-1.5 rounded-md font-label-md text-label-md font-bold transition-all bg-primary-container text-on-primary shadow-sm flex items-center gap-1.5';
+        btnShift1.className = 'shift-toggle-btn px-space-md py-1.5 rounded-md font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface flex items-center gap-1.5';
+        shiftBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">lock</span> Currently Targeting: Shift 2 Routing Matrix (10:30 AM)';
+      });
+    }
+
+    // Modal Control
+    const openPublishModal = document.getElementById('open-publish-modal');
+    const closePublishModal = document.getElementById('close-publish-modal');
+    const cancelPublishModal = document.getElementById('cancel-publish-modal');
+    const publishModal = document.getElementById('publish-modal');
+    const confirmPublish = document.getElementById('confirm-publish-action');
+
+    const toggleModal = (show) => {
+      if (!publishModal) return;
+      if (show) {
+        publishModal.classList.remove('hidden');
+      } else {
+        publishModal.classList.add('hidden');
+      }
+    };
+
+    if (openPublishModal) openPublishModal.addEventListener('click', () => toggleModal(true));
+    if (closePublishModal) closePublishModal.addEventListener('click', () => toggleModal(false));
+    if (cancelPublishModal) cancelPublishModal.addEventListener('click', () => toggleModal(false));
+
+    if (confirmPublish) {
+      confirmPublish.addEventListener('click', () => {
+        confirmPublish.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Broadcasting...';
+        setTimeout(() => {
+          confirmPublish.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span> Published!';
+          setTimeout(() => {
+            toggleModal(false);
+            confirmPublish.innerHTML = '<span class="material-symbols-outlined text-[18px]">rocket_launch</span> Confirm & Push Live';
+          }, 800);
+        }, 1000);
+      });
+    }
+
+    // Row-level legacy schedule verification inline unlock
+    const verifyButtons = document.querySelectorAll('.row-verify-btn');
+    verifyButtons.forEach((btn) => {
+      btn.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const badgeCell = row.cells[4];
+        const actionCell = row.cells[5];
+
+        badgeCell.innerHTML = '<span class="px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 w-max"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Admin Verified</span>';
+        actionCell.innerHTML = '<span class="text-tertiary font-label-sm text-label-sm font-bold flex items-center justify-end gap-1"><span class="material-symbols-outlined text-[16px]">lock_open</span> Ready to Publish</span>';
+      });
+    });
+
+    // Batch verify action
+    const batchBtn = document.getElementById('batch-verify-trigger');
+    if (batchBtn) {
+      batchBtn.addEventListener('click', () => {
+        verifyButtons.forEach(btn => btn.click());
+      });
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest shadow-[0_-1px_6px_rgba(0,0,0,0.03)]"><div class="w-full px-margin-desktop py-space-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-lg"><div class="flex flex-col gap-1"><div class="flex items-center gap-space-sm"><div class="w-6 h-6 rounded bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[14px]">commute</span></div><span class="font-label-lg text-label-lg font-bold text-on-surface tracking-tight">TransitTech Mobility Infrastructure</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Acropolis Institute of Technology &amp; Research (AITR) Campus Transit &amp; Fleet Telemetry • Bypass Road, Manglia, Indore (M.P.) 453771</p></div><div class="flex flex-wrap items-center gap-space-lg text-label-md font-label-md text-on-surface-variant"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-tertiary"></span>Fleet GPS Network: Online</span><a class="hover:text-primary transition-colors" data-path="transit-schedule" href="#">Emergency Protocols</a><a class="hover:text-primary transition-colors" data-path="campus-stops" href="#">Route Catalog</a><span class="text-outline">© 2025 AITR Transit Operations</span></div></div></footer></body></html>

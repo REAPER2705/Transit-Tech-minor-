@@ -468,4 +468,32 @@ router.get('/timetable-info', async (req, res) => {
   }
 });
 
+// Get all buses (for timetable display)
+router.get('/buses', async (req, res) => {
+  try {
+    const buses = await Bus.find({ status: 'active' }).sort({ busCode: 1 });
+
+    // Include source metadata
+    const firstBus = buses.length > 0 ? buses[0] : null;
+    const sourceMetadata = firstBus ? {
+      sourceUrl: firstBus.sourceUrl,
+      sourceDate: firstBus.sourceDate,
+      verificationStatus: firstBus.verificationStatus,
+    } : null;
+
+    res.json({
+      data: buses,
+      metadata: {
+        count: buses.length,
+        source: sourceMetadata,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching buses:', error);
+    res.status(500).json({
+      error: { code: 'FETCH_ERROR', message: 'Failed to fetch buses' },
+    });
+  }
+});
+
 export default router;

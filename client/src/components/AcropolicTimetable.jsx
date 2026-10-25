@@ -4,16 +4,14 @@ import { passengerAPI } from '../utils/api';
 export default function AcropolicTimetable() {
   const [stops, setStops] = useState([]);
   const [routes, setRoutes] = useState([]);
+  const [buses, setBuses] = useState([]);
   const [timetableInfo, setTimetableInfo] = useState(null);
-  const [selectedStop, setSelectedStop] = useState(null);
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [selectedShift, setSelectedShift] = useState('SHIFT_1');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredStops, setFilteredStops] = useState([]);
+  const [selectedStop, setSelectedStop] = useState(null);
   const [schedules, setSchedules] = useState([]);
+  const [selectedShift, setSelectedShift] = useState('SHIFT_1');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedStopOnMap, setSelectedStopOnMap] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -22,17 +20,18 @@ export default function AcropolicTimetable() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [stopsRes, routesRes, infoRes] = await Promise.all([
+      const [stopsRes, routesRes, busesRes, infoRes] = await Promise.all([
         passengerAPI.getStops(),
         passengerAPI.getRoutes(),
+        passengerAPI.getBuses(),
         passengerAPI.getTimetableInfo(),
       ]);
 
       setStops(stopsRes.data.data || []);
       setRoutes(routesRes.data.data || []);
+      setBuses(busesRes.data.data || []);
       setTimetableInfo(infoRes.data.data);
     } catch (err) {
-      setError('Failed to load timetable data');
       console.error('Error loading data:', err);
     } finally {
       setLoading(false);
@@ -58,7 +57,6 @@ export default function AcropolicTimetable() {
   // Load schedules when stop is selected
   const handleStopSelect = async (stop) => {
     setSelectedStop(stop);
-    setSelectedStopOnMap(stop);
     setSearchQuery('');
     setFilteredStops([]);
 
@@ -70,227 +68,278 @@ export default function AcropolicTimetable() {
     }
   };
 
-  // Load route details when route is selected
-  const handleRouteSelect = async (route) => {
-    setSelectedRoute(route);
-
-    try {
-      const res = await passengerAPI.getRouteDetails(route._id, { shift: selectedShift });
-      setSchedules(res.data.data?.schedules || []);
-    } catch (err) {
-      console.error('Error loading route details:', err);
+  const handleShiftChange = (newShift) => {
+    setSelectedShift(newShift);
+    if (selectedStop) {
+      handleStopSelect(selectedStop);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex justify-center items-center py-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading timetable...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mb-4"></div>
+          <p className="text-gray-600">Loading campus transit directory...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Disclaimer Banner */}
-      <div className="glass p-4 bg-amber-50 border-l-4 border-amber-500">
-        <div className="flex items-start gap-3">
-          <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          <div className="flex-1">
-            <h3 className="font-semibold text-amber-900">Historical Timetable</h3>
-            <p className="text-sm text-amber-800 mt-1">
-              {timetableInfo?.sourceDate && `Published ${new Date(timetableInfo.sourceDate).toLocaleDateString()}`}
-              {' — '}
-              <strong>Current timings are unverified.</strong> Always verify with the transport office before planning your journey.
-            </p>
-            {timetableInfo?.liveTrackingMessage && (
-              <p className="text-sm text-amber-800 mt-1">
-                📍 {timetableInfo.liveTrackingMessage}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Panel: Search & Select */}
-        <div className="lg:col-span-1 space-y-4">
-          <div className="glass p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Find a Stop</h3>
-            <input
-              type="text"
-              placeholder="Search stop name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            {searchQuery && (
-              <div className="mt-3 max-h-64 overflow-y-auto space-y-2">
-                {filteredStops.length > 0 ? (
-                  filteredStops.map((stop) => (
-                    <button
-                      key={stop._id}
-                      onClick={() => handleStopSelect(stop)}
-                      className={`w-full text-left p-2 rounded-lg transition-colors ${
-                        selectedStop?._id === stop._id
-                          ? 'bg-blue-100 border border-blue-300'
-                          : 'bg-gray-100 hover:bg-gray-200'
-                      }`}
-                    >
-                      <div className="font-medium text-sm text-gray-800">{stop.name}</div>
-                      <div className="text-xs text-gray-500">{stop.stopCode}</div>
-                    </button>
-                  ))
-                ) : (
-                  <div className="p-2 text-sm text-gray-600 text-center">No stops found</div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Shift Filter */}
-          <div className="glass p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Shift</h3>
-            <div className="space-y-2">
-              {['SHIFT_1', 'SHIFT_2'].map((shift) => (
-                <label key={shift} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="shift"
-                    value={shift}
-                    checked={selectedShift === shift}
-                    onChange={(e) => setSelectedShift(e.target.value)}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm text-gray-700">
-                    {shift === 'SHIFT_1' ? 'Morning (8:30 AM - 2:40 PM)' : 'Afternoon (10:30 AM - 5:00 PM)'}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Routes List */}
-          <div className="glass p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Routes</h3>
-            <div className="space-y-2 max-h-80 overflow-y-auto">
-              {routes.length > 0 ? (
-                routes.map((route) => (
+    <div className="space-y-8">
+      {/* Hero Section with Search */}
+      <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-8 text-white shadow-lg">
+        <h1 className="text-3xl font-bold mb-2">Campus Transit Schedule & Routes Directory</h1>
+        <p className="text-blue-100 mb-6">Real-time access to Acropolis bus transport timetables</p>
+        
+        {/* Search Bar */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search for a bus stop by name or code..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-6 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-md"
+          />
+          {searchQuery && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+              {filteredStops.length > 0 ? (
+                filteredStops.map((stop) => (
                   <button
-                    key={route._id}
-                    onClick={() => handleRouteSelect(route)}
-                    className={`w-full text-left p-2 rounded-lg transition-colors ${
-                      selectedRoute?._id === route._id
-                        ? 'bg-blue-100 border border-blue-300'
-                        : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
+                    key={stop._id}
+                    onClick={() => handleStopSelect(stop)}
+                    className="w-full text-left px-6 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
                   >
-                    <div className="font-medium text-sm text-gray-800">{route.name}</div>
-                    <div className="text-xs text-gray-500">{route.stopIds?.length || 0} stops</div>
+                    <div className="font-medium text-gray-900">{stop.name}</div>
+                    <div className="text-sm text-gray-600">{stop.stopCode}</div>
                   </button>
                 ))
               ) : (
-                <div className="text-sm text-gray-600 text-center py-4">No routes available</div>
+                <div className="px-6 py-3 text-center text-gray-600">No stops found</div>
               )}
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Right Panel: Details & Timetable */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Selected Stop Info */}
-          {selectedStop && (
-            <div className="glass p-4 bg-blue-50 border border-blue-200">
-              <h3 className="font-semibold text-gray-800 mb-2">{selectedStop.name}</h3>
-              <p className="text-sm text-gray-600">Code: {selectedStop.stopCode}</p>
-              {selectedStop.coordinatesVerified ? (
-                <p className="text-xs text-green-600 mt-1">✓ Coordinates verified</p>
-              ) : (
-                <p className="text-xs text-amber-600 mt-1">⚠ Stop location not verified</p>
-              )}
+        {/* Source Attribution */}
+        <div className="mt-6 p-3 bg-white/15 rounded-lg text-sm text-blue-50 border border-white/30">
+          <span className="font-medium">📋 Data Source:</span> September 1, 2023 • 
+          <a 
+            href="https://www.scribd.com/document/703073096/BusRoute-Sep23-1" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="underline hover:text-white ml-1"
+          >
+            Scribd Document
+          </a>
+          {' • '}
+          <span className="inline-flex items-center gap-1">
+            <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+            Unverified Data
+          </span>
+        </div>
+      </div>
+
+      {/* Fleet Units Section */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Active Fleet Units</h2>
+        {buses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {buses.map((bus) => (
+              <div key={bus._id} className="glass p-5 rounded-lg hover:shadow-md transition-shadow border border-gray-200">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">Bus Unit {bus.busCode}</h3>
+                    <p className="text-sm text-gray-600 mt-1">Fleet ID: {bus._id.substring(0, 8)}</p>
+                  </div>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded">Active</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between text-gray-700">
+                    <span className="text-gray-600">Capacity:</span>
+                    <span className="font-medium">{bus.capacity || 50} seats</span>
+                  </div>
+                  <div className="flex justify-between text-gray-700">
+                    <span className="text-gray-600">Status:</span>
+                    <span className="font-medium">{bus.operationalStatus || 'Operational'}</span>
+                  </div>
+                  {bus.sourceDate && (
+                    <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
+                      Data: {new Date(bus.sourceDate).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="glass p-8 text-center rounded-lg bg-gray-50">
+            <p className="text-gray-600">No fleet units currently available</p>
+          </div>
+        )}
+      </div>
+
+      {/* Shift Selection */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Service Shifts</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {['SHIFT_1', 'SHIFT_2'].map((shift) => (
+            <button
+              key={shift}
+              onClick={() => handleShiftChange(shift)}
+              className={`p-4 rounded-lg text-left transition-all ${
+                selectedShift === shift
+                  ? 'glass border-2 border-blue-500 bg-blue-50'
+                  : 'glass border border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="font-semibold text-gray-800">
+                {shift === 'SHIFT_1' ? '🌅 Morning Service' : '🌤️ Afternoon Service'}
+              </div>
+              <div className="text-sm text-gray-600 mt-1">
+                {shift === 'SHIFT_1' ? '08:30 - 14:40' : '10:30 - 17:00'}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Routes & Stops Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Routes */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Available Routes</h2>
+          {routes.length > 0 ? (
+            <div className="space-y-3">
+              {routes.map((route) => (
+                <div key={route._id} className="glass p-4 rounded-lg border border-gray-200 hover:shadow-md transition-all">
+                  <h3 className="font-semibold text-gray-800">{route.name}</h3>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-sm text-gray-600">🚏 {route.stopIds?.length || 0} stops</p>
+                    {route.sourceDate && (
+                      <p className="text-xs text-gray-500">
+                        {new Date(route.sourceDate).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="glass p-6 text-center bg-gray-50 rounded-lg">
+              <p className="text-gray-600">No routes available</p>
             </div>
           )}
+        </div>
 
-          {/* Selected Route Info */}
-          {selectedRoute && (
-            <div className="glass p-4 bg-green-50 border border-green-200">
-              <h3 className="font-semibold text-gray-800 mb-2">{selectedRoute.name}</h3>
-              <p className="text-sm text-gray-600">Route Code: {selectedRoute.routeCode}</p>
-              <p className="text-sm text-gray-600">Stops: {selectedRoute.stopIds?.length || 0}</p>
+        {/* All Stops */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Bus Stops Directory</h2>
+          {stops.length > 0 ? (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {stops.map((stop) => (
+                <button
+                  key={stop._id}
+                  onClick={() => handleStopSelect(stop)}
+                  className={`w-full text-left p-4 rounded-lg transition-all border ${
+                    selectedStop?._id === stop._id
+                      ? 'glass bg-blue-50 border-blue-500 shadow-md'
+                      : 'glass border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">{stop.name}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{stop.stopCode}</p>
+                    </div>
+                    <span className="text-lg">🚏</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="glass p-6 text-center bg-gray-50 rounded-lg">
+              <p className="text-gray-600">No stops available</p>
             </div>
           )}
+        </div>
+      </div>
 
-          {/* Timetable */}
+      {/* Selected Stop Details */}
+      {selectedStop && (
+        <div className="glass p-6 rounded-lg bg-blue-50 border-2 border-blue-300">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">📍 {selectedStop.name}</h2>
+              <p className="text-gray-600 mt-1">Stop Code: <span className="font-medium">{selectedStop.stopCode}</span></p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedStop(null);
+                setSchedules([]);
+              }}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Schedules for Selected Stop */}
           {schedules.length > 0 ? (
-            <div className="glass p-4">
-              <h3 className="font-semibold text-gray-800 mb-4">Schedules</h3>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Schedule & Timings</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {schedules.map((schedule, idx) => (
-                  <div key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex justify-between items-start mb-2">
+                  <div key={idx} className="p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <div className="font-medium text-gray-800">
-                          Bus {schedule.busId?.busCode || 'N/A'}
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {schedule.startTimeLocal} - {schedule.endTimeLocal}
-                        </div>
+                        <p className="font-bold text-gray-800 text-lg">
+                          🚌 Bus {schedule.busId?.busCode || 'N/A'}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          ⏱️ {schedule.startTimeLocal} — {schedule.endTimeLocal}
+                        </p>
                       </div>
-                      <span className={`badge ${
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
                         schedule.shiftCode === 'SHIFT_1' 
-                          ? 'badge-info' 
-                          : 'badge-warning'
+                          ? 'bg-orange-100 text-orange-700' 
+                          : 'bg-purple-100 text-purple-700'
                       }`}>
                         {schedule.shiftCode === 'SHIFT_1' ? 'Morning' : 'Afternoon'}
                       </span>
                     </div>
                     {schedule.routeId && (
-                      <div className="text-xs text-gray-600">
+                      <p className="text-xs text-gray-600">
                         Route: {schedule.routeId.name}
-                      </div>
+                      </p>
                     )}
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="glass p-6 text-center">
-              <p className="text-gray-600">
-                {selectedStop || selectedRoute
-                  ? 'No schedules available'
-                  : 'Select a stop or route to view schedules'}
-              </p>
+            <div className="mt-6 p-4 bg-white rounded-lg text-center text-gray-600">
+              No schedules available for this stop in the selected shift.
             </div>
           )}
-
-          {/* Map Placeholder */}
-          <div className="glass p-4 bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-            <div className="text-center">
-              <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <p className="text-gray-600 text-sm">
-                {selectedStopOnMap
-                  ? `${selectedStopOnMap.name} (map view)`
-                  : 'Map view coming soon'}
-              </p>
-              {selectedStopOnMap && (
-                <p className="text-xs text-gray-500 mt-1">
-                  {selectedStopOnMap.coordinatesVerified 
-                    ? '✓ Verified location'
-                    : '⚠ Location unverified'}
-                </p>
-              )}
-            </div>
-          </div>
         </div>
+      )}
+
+      {/* Footer Attribution */}
+      <div className="glass p-4 rounded-lg bg-gray-50 border border-gray-200 text-center text-sm text-gray-600">
+        <p>
+          This timetable contains historical data from 
+          <a 
+            href="https://www.scribd.com/document/703073096/BusRoute-Sep23-1" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline ml-1"
+          >
+            September 1, 2023 source
+          </a>
+          . Data is unverified and for reference only. Always contact the transport office for current schedules.
+        </p>
       </div>
     </div>
   );

@@ -55,6 +55,7 @@ export const passengerAPI = {
   getRouteDetails: (routeId, params) => api.get(`/passenger/routes/${routeId}`, { params }),
   getStopSchedules: (stopId, params) => api.get(`/passenger/stops/${stopId}/schedules`, { params }),
   getTimetableInfo: () => api.get('/passenger/timetable-info'),
+  getBuses: () => api.get('/passenger/buses'),
 };
 
 export const staffAPI = {

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-container-highest":"#dae2fd","on-background":"#131b2e","on-secondary-fixed-variant":"#3323cc","background":"#faf8ff","error-container":"#ffdad6","on-surface-variant":"#434655","on-secondary":"#ffffff","outline":"#737686","tertiary-container":"#007d55","on-secondary-fixed":"#0f0069","inverse-on-surface":"#eef0ff","primary":"#004ac6","secondary-fixed":"#e2dfff","on-primary-fixed-variant":"#003ea8","tertiary-fixed-dim":"#4edea3","on-tertiary-container":"#bdffdb","on-primary-container":"#eeefff","surface-tint":"#0053db","on-error-container":"#93000a","inverse-surface":"#283044","on-surface":"#131b2e","surface":"#faf8ff","secondary-fixed-dim":"#c3c0ff","tertiary":"#006242","primary-fixed":"#dbe1ff","surface-variant":"#dae2fd","surface-container-high":"#e2e7ff","surface-container":"#eaedff","secondary":"#4b41e1","on-tertiary":"#ffffff","surface-container-lowest":"#ffffff","surface-container-low":"#f2f3ff","on-primary-fixed":"#00174b","secondary-container":"#645efb","error":"#ba1a1a","inverse-primary":"#b4c5ff","surface-dim":"#d2d9f4","on-tertiary-fixed":"#002113","outline-variant":"#c3c6d7","tertiary-fixed":"#6ffbbe","surface-bright":"#faf8ff","on-primary":"#ffffff","on-secondary-container":"#fffbff","primary-fixed-dim":"#b4c5ff","primary-container":"#2563eb","on-error":"#ffffff","on-tertiary-fixed-variant":"#005236"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin-tablet":"1.5rem","space-xs":"0.25rem","margin":"1rem","space-xl":"2.5rem","space-sm":"0.5rem","gutter-desktop":"1.5rem","space-lg":"1.5rem","space-md":"1rem","margin-desktop":"2.5rem","gutter":"1.25rem"},"fontFamily":{"headline-md":["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"telemetry-metric":["Plus Jakarta Sans"],"headline-xl-mobile":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"]},"fontSize":{"headline-md":["1.25rem",{"lineHeight":"1.75rem","letterSpacing":"-0.01em","fontWeight":"600"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.06em","fontWeight":"700"}],"display-lg-mobile":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"800"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.04em","fontWeight":"600"}],"headline-lg":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-xl":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"telemetry-metric":["1.5rem",{"lineHeight":"1.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.015em","fontWeight":"700"}],"body-md":["0.9375rem",{"lineHeight":"1.5rem","fontWeight":"400"}],"body-sm":["0.8125rem",{"lineHeight":"1.25rem","fontWeight":"400"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","fontWeight":"400"}],"display-lg":["3.5rem",{"lineHeight":"4rem","letterSpacing":"-0.025em","fontWeight":"800"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-margin-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[20px]">directions_bus</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-on-surface leading-none">TransitTech</span><span class="font-label-sm text-label-sm text-outline tracking-wider uppercase mt-0.5">AITR Campus • Indore</span></div></div><nav class="hidden xl:flex items-center gap-space-xs" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-lg"><a class="px-space-md py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="passenger-portal" href="#">Passenger Portal</a><a aria-current="page" class="px-space-md py-space-xs transition-colors bg-primary-container text-on-primary font-label-lg rounded-lg" data-path="transport-staff-portal" href="#">Transport Staff Portal</a><a class="px-space-md py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" data-path="admin-portal" href="#">Admin Portal</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-space-sm px-space-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-label-md font-label-md w-56 justify-between cursor-pointer hover:bg-surface-container transition-colors"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[18px] text-outline">search</span><span>Search routes, stops...</span></div><kbd class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface text-[10px] font-bold font-mono">⌘K</kbd></div><div class="hidden lg:flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="text-on-surface font-semibold">Shift 1:</span><span>08:20 AM - 02:40 PM</span></div><button aria-label="Notifications" class="relative p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden sm:flex flex-col items-end"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-primary-fixed-variant uppercase tracking-wider">Passenger</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-surface-container-highest" src="https://lh3.googleusercontent.com/aida/AEtjO1Vdh_2i6-ypCuO_DrFRnRtqbUdO9N7FQV1H_vClIaEcZAS7qSvmcTVYVSK2orFHc3RIPYMPtU1EOerBtfUpPcqxpdZTcZeOncSICWtuzVmUpeuvhDdiHSid5Pon6bhjzUzwrhxuhUC21GdPFomd1nxHh5siVav2It53HUVvqZr7YhoDEzcbHDMeuc6pbSKPmkxgt1FpTkCydOqxtA26a_FOoMCaVA9Xc3s4n65RILNrKg7ksolY5LDDuRw22oI1vqPHECrEd_XqlhQ"/></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-14rem)]"><div class="flex flex-col w-full">
+<!-- Top Operational Sub-Bar / Context Header -->
+<section class="w-full px-margin-desktop py-space-md bg-surface-container-low">
+<div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Unit Identity & Shift Badges -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+<span class="font-headline-md text-headline-md tracking-tight">UNIT G-47</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono">MP-09-FA-2024</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Route: Bypass Corridor • Shift 1 (08:20 AM – 02:40 PM)</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px] text-tertiary">badge</span>
+<span>Role: Driver &amp; Fleet Conductor (Dual Authorized)</span>
+</div>
+</div>
+<!-- Live Heartbeat & Telemetry Status Pill -->
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary animate-ping"></span>
+<span class="font-semibold text-tertiary">FLEET SYNC: ONLINE</span>
+<span class="text-outline">|</span>
+<span class="font-mono text-outline-variant text-[11px]" id="clock-display">09:14:22 AM IST</span>
+</div>
+<button class="p-2 rounded-lg bg-surface-container-highest hover:bg-surface-variant text-on-surface-variant transition-colors" onclick="triggerManualSync()" title="Force Sync" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Campus Context Ambient Banner -->
+<section class="w-full px-margin-desktop py-space-sm">
+<div class="max-w-7xl mx-auto rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 rounded-full pointer-events-none blur-2xl"></div>
+<div class="flex items-center gap-space-md z-10">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[28px]">domain</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm uppercase text-outline tracking-wider block">Acropolis Institutional Hub</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Transit Command Center • Indore Campus Terminal</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Fleet vehicle attached to morning ingress pattern. Monitoring headway intervals, safe corridor ingress speeds, and seating headroom.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm z-10 w-full md:w-auto shrink-0">
+<div class="px-3 py-2 rounded-lg bg-surface-container text-center">
+<div class="font-label-sm text-label-sm text-outline">Target Campus Gate</div>
+<div class="font-headline-md text-headline-md text-primary font-bold">09:25 AM</div>
+</div>
+<div class="px-3 py-2 rounded-lg bg-surface-container text-center">
+<div class="font-label-sm text-label-sm text-outline">Scheduled Departure</div>
+<div class="font-headline-md text-headline-md text-on-surface font-bold">02:40 PM</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main 12-Column Telemetry & Control Canvas -->
+<div class="w-full px-margin-desktop py-space-lg">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT / MAIN COLUMN: Driver Controls & Live GIS Radar (7 Columns) -->
+<div class="lg:col-span-7 flex flex-col gap-space-lg">
+<!-- Module 1: Driver Telemetry & GPS Broadcast Controller -->
+<div class="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">GPS Broadcast &amp; Telemetry</h3>
+<span class="font-label-sm text-label-sm text-outline">NMEA High-Precision Dual Band L1/L5</span>
+</div>
+</div>
+<!-- GPS Master Switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="gps-toggle" onchange="toggleGPSStream(this)" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Telemetry Metric Strip -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm">
+<div class="rounded-lg bg-surface-container p-space-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Stream Rate</span>
+<span class="font-telemetry-metric text-telemetry-metric text-primary" id="stream-rate">1.0 Hz</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">Continuous</span>
+</div>
+<div class="rounded-lg bg-surface-container p-space-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Accuracy</span>
+<span class="font-telemetry-metric text-telemetry-metric text-tertiary">±3.8 m</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">High Precision</span>
+</div>
+<div class="rounded-lg bg-surface-container p-space-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ground Speed</span>
+<span class="font-telemetry-metric text-telemetry-metric text-on-surface" id="vehicle-speed">38 km/h</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">Optimal Range</span>
+</div>
+<div class="rounded-lg bg-surface-container p-space-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Battery Optim.</span>
+<span class="font-telemetry-metric text-telemetry-metric text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">battery_saver</span> ACTIVE
+              </span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">Wakelock Held</span>
+</div>
+</div>
+<!-- Trip Action Triggers -->
+<div class="flex flex-col sm:flex-row items-center gap-space-sm pt-space-xs">
+<button class="w-full sm:flex-1 py-3 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm transition-all" id="trip-btn" onclick="toggleTripState()" type="button">
+<span class="material-symbols-outlined text-[20px]" id="trip-icon">play_arrow</span>
+<span id="trip-btn-label">Active Trip in Progress (Bypass Ingress)</span>
+</button>
+<button class="w-full sm:w-auto py-3 px-space-md rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors" onclick="showTripLogModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span>Trip Logs</span>
+</button>
+</div>
+<!-- Live Broadcast Audit Line -->
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant pt-space-xs">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+              Broadcasting to Central Transit Telematics &amp; Passenger Radar
+            </span>
+<span class="font-mono text-outline">Lat 22.8124°N, Long 75.9271°E</span>
+</div>
+</div>
+<!-- Module 2: Interactive Campus Transit Waypoint Radar -->
+<div class="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container text-on-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">pin_drop</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Ordered Corridor Waypoints</h3>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded bg-surface-container-high text-on-surface-variant">Step 4 of 5 Active</span>
+</div>
+<!-- Vertical Timeline with Interactive Waypoint Checkpoints -->
+<div class="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-surface-container-highest">
+<!-- Stop 1: Palasia Square (Departed) -->
+<div class="relative flex items-start gap-space-md">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary shadow-sm">
+<span class="material-symbols-outlined text-[13px]">check</span>
+</span>
+<div class="flex-1 bg-surface-container-low rounded-lg p-space-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Stop 1: Palasia Square</span>
+<span class="font-label-sm text-label-sm text-tertiary bg-surface-container-lowest px-2 py-0.5 rounded font-mono">DEPARTED</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Initial pick-up hub • 22 Boarded</span>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono block">08:28 AM</span>
+<span class="font-label-sm text-label-sm text-tertiary">On Schedule (+0m)</span>
+</div>
+</div>
+</div>
+<!-- Stop 2: Bengali Square (Departed) -->
+<div class="relative flex items-start gap-space-md">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary shadow-sm">
+<span class="material-symbols-outlined text-[13px]">check</span>
+</span>
+<div class="flex-1 bg-surface-container-low rounded-lg p-space-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Stop 2: Bengali Square</span>
+<span class="font-label-sm text-label-sm text-tertiary bg-surface-container-lowest px-2 py-0.5 rounded font-mono">DEPARTED</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Major Transfer node • 8 Boarded</span>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono block">08:42 AM</span>
+<span class="font-label-sm text-label-sm text-tertiary">+2m Clearance</span>
+</div>
+</div>
+</div>
+<!-- Stop 3: Pipliyahana (Departed) -->
+<div class="relative flex items-start gap-space-md">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary shadow-sm">
+<span class="material-symbols-outlined text-[13px]">check</span>
+</span>
+<div class="flex-1 bg-surface-container-low rounded-lg p-space-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Stop 3: Pipliyahana Junction</span>
+<span class="font-label-sm text-label-sm text-tertiary bg-surface-container-lowest px-2 py-0.5 rounded font-mono">DEPARTED</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Flyover Service lane • 5 Boarded</span>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono block">08:58 AM</span>
+<span class="font-label-sm text-label-sm text-tertiary">On Schedule</span>
+</div>
+</div>
+</div>
+<!-- Stop 4: Bypass Hub (Current Status: Arrived) -->
+<div class="relative flex items-start gap-space-md">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary ring-4 ring-primary-fixed shadow-md animate-pulse">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+</span>
+<div class="flex-1 bg-primary-fixed/30 rounded-lg p-space-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-primary font-bold">Stop 4: Bypass Hub (MR-10 Ring)</span>
+<span class="font-label-sm text-label-sm bg-primary text-on-primary px-2 py-0.5 rounded font-mono font-bold">ARRIVED / DOCKED</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Conductor capacity intake active • 3 Boarded</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-primary font-mono font-bold">09:12 AM</span>
+<button class="px-2.5 py-1 rounded bg-primary text-on-primary text-label-sm font-label-sm hover:bg-primary-container transition-all" onclick="confirmWaypointDepart(this)" type="button">Mark Depart</button>
+</div>
+</div>
+</div>
+<!-- Stop 5: Acropolis Campus Gate (In Transit - Destination) -->
+<div class="relative flex items-start gap-space-md">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-[13px]">flag</span>
+</span>
+<div class="flex-1 bg-surface-container-lowest rounded-lg p-space-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Stop 5: Acropolis Campus Gate • Terminal</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface-variant px-2 py-0.5 rounded font-mono">IN TRANSIT</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Final drop-off • Engineering &amp; Pharmacy Porch</span>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-primary font-mono font-bold block">Target 09:25 AM</span>
+<span class="font-label-sm text-label-sm text-outline">ETA: ~11 mins</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Campus Context Image Gallery Banner -->
+<div class="rounded-xl overflow-hidden shadow-sm relative h-48 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Expansive frontal view of Acropolis Institute of Technology and Research campus building under daylight, modern peach and terracotta brick facade surrounded by manicured green lawns and palm trees with a pristine asphalt transit access driveway under clear sky." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSgxb_DcC3vxeW_-cin1qmZGtjOeJ4L_ETMgr2VDxZekfbchBOTRszeRk0HnAcv5Xs6CFlqaewKdIGkBdhAeHB07jnXq2fRCZEIEfqnH7mjpaMKGBx2WCgcVEUz9GJNo_4B3ApifODxCzJB4QJl7lFcPbpsIH5QOvZwZddIexlq_MRqX6coBING7Rcu18fTGXY4aQ-uYqlKIWh5ByC3Poz0jEka9nIA6soQGsahHvV6tl2KTT36e4fIA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/40 to-transparent flex items-end p-space-md text-inverse-on-surface">
+<div class="flex items-center justify-between w-full">
+<div>
+<span class="font-label-sm text-label-sm tracking-wider uppercase text-tertiary-fixed-dim">Institutional Destination</span>
+<p class="font-headline-md text-headline-md font-bold text-inverse-on-surface">Acropolis Institute (AITR) Terminal Bay 04</p>
+<p class="font-body-sm text-body-sm text-inverse-on-surface/80">Manglia Bypass Corridor • Speed Regulation: 25 km/h within gate radius</p>
+</div>
+<div class="hidden sm:flex flex-col items-end">
+<span class="font-label-sm text-label-sm bg-surface-container-highest/20 backdrop-blur-md px-2.5 py-1 rounded text-inverse-on-surface">Geofence Verified</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Conductor Occupancy Controls & Incident Dispatch (5 Columns) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Module 3: Conductor Live Occupancy Management Console -->
+<div class="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Occupancy Counter</h3>
+<span class="font-label-sm text-label-sm text-outline">Conductor Live Manifest Intake</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded bg-secondary-fixed text-on-secondary-fixed uppercase tracking-wider font-semibold">Dual Conductor Auth</span>
+</div>
+<!-- Large High-Visibility Metric Gauge Card -->
+<div class="rounded-xl bg-surface-container-low p-space-md flex flex-col gap-space-sm text-center">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Boarded Passengers</span>
+<div class="flex items-baseline justify-center gap-2">
+<span class="font-display-lg text-display-lg text-primary font-extrabold tracking-tight leading-none" id="passenger-count">38</span>
+<span class="font-headline-xl text-headline-xl text-outline font-semibold">/ 50</span>
+</div>
+<!-- Visual Segmented Capacity Bar -->
+<div class="w-full flex flex-col gap-1.5 px-space-xs mt-1">
+<div class="w-full bg-surface-container-highest rounded-full h-3 overflow-hidden flex">
+<div class="bg-primary h-full transition-all duration-300 rounded-full" id="capacity-fill" style="width: 76%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline px-1">
+<span>Safe Nominal Headroom (76%)</span>
+<span>12 Seats Remaining</span>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-center gap-space-sm text-label-sm font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">airline_seat_recline_normal</span>
+<span>50 Stated Seating Capacity</span>
+</span>
+<span>•</span>
+<span class="flex items-center gap-1 font-semibold text-secondary">
+<span class="material-symbols-outlined text-[16px]">security</span>
+<span>+2 Transport Staff</span>
+</span>
+</div>
+</div>
+<!-- High-Contrast Big Touch Buttons for Conductor boarding flow -->
+<div class="grid grid-cols-3 gap-space-sm">
+<button aria-label="Subtract 1 Passenger" class="h-16 rounded-xl bg-surface-container hover:bg-surface-container-high text-error font-headline-xl text-headline-xl flex items-center justify-center transition-transform active:scale-95 shadow-sm" onclick="adjustCount(-1)" type="button">
+              -1
+            </button>
+<button aria-label="Add 1 Passenger" class="h-16 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-xl text-headline-xl flex items-center justify-center transition-transform active:scale-95 shadow-sm" onclick="adjustCount(1)" type="button">
+              +1
+            </button>
+<button aria-label="Add 5 Passengers" class="h-16 rounded-xl bg-surface-container-highest hover:bg-surface-variant text-primary font-headline-xl text-headline-xl flex items-center justify-center transition-transform active:scale-95 shadow-sm" onclick="adjustCount(5)" type="button">
+              +5
+            </button>
+</div>
+<!-- Quick Confirm Capacity Button -->
+<button class="w-full py-3.5 px-space-md rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors shadow-sm" onclick="confirmCapacitySync()" type="button">
+<span class="material-symbols-outlined text-tertiary text-[20px]">verified</span>
+<span class="font-bold">Quick Confirm Capacity Broadcast</span>
+</button>
+<!-- Audit timestamp notification -->
+<div class="p-space-sm rounded-lg bg-surface-container text-on-surface-variant text-label-sm font-label-sm flex items-center justify-between">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">history_toggle_off</span>
+<span>Last confirmed sync:</span>
+</span>
+<span class="font-mono font-semibold text-on-surface" id="sync-timestamp">10:24 AM by Conductor</span>
+</div>
+</div>
+<!-- Module 4: Incident & Delay Dispatch Reporter (One-Click) -->
+<div class="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">One-Click Dispatch Reporter</h3>
+<span class="font-label-sm text-label-sm text-outline">Instantly Broadcasts to Admin &amp; Student HUD</span>
+</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tap any contingency event below to report route anomalies without typing during vehicle operation.</p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+<!-- Congestion Trigger -->
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-left flex flex-col gap-2 transition-transform active:scale-95 group" onclick="reportIncident('Traffic Congestion (MR-10 Ring)')" type="button">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">traffic</span>
+</div>
+<div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface block leading-tight">Traffic Jam</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5 block">+10m Delay</span>
+</div>
+</button>
+<!-- Breakdown Trigger -->
+<button class="p-space-md rounded-xl bg-error-container hover:opacity-90 text-on-error-container text-left flex flex-col gap-2 transition-transform active:scale-95 group" onclick="reportIncident('Mechanical Breakdown / Tire Hazard')" type="button">
+<div class="w-8 h-8 rounded-lg bg-error text-on-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">car_repair</span>
+</div>
+<div>
+<span class="font-label-lg text-label-lg font-bold text-on-error-container block leading-tight">Breakdown</span>
+<span class="font-label-sm text-label-sm text-error mt-0.5 block">Summon Rescue</span>
+</div>
+</button>
+<!-- Route Diversion Trigger -->
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-left flex flex-col gap-2 transition-transform active:scale-95 group" onclick="reportIncident('Corridor Diversion / Bypass Construction')" type="button">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">alt_route</span>
+</div>
+<div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface block leading-tight">Diversion</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5 block">Service Lane</span>
+</div>
+</button>
+</div>
+<!-- Dispatcher Confirmation Box -->
+<div class="hidden p-space-sm rounded-lg bg-tertiary-container text-on-tertiary-container text-label-sm font-label-sm flex items-center justify-between animate-fadeIn" id="dispatch-toast">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">broadcast_on_home</span>
+<span id="toast-message">Incident Dispatched to AITR Central Control.</span>
+</div>
+<button class="text-on-tertiary-container hover:text-white" onclick="dismissToast()" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Emergency Direct Hotkey -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-error">phone_in_talk</span>
+<span>AITR Transport Desk Direct:</span>
+</span>
+<a class="font-mono text-label-sm font-label-sm text-primary font-bold hover:underline" href="tel:+917314730000">+91 731-473-0000</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Route Mini-Telemetry Bar Footer Extension -->
+<section class="w-full px-margin-desktop py-space-md bg-surface-container mt-space-lg">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-space-md font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>AITR Telematics Node: MP-IN-BYPASS-GATE4</span>
+<span class="text-outline">•</span>
+<span>Firmware: TT-OBD2-v4.18</span>
+</div>
+<div class="flex items-center gap-space-md font-mono">
+<span>Packet Loss: 0.02%</span>
+<span>RSSI: -58 dBm (Strong 4G LTE)</span>
+</div>
+</div>
+</section>
+<!-- Trip Log Dialog (Hidden by Default) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-space-md" id="log-modal">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">history</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Unit G-47 Trip Log</h3>
+</div>
+<button class="p-1 rounded-lg hover:bg-surface-container text-on-surface-variant" onclick="closeTripLogModal()" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="space-y-3 font-mono text-body-sm text-on-surface max-h-64 overflow-y-auto pr-1">
+<div class="p-2 rounded bg-surface-container-low flex justify-between">
+<span>[08:20:00] Engine Ignition &amp; OBD Pair Verified</span>
+<span class="text-tertiary">SUCCESS</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex justify-between">
+<span>[08:28:14] Palasia Square Depart (22 pax)</span>
+<span class="text-primary">PASSENGER OK</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex justify-between">
+<span>[08:42:05] Bengali Square Depart (30 pax)</span>
+<span class="text-primary">PASSENGER OK</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex justify-between">
+<span>[08:58:20] Pipliyahana Depart (35 pax)</span>
+<span class="text-primary">PASSENGER OK</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex justify-between">
+<span>[09:12:33] Bypass Hub Ingress DOCKED (38 pax)</span>
+<span class="text-tertiary">CURRENT</span>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg" onclick="closeTripLogModal()" type="button">Close Log</button>
+</div>
+</div>
+<!-- Inline Micro-Interaction Script -->
+<script>
+    let currentOccupancy = 38;
+    const capacityLimit = 50;
+    let tripActive = true;
+
+    // Clock Live Updates
+    setInterval(() => {
+      const now = new Date();
+      const el = document.getElementById('clock-display');
+      if (el) {
+        el.innerText = now.toLocaleTimeString('en-IN', { hour12: true }) + ' IST';
+      }
+    }, 1000);
+
+    function adjustCount(delta) {
+      currentOccupancy = Math.max(0, Math.min(capacityLimit + 10, currentOccupancy + delta));
+      const countEl = document.getElementById('passenger-count');
+      const barEl = document.getElementById('capacity-fill');
+      if (countEl) countEl.innerText = currentOccupancy;
+      
+      const pct = Math.min(100, Math.round((currentOccupancy / capacityLimit) * 100));
+      if (barEl) {
+        barEl.style.width = pct + '%';
+        if (pct > 90) {
+          barEl.className = 'bg-error h-full transition-all duration-300 rounded-full';
+        } else if (pct > 75) {
+          barEl.className = 'bg-primary h-full transition-all duration-300 rounded-full';
+        } else {
+          barEl.className = 'bg-tertiary h-full transition-all duration-300 rounded-full';
+        }
+      }
+    }
+
+    function confirmCapacitySync() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const stampEl = document.getElementById('sync-timestamp');
+      if (stampEl) {
+        stampEl.innerText = `${timeStr} by Conductor`;
+      }
+      showToastNotification(`Capacity of ${currentOccupancy} seats broadcasted successfully.`);
+    }
+
+    function toggleGPSStream(checkbox) {
+      const rateEl = document.getElementById('stream-rate');
+      if (checkbox.checked) {
+        if (rateEl) rateEl.innerText = '1.0 Hz';
+        showToastNotification('GPS Stream active: broadcasting 1 Hz live telemetry');
+      } else {
+        if (rateEl) rateEl.innerText = 'PAUSED';
+        showToastNotification('GPS Stream paused. Central telematics notified.');
+      }
+    }
+
+    function toggleTripState() {
+      tripActive = !tripActive;
+      const btn = document.getElementById('trip-btn');
+      const label = document.getElementById('trip-btn-label');
+      const icon = document.getElementById('trip-icon');
+      if (tripActive) {
+        btn.className = "w-full sm:flex-1 py-3 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm transition-all";
+        label.innerText = "Active Trip in Progress (Bypass Ingress)";
+        icon.innerText = "play_arrow";
+        showToastNotification("Trip resumed. GPS waypoint tracker online.");
+      } else {
+        btn.className = "w-full sm:flex-1 py-3 px-space-md rounded-lg bg-tertiary-container hover:bg-tertiary text-on-tertiary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm transition-all";
+        label.innerText = "Complete Trip & File Log";
+        icon.innerText = "task_alt";
+        showToastNotification("Trip paused/completed. Preparing shift settlement.");
+      }
+    }
+
+    function confirmWaypointDepart(btn) {
+      btn.innerText = "Departed";
+      btn.className = "px-2.5 py-1 rounded bg-tertiary text-on-tertiary text-label-sm font-label-sm transition-all";
+      btn.disabled = true;
+      showToastNotification("Waypoint Departure Confirmed: Bypass Hub (MR-10). Heading to Campus.");
+    }
+
+    function reportIncident(type) {
+      showToastNotification(`DISPATCHED: ${type} logged. Campus Operations alerted.`);
+    }
+
+    function showToastNotification(msg) {
+      const toast = document.getElementById('dispatch-toast');
+      const toastMsg = document.getElementById('toast-message');
+      if (toast && toastMsg) {
+        toastMsg.innerText = msg;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        setTimeout(() => {
+          dismissToast();
+        }, 5000);
+      }
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('dispatch-toast');
+      if (toast) {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }
+    }
+
+    function triggerManualSync() {
+      showToastNotification("Force Sync: Handshake verified with Central Indore Fleet API.");
+    }
+
+    function showTripLogModal() {
+      const modal = document.getElementById('log-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeTripLogModal() {
+      const modal = document.getElementById('log-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest shadow-[0_-1px_6px_rgba(0,0,0,0.03)]"><div class="w-full px-margin-desktop py-space-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-lg"><div class="flex flex-col gap-1"><div class="flex items-center gap-space-sm"><div class="w-6 h-6 rounded bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[14px]">commute</span></div><span class="font-label-lg text-label-lg font-bold text-on-surface tracking-tight">TransitTech Mobility Infrastructure</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Acropolis Institute of Technology &amp; Research (AITR) Campus Transit &amp; Fleet Telemetry • Bypass Road, Manglia, Indore (M.P.) 453771</p></div><div class="flex flex-wrap items-center gap-space-lg text-label-md font-label-md text-on-surface-variant"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-tertiary"></span>Fleet GPS Network: Online</span><a class="hover:text-primary transition-colors" data-path="transit-schedule" href="#">Emergency Protocols</a><a class="hover:text-primary transition-colors" data-path="campus-stops" href="#">Route Catalog</a><span class="text-outline">© 2025 AITR Transit Operations</span></div></div></footer></body></html>
