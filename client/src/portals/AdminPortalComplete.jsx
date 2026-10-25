@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAppStore } from '../store/appStore';
 
 export default function AdminPortalComplete() {
@@ -6,488 +6,418 @@ export default function AdminPortalComplete() {
     buses,
     routes,
     stops,
-    shifts,
-    requests,
+    timetables,
     complaints,
-    updateBus,
-    addBus,
-    updateRoute,
-    addRoute,
-    updateStop,
-    addStop,
-    updateRequestStatus,
+    incidents,
+    trips,
     updateComplaintStatus,
+    updateIncidentStatus,
+    updateTimetableEntry,
+    getStats,
   } = useAppStore();
 
   const [activeTab, setActiveTab] = useState('overview');
-  const [showBusModal, setShowBusModal] = useState(false);
-  const [showRouteModal, setShowRouteModal] = useState(false);
-  const [newBus, setNewBus] = useState({ id: '', capacity: 50, status: 'ACTIVE' });
-  const [newRoute, setNewRoute] = useState({ id: '', name: '', distance: 0 });
-  const [selectedShift, setSelectedShift] = useState('SHIFT-1');
-  const [importFile, setImportFile] = useState(null);
+  const [filterComplaintStatus, setFilterComplaintStatus] = useState('all');
+  const [filterIncidentStatus, setFilterIncidentStatus] = useState('all');
 
-  const handleAddBus = () => {
-    if (newBus.id && newBus.capacity > 0) {
-      addBus({
-        ...newBus,
-        officialCapacity: newBus.capacity,
-        staffCapacity: 2,
-        currentOccupancy: 0,
-        lastOccupancyUpdate: new Date(),
-      });
-      setNewBus({ id: '', capacity: 50, status: 'ACTIVE' });
-      setShowBusModal(false);
-      alert('Bus added successfully!');
-    }
-  };
+  // Calculate KPIs
+  const stats = getStats();
+  const fleetUtilization = stats.totalBuses > 0 ? ((stats.activeBuses / stats.totalBuses) * 100).toFixed(1) : 0;
+  const totalCapacity = buses.reduce((sum, b) => sum + b.capacity, 0);
+  const totalOccupancy = buses.reduce((sum, b) => sum + (b.currentOccupancy || 0), 0);
+  const occupancyRate = totalCapacity > 0 ? ((totalOccupancy / totalCapacity) * 100).toFixed(1) : 0;
 
-  const handleAddRoute = () => {
-    if (newRoute.id && newRoute.name) {
-      addRoute({
-        ...newRoute,
-        stops: [],
-        activeBuses: [],
-        shift: selectedShift,
-      });
-      setNewRoute({ id: '', name: '', distance: 0 });
-      setShowRouteModal(false);
-      alert('Route added successfully!');
-    }
-  };
+  const kpis = [
+    {
+      title: 'Active Fleet Network',
+      value: stats.activeBuses,
+      total: stats.totalBuses,
+      metric: `${fleetUtilization}% Operational`,
+      icon: 'directions_bus',
+      bgColor: 'bg-primary-fixed',
+      textColor: 'text-on-primary-fixed',
+    },
+    {
+      title: 'Total Routes',
+      value: stats.totalRoutes,
+      metric: `${stats.totalStops} Campus Stops`,
+      icon: 'route',
+      bgColor: 'bg-tertiary-fixed',
+      textColor: 'text-on-tertiary-fixed',
+    },
+    {
+      title: 'Active Trips',
+      value: stats.activeTrips,
+      metric: 'In Progress',
+      icon: 'trip_origin',
+      bgColor: 'bg-secondary-fixed',
+      textColor: 'text-on-secondary-fixed',
+    },
+    {
+      title: 'Open Incidents',
+      value: stats.openIncidents,
+      metric: 'Require Action',
+      icon: 'warning',
+      bgColor: 'bg-error-fixed',
+      textColor: 'text-on-error-fixed',
+    },
+    {
+      title: 'Occupancy Rate',
+      value: `${occupancyRate}%`,
+      metric: `${totalOccupancy}/${totalCapacity} seats`,
+      icon: 'airline_seat_recline_normal',
+      bgColor: 'bg-primary-fixed',
+      textColor: 'text-on-primary-fixed',
+    },
+    {
+      title: 'Unverified Schedules',
+      value: stats.unverifiedTimetables,
+      metric: 'Pending Verification',
+      icon: 'schedule',
+      bgColor: 'bg-tertiary-fixed',
+      textColor: 'text-on-tertiary-fixed',
+      hasBorder: true,
+    },
+  ];
+
+  // Filter complaints and incidents
+  const filteredComplaints = useMemo(() => {
+    if (filterComplaintStatus === 'all') return complaints;
+    return complaints.filter((c) => c.status === filterComplaintStatus);
+  }, [complaints, filterComplaintStatus]);
+
+  const filteredIncidents = useMemo(() => {
+    if (filterIncidentStatus === 'all') return incidents;
+    return incidents.filter((i) => i.status === filterIncidentStatus);
+  }, [incidents, filterIncidentStatus]);
 
   return (
-    <div className="max-w-[1520px] mx-auto px-4 md:px-8 space-y-6 pb-12">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">Admin Portal - Fleet Management</h1>
-        <p className="text-slate-500 mt-2">Manage buses, routes, staff, assignments, and system configuration</p>
-      </div>
-
-      {/* Shift Selector */}
-      <div className="flex gap-2">
-        {[
-          { id: 'SHIFT-1', label: 'Shift 1 (08:20-14:40)' },
-          { id: 'SHIFT-2', label: 'Shift 2 (10:30-17:00)' },
-        ].map((shift) => (
-          <button
-            key={shift.id}
-            onClick={() => setSelectedShift(shift.id)}
-            className={`px-4 py-2 rounded-lg font-semibold transition ${
-              selectedShift === shift.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-200 text-slate-900 hover:bg-slate-300'
-            }`}
-          >
-            {shift.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-4 overflow-x-auto">
-        {[
-          { id: 'overview', label: '📊 Overview' },
-          { id: 'buses', label: '🚌 Buses' },
-          { id: 'routes', label: '🛣️ Routes' },
-          { id: 'stops', label: '📍 Stops' },
-          { id: 'requests', label: '📝 Requests' },
-          { id: 'complaints', label: '⚠️ Complaints' },
-          { id: 'imports', label: '📥 Imports' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg font-semibold text-sm transition whitespace-nowrap ${
-              activeTab === tab.id
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { label: 'Total Buses', value: buses.length, color: 'blue' },
-            { label: 'Active Routes', value: routes.length, color: 'green' },
-            { label: 'Total Stops', value: stops.length, color: 'purple' },
-            { label: 'Pending Requests', value: requests.filter(r => r.status === 'PENDING').length, color: 'amber' },
-          ].map((card, i) => (
-            <div key={i} className={`bg-${card.color}-50 rounded-2xl p-6 border border-${card.color}-200`}>
-              <span className={`text-xs font-bold uppercase text-${card.color}-600`}>{card.label}</span>
-              <p className={`text-3xl font-bold text-${card.color}-900 mt-2`}>{card.value}</p>
+    <div className="w-full pt-16 bg-surface min-h-screen">
+      {/* Top Command Ribbon */}
+      <section className="w-full px-margin-desktop py-space-md bg-surface-container-low sticky top-16 z-30">
+        <div className="w-full flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md">
+          <div className="flex flex-col md:flex-row md:items-center gap-space-md">
+            <div className="flex items-center gap-space-sm">
+              <span className="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">
+                <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                TRANSPORT ADMINISTRATOR
+              </span>
+              <span className="font-body-sm text-body-sm text-outline">|</span>
+              <span className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px] text-tertiary">domain</span>
+                Acropolis Institute (AITR) Manglia Bypass Depot
+              </span>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
 
-      {activeTab === 'buses' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-slate-900">Bus Fleet Management</h2>
-            <button
-              onClick={() => setShowBusModal(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
-            >
-              + Add Bus
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-space-sm">
+            <button className="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-colors flex items-center gap-1.5 shadow-sm">
+              <span className="material-symbols-outlined text-[18px]">download</span>
+              Export Report
             </button>
           </div>
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Bus ID</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Capacity</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Occupancy</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Route</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {buses.map((bus) => (
-                  <tr key={bus.id} className="border-b border-slate-200 hover:bg-slate-50">
-                    <td className="px-6 py-3 font-bold text-slate-900">{bus.id}</td>
-                    <td className="px-6 py-3 text-slate-600">{bus.capacity} seats</td>
-                    <td className="px-6 py-3 text-slate-600">{bus.currentOccupancy}/{bus.capacity}</td>
-                    <td className="px-6 py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                        bus.status === 'ACTIVE'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-slate-100 text-slate-800'
-                      }`}>
-                        {bus.status}
+        </div>
+      </section>
+
+      {/* Sub-Navigation Tabs */}
+      <div className="px-margin-desktop py-space-md bg-surface-container-low sticky top-[120px] z-20 shadow-sm">
+        <div className="flex flex-wrap items-center gap-space-xs">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'overview'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">dashboard</span>
+            <span>Overview & KPIs</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('fleet')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'fleet'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">directions_bus</span>
+            <span>Fleet Management</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('complaints')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'complaints'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">feedback</span>
+            <span>Complaints ({complaints.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('incidents')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'incidents'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">warning</span>
+            <span>Incidents ({incidents.length})</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="px-margin-desktop py-space-lg">
+        {/* OVERVIEW TAB */}
+        {activeTab === 'overview' && (
+          <div className="space-y-space-lg">
+            {/* KPI Telemetry Bento Matrix */}
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-space-md">
+              {kpis.map((kpi, idx) => (
+                <div
+                  key={idx}
+                  className={`p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between relative overflow-hidden ${
+                    kpi.hasBorder ? 'border-l-4 border-l-error' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-label-md text-label-md uppercase tracking-wider text-outline">{kpi.title}</span>
+                    {kpi.icon && (
+                      <span
+                        className={`w-8 h-8 rounded-lg ${kpi.bgColor} ${kpi.textColor} flex items-center justify-center`}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">{kpi.icon}</span>
                       </span>
-                    </td>
-                    <td className="px-6 py-3 text-slate-600">{bus.assignedRoute || 'Unassigned'}</td>
-                    <td className="px-6 py-3">
-                      <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm">Edit</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+                    )}
+                  </div>
 
-      {activeTab === 'routes' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-slate-900">Route Management</h2>
-            <button
-              onClick={() => setShowRouteModal(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
-            >
-              + Add Route
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {routes.filter(r => r.shift === selectedShift).map((route) => (
-              <div key={route.id} className="bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-md transition">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-bold text-slate-900">{route.id}</h3>
-                    <p className="text-sm text-slate-600 mt-1">{route.name}</p>
-                  </div>
-                  <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm">Edit</button>
-                </div>
-                <div className="space-y-2 text-sm text-slate-600">
-                  <div className="flex justify-between">
-                    <span>Distance:</span>
-                    <span className="font-bold text-slate-900">{route.distance} km</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Duration:</span>
-                    <span className="font-bold text-slate-900">{route.estimatedDuration} mins</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Stops:</span>
-                    <span className="font-bold text-slate-900">{route.stops.length}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Active Buses:</span>
-                    <span className="font-bold text-slate-900">{route.activeBuses.length}</span>
+                  <div className="my-space-md">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-headline-xl text-headline-xl text-on-surface">{kpi.value}</span>
+                      {kpi.total && <span className="font-headline-md text-headline-md text-outline">/ {kpi.total}</span>}
+                    </div>
+                    <p className="font-body-sm text-body-sm text-tertiary mt-1">{kpi.metric}</p>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'stops' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-slate-900">Stop Management</h2>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Stop ID</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Routes</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stops.map((stop) => (
-                  <tr key={stop.id} className="border-b border-slate-200 hover:bg-slate-50">
-                    <td className="px-6 py-3 font-bold text-slate-900">{stop.id}</td>
-                    <td className="px-6 py-3 text-slate-600">{stop.name}</td>
-                    <td className="px-6 py-3 text-slate-600">{stop.routes.join(', ')}</td>
-                    <td className="px-6 py-3">
-                      <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm">Edit</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'requests' && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-900">Assignment & Change Requests</h2>
-          {requests.map((request) => (
-            <div key={request.id} className="bg-white rounded-2xl p-6 border border-slate-200">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-bold text-slate-900">{request.type}</h3>
-                  <p className="text-sm text-slate-600 mt-1">{request.description}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                  request.status === 'PENDING'
-                    ? 'bg-amber-100 text-amber-800'
-                    : request.status === 'APPROVED'
-                    ? 'bg-emerald-100 text-emerald-800'
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                  {request.status}
-                </span>
-              </div>
-              {request.status === 'PENDING' && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => updateRequestStatus(request.id, 'APPROVED')}
-                    className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition text-sm"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => updateRequestStatus(request.id, 'REJECTED')}
-                    className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition text-sm"
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {activeTab === 'complaints' && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-900">Complaints & Issues</h2>
-          {complaints.map((complaint) => (
-            <div key={complaint.id} className="bg-white rounded-2xl p-6 border border-slate-200">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-bold text-slate-900">{complaint.category}</h3>
-                  <p className="text-sm text-slate-600 mt-1">{complaint.description}</p>
-                  <p className="text-xs text-slate-500 mt-2">Bus: {complaint.relatedBus}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                  complaint.status === 'OPEN'
-                    ? 'bg-amber-100 text-amber-800'
-                    : 'bg-emerald-100 text-emerald-800'
-                }`}>
-                  {complaint.status}
-                </span>
-              </div>
-              {complaint.status === 'OPEN' && (
-                <button
-                  onClick={() => updateComplaintStatus(complaint.id, 'RESOLVED')}
-                  className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition text-sm"
-                >
-                  Mark Resolved
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {activeTab === 'imports' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <h3 className="font-bold text-slate-900 mb-4">Import Data</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-semibold text-slate-900 block mb-2">Shift</label>
-                <select
-                  value={selectedShift}
-                  onChange={(e) => setSelectedShift(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="SHIFT-1">Shift 1 (08:20-14:40)</option>
-                  <option value="SHIFT-2">Shift 2 (10:30-17:00)</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-slate-900 block mb-2">Data Type</label>
-                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Timetables</option>
-                  <option>Routes</option>
-                  <option>Bus Assignments</option>
-                  <option>Staff Assignments</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-slate-900 block mb-2">Upload File</label>
-                <input
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
-                  onChange={(e) => setImportFile(e.target.files?.[0])}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <button className="w-full px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
-                Upload & Preview
-              </button>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <h3 className="font-bold text-slate-900 mb-4">Export Data</h3>
-            <div className="space-y-2">
-              {[
-                'Bus Fleet',
-                'Routes',
-                'Stops',
-                'Schedules',
-                'Staff Assignments',
-              ].map((item) => (
-                <button
-                  key={item}
-                  className="w-full text-left px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold text-slate-900 transition text-sm"
-                >
-                  Export {item} (CSV)
-                </button>
               ))}
-            </div>
-          </div>
-        </div>
-      )}
+            </section>
 
-      {/* Bus Modal */}
-      {showBusModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Add New Bus</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">Bus ID</label>
-                <input
-                  type="text"
-                  value={newBus.id}
-                  onChange={(e) => setNewBus({ ...newBus, id: e.target.value })}
-                  placeholder="e.g., G-50"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+            {/* Fleet Distribution & Status */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+              {/* Active vs Inactive */}
+              <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Fleet Status Distribution</h3>
+                <div className="space-y-space-md">
+                  {['ACTIVE', 'MAINTENANCE', 'INACTIVE'].map((status) => {
+                    const count = buses.filter((b) => b.status === status).length;
+                    const percentage = stats.totalBuses > 0 ? (count / stats.totalBuses) * 100 : 0;
+                    return (
+                      <div key={status}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-label-md text-label-md text-on-surface">{status}</span>
+                          <span className="font-bold text-on-surface">{count} units</span>
+                        </div>
+                        <div className="h-3 bg-surface-container-highest rounded-full overflow-hidden">
+                          <div
+                            className={`h-full ${
+                              status === 'ACTIVE'
+                                ? 'bg-tertiary'
+                                : status === 'MAINTENANCE'
+                                ? 'bg-tertiary-fixed'
+                                : 'bg-surface-container'
+                            }`}
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">Passenger Capacity</label>
-                <input
-                  type="number"
-                  value={newBus.capacity}
-                  onChange={(e) => setNewBus({ ...newBus, capacity: parseInt(e.target.value) || 0 })}
-                  min="10"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowBusModal(false)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-slate-200 text-slate-900 font-semibold hover:bg-slate-300 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddBus}
-                  className="flex-1 px-3 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-                >
-                  Add Bus
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Route Modal */}
-      {showRouteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Add New Route</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">Route ID</label>
-                <input
-                  type="text"
-                  value={newRoute.id}
-                  onChange={(e) => setNewRoute({ ...newRoute, id: e.target.value })}
-                  placeholder="e.g., ROUTE-03"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">Route Name</label>
-                <input
-                  type="text"
-                  value={newRoute.name}
-                  onChange={(e) => setNewRoute({ ...newRoute, name: e.target.value })}
-                  placeholder="e.g., Main Campus Loop"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">Distance (km)</label>
-                <input
-                  type="number"
-                  value={newRoute.distance}
-                  onChange={(e) => setNewRoute({ ...newRoute, distance: parseFloat(e.target.value) || 0 })}
-                  min="0"
-                  step="0.1"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowRouteModal(false)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-slate-200 text-slate-900 font-semibold hover:bg-slate-300 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddRoute}
-                  className="flex-1 px-3 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-                >
-                  Add Route
-                </button>
+              {/* Current Operations Summary */}
+              <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Current Operations</h3>
+                <div className="space-y-space-md">
+                  <div className="p-space-md rounded-lg bg-surface-container-low">
+                    <p className="text-label-sm text-on-surface-variant uppercase">Active Routes</p>
+                    <p className="text-headline-lg font-bold text-on-surface mt-1">{stats.totalRoutes}</p>
+                  </div>
+                  <div className="p-space-md rounded-lg bg-surface-container-low">
+                    <p className="text-label-sm text-on-surface-variant uppercase">Scheduled Stops</p>
+                    <p className="text-headline-lg font-bold text-on-surface mt-1">{stats.totalStops}</p>
+                  </div>
+                  <div className="p-space-md rounded-lg bg-surface-container-low">
+                    <p className="text-label-sm text-on-surface-variant uppercase">Average Occupancy</p>
+                    <p className="text-headline-lg font-bold text-tertiary mt-1">{occupancyRate}%</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* FLEET MANAGEMENT TAB */}
+        {activeTab === 'fleet' && (
+          <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+            <h2 className="text-headline-lg font-bold text-on-surface mb-space-md">Fleet Management</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-body-sm">
+                <thead>
+                  <tr className="border-b border-surface-container">
+                    <th className="text-left p-3 font-bold text-on-surface">Bus ID</th>
+                    <th className="text-left p-3 font-bold text-on-surface">Status</th>
+                    <th className="text-left p-3 font-bold text-on-surface">Route</th>
+                    <th className="text-left p-3 font-bold text-on-surface">Occupancy</th>
+                    <th className="text-left p-3 font-bold text-on-surface">Last Update</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {buses.map((bus) => (
+                    <tr key={bus.id} className="border-b border-surface-container-low hover:bg-surface-container-low transition-colors">
+                      <td className="p-3 font-bold text-primary">{bus.id}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded text-label-sm font-bold ${
+                          bus.status === 'ACTIVE'
+                            ? 'bg-tertiary-fixed text-on-tertiary-fixed'
+                            : 'bg-surface-container-high text-on-surface'
+                        }`}>
+                          {bus.status}
+                        </span>
+                      </td>
+                      <td className="p-3 text-on-surface-variant">{bus.assignedRoute || 'Unassigned'}</td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold">{bus.currentOccupancy}/{bus.capacity}</span>
+                          <div className="w-16 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-primary"
+                              style={{ width: `${(bus.currentOccupancy / bus.capacity) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3 text-on-surface-variant">
+                        {bus.lastOccupancyUpdate
+                          ? new Date(bus.lastOccupancyUpdate).toLocaleTimeString()
+                          : 'Never'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* COMPLAINTS TAB */}
+        {activeTab === 'complaints' && (
+          <div className="space-y-space-lg">
+            <div className="flex items-center gap-space-sm mb-space-md">
+              <select
+                value={filterComplaintStatus}
+                onChange={(e) => setFilterComplaintStatus(e.target.value)}
+                className="px-space-md py-2 rounded-lg bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">All Complaints</option>
+                <option value="SUBMITTED">Submitted</option>
+                <option value="IN_REVIEW">In Review</option>
+                <option value="RESOLVED">Resolved</option>
+              </select>
+              <span className="text-label-sm text-on-surface-variant">{filteredComplaints.length} complaints</span>
+            </div>
+
+            <div className="space-y-space-md">
+              {filteredComplaints.length > 0 ? (
+                filteredComplaints.map((complaint) => (
+                  <div key={complaint.id} className="glass rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
+                    <div className="flex items-start justify-between mb-space-sm">
+                      <div className="flex-1">
+                        <p className="font-label-lg font-bold text-on-surface">{complaint.category}</p>
+                        <p className="text-body-sm text-on-surface-variant mt-1">{complaint.description}</p>
+                        <p className="text-label-sm text-outline mt-2">
+                          Submitted: {new Date(complaint.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                      <select
+                        value={complaint.status}
+                        onChange={(e) => updateComplaintStatus(complaint.id, e.target.value)}
+                        className="px-2 py-1 rounded text-label-sm font-bold bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        <option value="SUBMITTED">Submitted</option>
+                        <option value="IN_REVIEW">In Review</option>
+                        <option value="RESOLVED">Resolved</option>
+                      </select>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-space-lg text-on-surface-variant">
+                  <p className="text-body-sm">No complaints found</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* INCIDENTS TAB */}
+        {activeTab === 'incidents' && (
+          <div className="space-y-space-lg">
+            <div className="flex items-center gap-space-sm mb-space-md">
+              <select
+                value={filterIncidentStatus}
+                onChange={(e) => setFilterIncidentStatus(e.target.value)}
+                className="px-space-md py-2 rounded-lg bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">All Incidents</option>
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+              </select>
+              <span className="text-label-sm text-on-surface-variant">{filteredIncidents.length} incidents</span>
+            </div>
+
+            <div className="space-y-space-md">
+              {filteredIncidents.length > 0 ? (
+                filteredIncidents.map((incident) => (
+                  <div key={incident.id} className="glass rounded-xl bg-surface-container-lowest p-space-md shadow-sm border-l-4 border-error">
+                    <div className="flex items-start justify-between mb-space-sm">
+                      <div className="flex-1">
+                        <p className="font-label-lg font-bold text-on-surface">{incident.category}</p>
+                        <p className="text-body-sm text-on-surface-variant mt-1">{incident.description}</p>
+                        <p className="text-label-sm text-outline mt-2">
+                          Location: {incident.location} | {new Date(incident.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                      <select
+                        value={incident.status}
+                        onChange={(e) => updateIncidentStatus(incident.id, e.target.value)}
+                        className={`px-2 py-1 rounded text-label-sm font-bold border focus:outline-none focus:ring-2 ${
+                          incident.status === 'OPEN'
+                            ? 'bg-error-fixed text-on-error-fixed border-error'
+                            : 'bg-surface-container-low border-surface-container text-on-surface'
+                        }`}
+                      >
+                        <option value="OPEN">Open</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                      </select>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-space-lg text-on-surface-variant">
+                  <p className="text-body-sm">No incidents found</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

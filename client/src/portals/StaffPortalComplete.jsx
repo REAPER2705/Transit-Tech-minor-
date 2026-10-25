@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 
 export default function StaffPortalComplete() {
@@ -6,399 +6,473 @@ export default function StaffPortalComplete() {
     buses,
     routes,
     stops,
-    staff,
     trips,
+    incidents,
     updateBusOccupancy,
     startTrip,
-    endTrip,
-    addComplaint,
+    completeTrip,
+    updateTripProgress,
+    addIncident,
+    addNotification,
+    getActiveTrips,
+    getIncidentsForRoute,
   } = useAppStore();
 
-  const [activeTab, setActiveTab] = useState('assignment');
-  const [activeTrip, setActiveTrip] = useState(trips[0]);
-  const [occupancyInput, setOccupancyInput] = useState(activeTrip?.passengersAboard || 0);
+  const [activeTab, setActiveTab] = useState('control');
+  const [selectedBus, setSelectedBus] = useState(buses[0]?.id || 'G-47');
+  const [occupancyInput, setOccupancyInput] = useState(0);
   const [gpsSharing, setGpsSharing] = useState(true);
+  const [tripActive, setTripActive] = useState(false);
+  const [currentTripId, setCurrentTripId] = useState(null);
+  const [currentStopIndex, setCurrentStopIndex] = useState(0);
+  const [incidentForm, setIncidentForm] = useState({ category: '', description: '', location: '' });
+  const [showIncidentForm, setShowIncidentForm] = useState(false);
 
-  const staffMember = staff[0]; // Demo: First staff member
-  const assignedBus = buses.find(b => b.id === staffMember.assignedBus);
-  const assignedRoute = routes.find(r => r.id === staffMember.assignedRoute);
-  const routeStops = stops.filter(s => s.routes.includes(staffMember.assignedRoute));
+  const selectedBusData = buses.find((b) => b.id === selectedBus);
+  const assignedRoute = routes.find((r) => r.id === selectedBusData?.assignedRoute);
+  const routeStops = assignedRoute ? stops.filter((s) => s.routes?.includes(assignedRoute.id)) : [];
+  const routeIncidents = assignedRoute ? getIncidentsForRoute(assignedRoute.id) : [];
+  const activeTrips = getActiveTrips();
 
   const handleStartTrip = () => {
-    const newTrip = {
-      id: `TRIP-${Date.now()}`,
-      bus: staffMember.assignedBus,
-      route: staffMember.assignedRoute,
-      shift: staffMember.assignedShift,
-      status: 'IN_PROGRESS',
-      startTime: new Date(),
-      currentStop: routeStops[0]?.id,
-      nextStop: routeStops[1]?.id,
-      passengersAboard: 0,
+    if (!selectedBusData || !assignedRoute) {
+      alert('Bus or route not configured properly');
+      return;
+    }
+
+    const trip = {
+      busId: selectedBusData.id,
+      routeId: assignedRoute.id,
+      shiftId: selectedBusData.assignedShift || 'SHIFT-1',
+      startedBy: 'STAFF',
     };
-    startTrip(newTrip);
-    setActiveTrip(newTrip);
-    alert('Trip started successfully!');
+
+    startTrip(trip);
+    setTripActive(true);
+    setCurrentStopIndex(0);
+    addNotification({
+      type: 'TRIP_STARTED',
+      title: 'Trip Started',
+      message: `Bus ${selectedBusData.id} trip started on route ${assignedRoute.name}`,
+    });
   };
 
-  const handleEndTrip = () => {
-    if (activeTrip) {
-      endTrip(activeTrip.id);
-      setActiveTrip(null);
-      alert('Trip ended successfully!');
+  const handleCompleteTrip = () => {
+    if (currentTripId) {
+      completeTrip(currentTripId);
+      setTripActive(false);
+      setCurrentTripId(null);
+      setCurrentStopIndex(0);
+      addNotification({
+        type: 'TRIP_COMPLETED',
+        title: 'Trip Completed',
+        message: `Bus ${selectedBusData.id} trip completed`,
+      });
+    }
+  };
+
+  const handleAdvanceStop = () => {
+    if (currentTripId && currentStopIndex < routeStops.length - 1) {
+      const nextIndex = currentStopIndex + 1;
+      updateTripProgress(currentTripId, nextIndex);
+      setCurrentStopIndex(nextIndex);
+      addNotification({
+        type: 'STOP_REACHED',
+        title: 'Stop Reached',
+        message: `Arrived at ${routeStops[nextIndex]?.name}`,
+      });
     }
   };
 
   const handleUpdateOccupancy = () => {
-    if (assignedBus && occupancyInput >= 0 && occupancyInput <= assignedBus.capacity) {
-      updateBusOccupancy(assignedBus.id, occupancyInput);
-      alert('Occupancy updated successfully!');
-    } else {
-      alert('Invalid occupancy value');
+    if (selectedBusData && occupancyInput >= 0 && occupancyInput <= selectedBusData.capacity) {
+      updateBusOccupancy(selectedBusData.id, occupancyInput);
+      addNotification({
+        type: 'OCCUPANCY_UPDATED',
+        title: 'Occupancy Updated',
+        message: `Bus ${selectedBusData.id} occupancy: ${occupancyInput}/${selectedBusData.capacity}`,
+      });
     }
   };
 
-  const handleReportIssue = () => {
-    addComplaint({
-      id: `ISSUE-${Date.now()}`,
-      submittedBy: staffMember.id,
-      category: 'OPERATIONAL_ISSUE',
-      description: 'Staff reported issue',
-      relatedBus: assignedBus?.id,
-      status: 'OPEN',
-      createdAt: new Date(),
-    });
-    alert('Issue reported successfully!');
+  const handleSubmitIncident = () => {
+    if (incidentForm.category && incidentForm.description) {
+      addIncident({
+        category: incidentForm.category,
+        description: incidentForm.description,
+        location: incidentForm.location || 'En Route',
+        routeId: assignedRoute?.id,
+        busId: selectedBusData?.id,
+        reportedBy: 'STAFF',
+      });
+      setIncidentForm({ category: '', description: '', location: '' });
+      setShowIncidentForm(false);
+      addNotification({
+        type: 'INCIDENT_REPORTED',
+        title: 'Incident Reported',
+        message: `${incidentForm.category} incident logged for route ${assignedRoute?.name}`,
+      });
+    }
   };
 
   return (
-    <div className="max-w-[1520px] mx-auto px-4 md:px-8 space-y-6 pb-12">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">Transport Staff Portal</h1>
-        <p className="text-slate-500 mt-2">Manage your assigned bus, GPS sharing, and occupancy updates</p>
-      </div>
+    <div className="w-full pt-16 bg-surface min-h-screen">
+      {/* Top Operational Sub-Bar */}
+      <section className="w-full px-margin-desktop py-space-md bg-surface-container-low sticky top-16 z-30">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+          <div className="flex flex-wrap items-center gap-space-sm">
+            <div className="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface">
+              <span className="material-symbols-outlined text-[20px] text-primary">directions_bus</span>
+              <span className="font-headline-md text-headline-md tracking-tight">UNIT {selectedBus}</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md">
+              <span className="w-2 h-2 rounded-full bg-secondary"></span>
+              <span>Route: {assignedRoute?.name || 'Unassigned'}</span>
+            </div>
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-label-sm text-label-sm ${
+              tripActive 
+                ? 'bg-tertiary-fixed text-on-tertiary-fixed' 
+                : 'bg-surface-container-high text-on-surface-variant'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${tripActive ? 'bg-tertiary animate-pulse' : 'bg-outline'}`}></span>
+              <span>{tripActive ? 'TRIP ACTIVE' : 'TRIP IDLE'}</span>
+            </div>
+          </div>
 
-      {/* Staff Profile Card */}
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <span className="text-xs font-bold uppercase text-blue-600">Staff Member</span>
-            <p className="text-lg font-bold text-slate-900 mt-1">{staffMember.name}</p>
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase text-blue-600">Role</span>
-            <p className="text-lg font-bold text-slate-900 mt-1">{staffMember.role.join(', ')}</p>
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase text-blue-600">Assigned Bus</span>
-            <p className="text-lg font-bold text-slate-900 mt-1">{assignedBus?.id || 'None'}</p>
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase text-blue-600">Shift</span>
-            <p className="text-lg font-bold text-slate-900 mt-1">Shift 1 (08:20-14:40)</p>
+          <div className="flex items-center gap-space-sm">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm">
+              <span className={`w-2.5 h-2.5 rounded-full ${gpsSharing ? 'bg-tertiary animate-pulse' : 'bg-outline'}`}></span>
+              <span className="font-semibold">{gpsSharing ? 'GPS SHARING' : 'GPS INACTIVE'}</span>
+              <button
+                onClick={() => setGpsSharing(!gpsSharing)}
+                className="ml-2 px-2 py-0.5 rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-label-sm transition-colors"
+              >
+                {gpsSharing ? 'Disable' : 'Enable'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-4">
-        {[
-          { id: 'assignment', label: 'My Assignment' },
-          { id: 'tripControl', label: 'Trip Control' },
-          { id: 'occupancy', label: 'Occupancy' },
-          { id: 'gps', label: 'GPS Sharing' },
-        ].map((tab) => (
+      {/* Sub-Navigation Tabs */}
+      <div className="px-margin-desktop py-space-md bg-surface-container-low sticky top-[120px] z-20 shadow-sm">
+        <div className="flex flex-wrap items-center gap-space-xs">
           <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${
-              activeTab === tab.id
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveTab('control')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'control'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
             }`}
           >
-            {tab.label}
+            <span className="material-symbols-outlined text-[18px]">dashboard</span>
+            <span>Trip Control</span>
           </button>
-        ))}
+          <button
+            onClick={() => setActiveTab('occupancy')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'occupancy'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">groups</span>
+            <span>Occupancy</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('incidents')}
+            className={`px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
+              activeTab === 'incidents'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">warning</span>
+            <span>Incidents</span>
+          </button>
+        </div>
       </div>
 
-      {/* Tab Content */}
-      {activeTab === 'assignment' && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
-          <h2 className="text-xl font-bold text-slate-900">My Assignment</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-xs font-bold uppercase text-slate-500">Bus</span>
-              <p className="text-lg font-bold text-slate-900 mt-1">{assignedBus?.id}</p>
-              <p className="text-sm text-slate-600 mt-1">Capacity: {assignedBus?.capacity} passengers</p>
-            </div>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-xs font-bold uppercase text-slate-500">Route</span>
-              <p className="text-lg font-bold text-slate-900 mt-1">{assignedRoute?.name}</p>
-              <p className="text-sm text-slate-600 mt-1">{assignedRoute?.distance} km • {assignedRoute?.estimatedDuration} mins</p>
-            </div>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-xs font-bold uppercase text-slate-500">Stops</span>
-              <p className="text-lg font-bold text-slate-900 mt-1">{routeStops.length} Stops</p>
-              <p className="text-sm text-slate-600 mt-1 truncate">{routeStops.map(s => s.name).join(', ')}</p>
-            </div>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-              <span className="text-xs font-bold uppercase text-slate-500">Current Status</span>
-              <p className="text-lg font-bold text-slate-900 mt-1">{activeTrip ? 'Trip In Progress' : 'Idle'}</p>
-              {activeTrip && (
-                <p className="text-sm text-emerald-700 mt-1">Started: {new Date(activeTrip.startTime).toLocaleTimeString()}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Main Content */}
+      <main className="px-margin-desktop py-space-lg">
+        {/* TRIP CONTROL TAB */}
+        {activeTab === 'control' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+            {/* Left: Trip Control */}
+            <div className="lg:col-span-8 flex flex-col gap-space-lg">
+              {/* Bus Selection */}
+              <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Select Bus Unit</h3>
+                <select
+                  value={selectedBus}
+                  onChange={(e) => {
+                    setSelectedBus(e.target.value);
+                    setOccupancyInput(0);
+                  }}
+                  className="w-full px-space-md py-3 rounded-lg bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary font-label-lg"
+                >
+                  {buses.map((bus) => (
+                    <option key={bus.id} value={bus.id}>
+                      {bus.id} - {bus.status} ({bus.currentOccupancy}/{bus.capacity} passengers)
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-      {activeTab === 'tripControl' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Trip Control Panel */}
-          <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Trip Control</h2>
-            {activeTrip ? (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-xs font-bold uppercase text-emerald-600">Trip Status</span>
-                      <p className="text-lg font-bold text-emerald-900 mt-1">IN PROGRESS</p>
-                    </div>
-                    <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold">ACTIVE</span>
-                  </div>
+              {/* Trip Control Buttons */}
+              <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Trip Control</h3>
+                <div className="space-y-space-md">
+                  {!tripActive ? (
+                    <button
+                      onClick={handleStartTrip}
+                      className="w-full py-4 px-space-md rounded-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-md transition-all active:scale-95"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">play_arrow</span>
+                      Start Trip
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleAdvanceStop}
+                        className="w-full py-4 px-space-md rounded-lg bg-tertiary hover:bg-tertiary-container text-on-tertiary font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-md transition-all active:scale-95"
+                      >
+                        <span className="material-symbols-outlined text-[20px]">navigate_next</span>
+                        Advance to Next Stop
+                      </button>
+                      <button
+                        onClick={handleCompleteTrip}
+                        className="w-full py-4 px-space-md rounded-lg bg-error hover:bg-error-container text-on-error font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-md transition-all active:scale-95"
+                      >
+                        <span className="material-symbols-outlined text-[20px]">stop_circle</span>
+                        Complete Trip
+                      </button>
+                    </>
+                  )}
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <span className="text-xs font-bold uppercase text-slate-500">Trip Duration</span>
-                    <p className="text-lg font-bold text-slate-900 mt-1">
-                      {Math.round((Date.now() - activeTrip.startTime) / 60000)} mins
+              </div>
+
+              {/* Route Stops Timeline */}
+              <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Route Stops</h3>
+                <div className="space-y-2">
+                  {routeStops.map((stop, idx) => (
+                    <div
+                      key={stop.id}
+                      className={`p-space-md rounded-lg flex items-center justify-between ${
+                        idx === currentStopIndex && tripActive
+                          ? 'bg-primary-fixed text-on-primary-fixed'
+                          : idx < currentStopIndex && tripActive
+                          ? 'bg-tertiary-container text-on-tertiary'
+                          : 'bg-surface-container-low text-on-surface'
+                      }`}
+                    >
+                      <div className="flex items-center gap-space-sm">
+                        <span className="material-symbols-outlined text-[20px]">pin_drop</span>
+                        <div>
+                          <p className="font-label-lg font-bold">{stop.name}</p>
+                          <p className="text-label-sm opacity-75">{stop.stopCode}</p>
+                        </div>
+                      </div>
+                      {idx === currentStopIndex && tripActive && (
+                        <span className="px-3 py-1 rounded-full bg-on-primary-fixed text-primary-fixed font-label-sm font-bold animate-pulse">
+                          CURRENT
+                        </span>
+                      )}
+                      {idx < currentStopIndex && tripActive && (
+                        <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Status Summary */}
+            <div className="lg:col-span-4 flex flex-col gap-space-lg">
+              <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Trip Status</h3>
+                <div className="space-y-space-md">
+                  <div className="p-space-md rounded-lg bg-surface-container-low">
+                    <p className="text-label-sm text-on-surface-variant uppercase">Current Stop</p>
+                    <p className="text-headline-lg font-bold text-on-surface mt-1">
+                      {currentStopIndex < routeStops.length ? routeStops[currentStopIndex]?.name : 'Trip Not Active'}
                     </p>
                   </div>
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <span className="text-xs font-bold uppercase text-slate-500">Passengers</span>
-                    <p className="text-lg font-bold text-slate-900 mt-1">{activeTrip.passengersAboard}</p>
+                  <div className="p-space-md rounded-lg bg-surface-container-low">
+                    <p className="text-label-sm text-on-surface-variant uppercase">Bus Occupancy</p>
+                    <p className="text-headline-lg font-bold text-on-surface mt-1">
+                      {selectedBusData?.currentOccupancy || 0} / {selectedBusData?.capacity || 50}
+                    </p>
+                  </div>
+                  <div className="p-space-md rounded-lg bg-surface-container-low">
+                    <p className="text-label-sm text-on-surface-variant uppercase">Trip Progress</p>
+                    <div className="mt-2 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all"
+                        style={{
+                          width: routeStops.length > 0 ? `${(currentStopIndex / routeStops.length) * 100}%` : '0%',
+                        }}
+                      />
+                    </div>
+                    <p className="text-label-sm text-on-surface-variant mt-1">
+                      {currentStopIndex} / {routeStops.length} stops
+                    </p>
                   </div>
                 </div>
-                <button
-                  onClick={handleEndTrip}
-                  className="w-full px-4 py-3 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition"
-                >
-                  End Trip
-                </button>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-bold uppercase text-slate-500">Trip Status</span>
-                  <p className="text-lg font-bold text-slate-900 mt-1">NOT STARTED</p>
-                </div>
-                <p className="text-sm text-slate-600">No active trip. Click below to start a new trip.</p>
-                <button
-                  onClick={handleStartTrip}
-                  className="w-full px-4 py-3 rounded-lg bg-green-600 text-white font-bold hover:bg-green-700 transition"
-                >
-                  Start Trip
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Trip History */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-            <h3 className="font-bold text-slate-900 mb-4">Recent Trips</h3>
-            <div className="space-y-3">
-              {trips.map((trip) => (
-                <div key={trip.id} className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm">
-                  <div className="flex justify-between">
-                    <span className="font-bold text-slate-900">{trip.bus}</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                      trip.status === 'COMPLETED'
-                        ? 'bg-slate-200 text-slate-700'
-                        : 'bg-emerald-200 text-emerald-700'
-                    }`}>
-                      {trip.status}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-600 mt-1">{trip.route}</p>
-                </div>
-              ))}
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {activeTab === 'occupancy' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Update Occupancy</h2>
-            {assignedBus && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-bold uppercase text-slate-500">Bus Capacity</span>
-                  <p className="text-lg font-bold text-slate-900 mt-1">{assignedBus.capacity} passengers</p>
+        {/* OCCUPANCY TAB */}
+        {activeTab === 'occupancy' && (
+          <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm max-w-2xl">
+            <h2 className="text-headline-lg font-bold text-on-surface mb-space-lg">Update Bus Occupancy</h2>
+            <div className="space-y-space-lg">
+              <div>
+                <p className="text-label-lg text-on-surface-variant uppercase mb-2">Bus: {selectedBus}</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-display-lg font-bold text-primary">{occupancyInput}</span>
+                  <span className="text-headline-lg text-on-surface-variant">/ {selectedBusData?.capacity}</span>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-slate-900 mb-2">Current Passenger Count</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      min="0"
-                      max={assignedBus.capacity}
-                      value={occupancyInput}
-                      onChange={(e) => setOccupancyInput(parseInt(e.target.value) || 0)}
-                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+              <div className="flex items-center gap-space-md">
+                <input
+                  type="number"
+                  min="0"
+                  max={selectedBusData?.capacity || 50}
+                  value={occupancyInput}
+                  onChange={(e) => setOccupancyInput(Math.max(0, Math.min(selectedBusData?.capacity || 50, parseInt(e.target.value) || 0)))}
+                  className="flex-1 px-space-md py-3 rounded-lg bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary font-label-lg"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-space-sm">
+                <button
+                  onClick={() => setOccupancyInput(Math.max(0, occupancyInput - 5))}
+                  className="py-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-headline-md transition-colors"
+                >
+                  -5
+                </button>
+                <button
+                  onClick={() => setOccupancyInput(Math.max(0, occupancyInput - 1))}
+                  className="py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-headline-md transition-colors"
+                >
+                  -1
+                </button>
+                <button
+                  onClick={() => setOccupancyInput(Math.min(selectedBusData?.capacity || 50, occupancyInput + 1))}
+                  className="py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-headline-md transition-colors"
+                >
+                  +1
+                </button>
+              </div>
+
+              <button
+                onClick={handleUpdateOccupancy}
+                className="w-full py-4 px-space-md rounded-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-lg text-label-lg shadow-md transition-all active:scale-95"
+              >
+                Confirm & Broadcast Occupancy
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* INCIDENTS TAB */}
+        {activeTab === 'incidents' && (
+          <div className="space-y-space-lg">
+            {/* Report Form */}
+            <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+              <div className="flex items-center justify-between mb-space-md">
+                <h2 className="text-headline-lg font-bold text-on-surface">Report Incident</h2>
+                <button
+                  onClick={() => setShowIncidentForm(!showIncidentForm)}
+                  className="px-space-md py-2 rounded-lg bg-error text-on-error font-label-lg hover:bg-error-container transition-colors flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                  New Incident
+                </button>
+              </div>
+
+              {showIncidentForm && (
+                <div className="p-space-md rounded-lg bg-surface-container-low border-2 border-error-fixed mb-space-md space-y-space-sm">
+                  <select
+                    value={incidentForm.category}
+                    onChange={(e) => setIncidentForm({ ...incidentForm, category: e.target.value })}
+                    className="w-full px-space-md py-2 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-error"
+                  >
+                    <option value="">Select Incident Type</option>
+                    <option value="TRAFFIC_CONGESTION">Traffic Congestion</option>
+                    <option value="MECHANICAL_ISSUE">Mechanical Issue</option>
+                    <option value="PASSENGER_INCIDENT">Passenger Incident</option>
+                    <option value="WEATHER">Adverse Weather</option>
+                    <option value="DELAY">Route Delay</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Incident location..."
+                    value={incidentForm.location}
+                    onChange={(e) => setIncidentForm({ ...incidentForm, location: e.target.value })}
+                    className="w-full px-space-md py-2 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-error"
+                  />
+                  <textarea
+                    placeholder="Describe the incident..."
+                    value={incidentForm.description}
+                    onChange={(e) => setIncidentForm({ ...incidentForm, description: e.target.value })}
+                    className="w-full px-space-md py-2 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-error"
+                    rows="4"
+                  />
+                  <div className="flex gap-space-sm">
                     <button
-                      onClick={handleUpdateOccupancy}
-                      className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+                      onClick={handleSubmitIncident}
+                      className="px-space-md py-2 rounded-lg bg-error text-on-error font-label-lg hover:bg-error-container transition-colors"
                     >
-                      Update
+                      Submit Incident
+                    </button>
+                    <button
+                      onClick={() => setShowIncidentForm(false)}
+                      className="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-lg hover:bg-surface-container-high transition-colors"
+                    >
+                      Cancel
                     </button>
                   </div>
                 </div>
-
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-bold uppercase text-slate-500">Occupancy Bar</span>
-                  <div className="mt-3 h-3 bg-slate-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-600 transition-all"
-                      style={{ width: `${(occupancyInput / assignedBus.capacity) * 100}%` }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between mt-2 text-xs text-slate-600">
-                    <span>{occupancyInput} passengers</span>
-                    <span>{Math.round((occupancyInput / assignedBus.capacity) * 100)}% full</span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-                  <p className="text-xs text-amber-800"><strong>Demo Note:</strong> This updates local demo data only. In production, this will sync with occupancy sensors.</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-            <h3 className="font-bold text-slate-900 mb-4">Current Status</h3>
-            {assignedBus && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-bold uppercase text-slate-500">Last Update</span>
-                  <p className="text-lg font-bold text-slate-900 mt-1">
-                    {Math.round((Date.now() - assignedBus.lastOccupancyUpdate) / 60000)} mins ago
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-bold uppercase text-slate-500">Available Seats</span>
-                  <p className="text-lg font-bold text-slate-900 mt-1">
-                    {assignedBus.capacity - assignedBus.currentOccupancy} seats
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-bold uppercase text-slate-500">Status</span>
-                  <p className="text-lg font-bold text-slate-900 mt-1">
-                    {assignedBus.currentOccupancy >= assignedBus.capacity ? '🚌 Bus Full' : '✓ Capacity Available'}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'gps' && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">GPS Sharing</h2>
-          <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold uppercase text-slate-500">GPS Status</span>
-                  <p className="text-lg font-bold text-slate-900 mt-1">
-                    {gpsSharing ? '🟢 Active' : '🔴 Inactive'}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setGpsSharing(!gpsSharing)}
-                  className={`px-4 py-2 rounded-lg font-bold transition ${
-                    gpsSharing
-                      ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'bg-green-600 text-white hover:bg-green-700'
-                  }`}
-                >
-                  {gpsSharing ? 'Stop Sharing' : 'Start Sharing'}
-                </button>
-              </div>
+              )}
             </div>
 
-            {gpsSharing && (
-              <>
-                <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200">
-                  <span className="text-xs font-bold uppercase text-emerald-600">Location Data</span>
-                  <div className="space-y-2 mt-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Latitude:</span>
-                      <span className="font-mono font-bold">{assignedBus?.currentLocation?.lat || 'N/A'}</span>
+            {/* Active Incidents */}
+            <div className="glass rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+              <h3 className="text-headline-md font-bold text-on-surface mb-space-md">Route Incidents</h3>
+              {routeIncidents.length > 0 ? (
+                <div className="space-y-space-sm">
+                  {routeIncidents.map((incident) => (
+                    <div key={incident.id} className="p-space-md rounded-lg bg-surface-container-low border-l-4 border-error">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-label-lg font-bold text-on-surface">{incident.category}</p>
+                          <p className="text-body-sm text-on-surface-variant mt-1">{incident.description}</p>
+                          <p className="text-label-sm text-outline mt-2">{incident.location}</p>
+                        </div>
+                        <span className={`px-2 py-1 rounded text-label-sm font-bold whitespace-nowrap ${
+                          incident.status === 'OPEN' ? 'bg-error-fixed text-on-error-fixed' :
+                          'bg-tertiary-fixed text-on-tertiary-fixed'
+                        }`}>
+                          {incident.status}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Longitude:</span>
-                      <span className="font-mono font-bold">{assignedBus?.currentLocation?.lng || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Speed:</span>
-                      <span className="font-mono font-bold">{assignedBus?.currentSpeed || 0} km/h</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Last Update:</span>
-                      <span className="font-mono font-bold">
-                        {assignedBus?.lastGPSUpdate
-                          ? `${Math.round((Date.now() - assignedBus.lastGPSUpdate) / 1000)}s ago`
-                          : 'N/A'}
-                      </span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-
-                <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-                  <p className="text-xs text-amber-800"><strong>Demo Note:</strong> GPS data is simulated. In production, this will use the driver's phone location with proper permissions.</p>
-                </div>
-              </>
-            )}
-
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-              <h3 className="font-bold text-slate-900 mb-2">Broadcasting</h3>
-              <p className="text-sm text-slate-600">
-                When GPS sharing is active, your location is broadcasted to:
-              </p>
-              <ul className="text-sm text-slate-600 mt-2 space-y-1 ml-4">
-                <li>✓ Passengers assigned to your bus</li>
-                <li>✓ Admin dashboard</li>
-                <li>✓ Route tracking system</li>
-              </ul>
+              ) : (
+                <p className="text-center py-space-lg text-on-surface-variant">No incidents reported for this route</p>
+              )}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-        <h3 className="font-bold text-slate-900 mb-4">Staff Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            onClick={handleReportIssue}
-            className="px-4 py-3 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700 transition"
-          >
-            📋 Report Operational Issue
-          </button>
-          <button className="px-4 py-3 rounded-lg bg-slate-600 text-white font-bold hover:bg-slate-700 transition">
-            📞 Contact Support
-          </button>
-        </div>
-      </div>
+        )}
+      </main>
     </div>
   );
 }
