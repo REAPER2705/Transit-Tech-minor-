@@ -279,13 +279,25 @@ export default function PassengerPortal() {
 
               {/* Zoom controls */}
               <div className="absolute top-4 right-4 flex flex-col gap-1.5">
-                <button className="w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface shadow-md flex items-center justify-center hover:bg-surface-container transition-colors">
+                <button
+                  onClick={() => alert('Zoom in feature coming soon')}
+                  className="w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface shadow-md flex items-center justify-center hover:bg-surface-container transition-colors"
+                  title="Zoom In"
+                >
                   <span className="material-symbols-outlined text-[20px]">add</span>
                 </button>
-                <button className="w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface shadow-md flex items-center justify-center hover:bg-surface-container transition-colors">
+                <button
+                  onClick={() => alert('Zoom out feature coming soon')}
+                  className="w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface shadow-md flex items-center justify-center hover:bg-surface-container transition-colors"
+                  title="Zoom Out"
+                >
                   <span className="material-symbols-outlined text-[20px]">remove</span>
                 </button>
-                <button className="w-9 h-9 rounded-lg bg-surface-container-lowest text-primary shadow-md flex items-center justify-center hover:bg-surface-container transition-colors">
+                <button
+                  onClick={() => alert('Recenter on your location')}
+                  className="w-9 h-9 rounded-lg bg-surface-container-lowest text-primary shadow-md flex items-center justify-center hover:bg-surface-container transition-colors"
+                  title="My Location"
+                >
                   <span className="material-symbols-outlined text-[20px]">my_location</span>
                 </button>
               </div>
@@ -408,14 +420,20 @@ export default function PassengerPortal() {
             <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
               <span className="font-headline-md text-headline-md font-bold text-on-surface">Passenger Action Terminal</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-space-sm">
-                <button className="w-full px-space-md py-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-lg text-label-lg flex items-center justify-between text-left">
+                <button
+                  onClick={() => alert('Stop change requests coming soon. Contact transport office at 0731-4730000')}
+                  className="w-full px-space-md py-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-lg text-label-lg flex items-center justify-between text-left"
+                >
                   <span className="flex items-center gap-space-sm">
                     <span className="material-symbols-outlined text-[20px] text-primary">edit_location_alt</span>
                     <span>Request Stop Change</span>
                   </span>
                   <span className="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
                 </button>
-                <button className="w-full px-space-md py-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-lg text-label-lg flex items-center justify-between text-left">
+                <button
+                  onClick={() => alert('Delay reporting form coming soon. Current delays: Check notifications panel')}
+                  className="w-full px-space-md py-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-lg text-label-lg flex items-center justify-between text-left"
+                >
                   <span className="flex items-center gap-space-sm">
                     <span className="material-symbols-outlined text-[20px] text-outline">schedule</span>
                     <span>Report Transit Delay</span>
@@ -471,7 +489,10 @@ export default function PassengerPortal() {
                 </div>
               </div>
 
-              <button className="w-full px-space-md py-3 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm">
+              <button
+                onClick={() => window.open('https://www.google.com/maps/place/Acropolis+Institute+of+Technology+%26+Research,+Indore/@22.705,-75.8324,15z', '_blank')}
+                className="w-full px-space-md py-3 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm"
+              >
                 <span className="material-symbols-outlined text-[20px]">directions</span>
                 Get Directions to Acropolis
               </button>
@@ -561,7 +582,10 @@ export default function PassengerPortal() {
                         <td className="px-space-md py-3">{Math.round((bus.currentOccupancy / bus.capacity) * 100)}%</td>
                         <td className="px-space-md py-3 font-semibold text-tertiary">{bus.capacity - bus.currentOccupancy}</td>
                         <td className="px-space-md py-3">
-                          <button className="px-3 py-1 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:bg-on-primary-fixed-variant transition-colors">
+                          <button
+                            onClick={() => alert(`Bus ${bus.id} Details:\n\nRoute: ${bus.assignedRoute}\nStatus: ${bus.status}\nOccupancy: ${bus.currentOccupancy}/${bus.capacity}\nRegistration: ${bus.registrationNumber}`)}
+                            className="px-3 py-1 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:bg-on-primary-fixed-variant transition-colors"
+                          >
                             View
                           </button>
                         </td>
@@ -716,7 +740,10 @@ export default function PassengerPortal() {
                     </div>
                   </div>
 
-                  <button className="w-full mt-space-md px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm">
+                  <button
+                    onClick={() => alert(`${route.name}\n\nRoute #: ${route.number}\nDistance: ${route.distance}\nDuration: ${route.duration}\nStops: ${route.stops}\n\nShift 1: ${route.shift1}\nShift 2: ${route.shift2}\n\nStatus: ${route.status}`)}
+                    className="w-full mt-space-md px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm"
+                  >
                     <span className="material-symbols-outlined text-[18px]">info</span>
                     View Route Details
                   </button>
