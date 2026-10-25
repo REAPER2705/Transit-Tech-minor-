@@ -47,33 +47,27 @@ export default function PassengerPortal() {
     { id: 'G-34', name: 'Bus Unit G-34', eta: 22, seats: 8, occupancy: 42, capacity: 50 },
   ];
 
-  const landmarks = [
-    {
-      id: 1,
-      title: 'Campus Administration & Lawn',
-      desc: 'Direct bus stop turnaround loop near the main academic wing.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDzjDt9jau_lDtL4orNISJJdnN3nNcDlbvVrXU8EQjEEN4wlMIPhlC3NNDy0tyZ886OI_tPjFrEMTz7OBeex_oWli74p79OOygOfPY2MD25Pr5BqH86PHfnci1r6w6dVdCfosXhZxQJV_cHAuuPExKkIq-n_RaXnTpZ_r8FyDY8e9xq7ky0btFub5uiM97Op7qo8CPTkngr0qqkQM2xxPpVPTHuVpi4vvpsUxMYAhtmSITFBkU801KpgQ',
-    },
-    {
-      id: 2,
-      title: 'Central Library Bay 2 Transit Hub',
-      desc: 'Primary disembarkation hub for Shift 1 science and engineering departments.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8oVgKdjPFHPJCUD-OZfJcbc4SiGRPa7cJSIKR7eodxQrQ7lUJ98vD3yv1cLOX0qk7KbSpys8tjJ1XdTs89jyQngQBu0qFfu1he_K5EXVvss5EoT-68lpgHM6frSFaBTcLfcw1W83RkjUILu5-240EszBGB4iv5b1-XLCg5iXV8oFT4mPwB_7T0y-jjhMLcsihrPaJNkXuNdJEeuk0KS3-B8rcREiYJVfZdroyYA2lXm3KWKbA2aVNzQ',
-    },
-    {
-      id: 3,
-      title: 'Bypass Corridor Access',
-      desc: 'Wide paved campus bypass roadway with directional lane markings.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAo7lpS_L94GPF-Ck38QRKM8rZPqZ2_mHfAD-lwh_2BykX0vcj0gq8iFsG0zCnoghr0Mx518XyXzdo1TNXXc6S9ofqhSoIS7-jp2yVIVacAr',
-    },
-  ];
-
   return (
-    <div className="w-full pt-16 bg-surface min-h-[calc(100vh-14rem)]">
+    <div className="w-full pt-16 bg-surface min-h-screen">
+      {/* HERO SECTION WITH AITR BUILDING IMAGE */}
+      <div
+        className="w-full h-96 bg-cover bg-center relative shadow-lg"
+        style={{
+          backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuufXekciwjl6pejt5EuQzj4S4VIVgQuaJ-vEgHsryQYsXXAyIit_Xk41X3yv8jfd8-ZRPO5fIVm8K_4lrAMW1SYnpTfmlzWSuzKy5i632o_WUShbKnCJufHcpxf8yfek7D5LybC3Dc6UgOGutV9N4FfVdemKAjAkQBcoxByRlSoKlyV3Yrl5Atkyy-TMJ3qgYwO0vvZ2q3STrmDVhG7lm5bvU23mxDxBtW7IvbT82xHDLPQfpNKYiVg')`,
+          backgroundPosition: 'center center',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+          <h1 className="font-headline-lg text-headline-lg md:text-4xl font-bold mb-4">AITR Campus Transit Network</h1>
+          <p className="font-body-lg text-body-lg md:text-xl max-w-2xl">Real-time tracking for seamless campus mobility across Indore</p>
+        </div>
+      </div>
+
       {/* Top Navigation Bar */}
-      <div className="px-margin-desktop py-space-md bg-surface-container-low shadow-sm">
+      <div className="px-margin-desktop py-space-md bg-surface-container-low shadow-sm sticky top-20 z-40">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-md">
-          <div className="flex flex-wrap items-center gap-space-xs" id="portal-subnav">
+          <div className="flex flex-wrap items-center gap-space-xs">
             <button
               onClick={() => setActiveTab('tracking')}
               className={`tab-btn px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
@@ -124,7 +118,7 @@ export default function PassengerPortal() {
               <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
               <span>TELEMETRY ACTIVE: DUAL BAND L1/L5</span>
             </div>
-            <div className="text-on-surface-variant">
+            <div className="text-on-surface-variant hidden sm:block">
               Campus Geo-Zone: <span className="font-bold text-on-surface">AITR Indore Central</span>
             </div>
           </div>
@@ -411,6 +405,52 @@ export default function PassengerPortal() {
         </div>
       )}
 
+      {/* ACROPOLIS IMAGE SECTION - REPLACING THE BROKEN IMAGE */}
+      <div className="px-margin-desktop py-space-lg">
+        <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-gutter-desktop items-center">
+            {/* Acropolis Image */}
+            <div className="relative w-full h-80 lg:h-96 rounded-lg overflow-hidden shadow-md">
+              <img
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8oVgKdjPFHPJCUD-OZfJcbc4SiGRPa7cJSIKR7eodxQrQ7lUJ98vD3yv1cLOX0qk7KbSpys8tjJ1XdTs89jyQngQBu0qFfu1he_K5EXVvss5EoT-68lpgHM6frSFaBTcLfcw1W83RkjUILu5-240EszBGB4iv5b1-XLCg5iXV8oFT4mPwB_7T0y-jjhMLcsihrPaJNkXuNdJEeuk0KS3-B8rcREiYJVfZdroyYA2lXm3KWKbA2aVNzQ"
+                alt="AITR Acropolis Building"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="flex flex-col gap-space-md">
+              <div>
+                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm uppercase mb-space-sm">
+                  <span className="material-symbols-outlined text-[14px]">location_on</span>
+                  Academic Complex
+                </div>
+                <h2 className="font-headline-lg text-headline-lg text-on-surface">Acropolis Academic Wing</h2>
+                <p className="font-body-lg text-body-lg text-on-surface-variant mt-2">
+                  The iconic yellow and white academic complex at AITR Indore features modern classrooms, laboratories, and lecture halls designed to support interdisciplinary learning and research initiatives.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-space-md">
+                <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-container">
+                  <span className="font-label-sm text-label-sm text-outline uppercase block">Primary Route Access</span>
+                  <span className="font-headline-md text-headline-md text-on-surface mt-1">Line 47, 51, 63</span>
+                </div>
+                <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-container">
+                  <span className="font-label-sm text-label-sm text-outline uppercase block">Daily Footfall</span>
+                  <span className="font-headline-md text-headline-md text-on-surface mt-1">2,100+ Students</span>
+                </div>
+              </div>
+
+              <button className="w-full px-space-md py-3 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm">
+                <span className="material-symbols-outlined text-[20px]">directions</span>
+                Get Directions to Acropolis
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Landmarks Section */}
       <div className="px-margin-desktop py-space-lg">
         <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
@@ -424,7 +464,26 @@ export default function PassengerPortal() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter-desktop">
-            {landmarks.map((landmark) => (
+            {[
+              {
+                id: 1,
+                title: 'Campus Administration & Lawn',
+                desc: 'Direct bus stop turnaround loop near the main academic wing.',
+                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDzjDt9jau_lDtL4orNISJJdnN3nNcDlbvVrXU8EQjEEN4wlMIPhlC3NNDy0tyZ886OI_tPjFrEMTz7OBeex_oWli74p79OOygOfPY2MD25Pr5BqH86PHfnci1r6w6dVdCfosXhZxQJV_cHAuuPExKkIq-n_RaXnTpZ_r8FyDY8e9xq7ky0btFub5uiM97Op7qo8CPTkngr0qqkQM2xxPpVPTHuVpi4vvpsUxMYAhtmSITFBkU801KpgQ',
+              },
+              {
+                id: 2,
+                title: 'Central Library Bay 2 Transit Hub',
+                desc: 'Primary disembarkation hub for Shift 1 science and engineering departments.',
+                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8oVgKdjPFHPJCUD-OZfJcbc4SiGRPa7cJSIKR7eodxQrQ7lUJ98vD3yv1cLOX0qk7KbSpys8tjJ1XdTs89jyQngQBu0qFfu1he_K5EXVvss5EoT-68lpgHM6frSFaBTcLfcw1W83RkjUILu5-240EszBGB4iv5b1-XLCg5iXV8oFT4mPwB_7T0y-jjhMLcsihrPaJNkXuNdJEeuk0KS3-B8rcREiYJVfZdroyYA2lXm3KWKbA2aVNzQ',
+              },
+              {
+                id: 3,
+                title: 'Bypass Corridor Access',
+                desc: 'Wide paved campus bypass roadway with directional lane markings.',
+                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAo7lpS_L94GPF-Ck38QRKM8rZPqZ2_mHfAD-lwh_2BykX0vcj0gq8iFsG0zCnoghr0Mx518XyXzdo1TNXXc6S9ofqhSoIS7-jp2yVIVacAr',
+              },
+            ].map((landmark) => (
               <div key={landmark.id} className="rounded-lg overflow-hidden bg-surface-container-low shadow-sm flex flex-col">
                 <img className="w-full h-44 object-cover" src={landmark.image} alt={landmark.title} />
                 <div className="p-space-md flex flex-col gap-1">
@@ -439,9 +498,9 @@ export default function PassengerPortal() {
 
       {/* ACTIONS TAB */}
       {activeTab === 'actions' && (
-        <div className="px-margin-desktop py-space-lg">
+        <div className="px-margin-desktop py-space-lg pb-space-xl">
           <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
-            <div className="flex items-center justify-between mb-space-md">
+            <div className="flex items-center justify-between mb-space-md flex-wrap gap-space-sm">
               <h2 className="text-headline-lg font-bold text-on-surface">Requests & Complaints</h2>
               <button
                 onClick={() => setShowComplaintForm(!showComplaintForm)}
@@ -490,30 +549,24 @@ export default function PassengerPortal() {
               </div>
             )}
 
-            {complaints.length > 0 ? (
+            {complaints.length > 0 && (
               <div className="space-y-space-sm">
-                {complaints.map((complaint) => (
-                  <div key={complaint.id} className="p-space-md rounded-lg bg-surface-container-low border border-surface-container">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="font-label-lg font-bold text-on-surface">{complaint.category}</p>
-                        <p className="text-body-sm text-on-surface-variant">{complaint.description}</p>
+                <h3 className="text-label-lg font-bold text-on-surface">Your Complaints History</h3>
+                {complaints.map((complaint, idx) => (
+                  <div key={idx} className="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-md">
+                    <span className="material-symbols-outlined text-primary text-[24px]">feedback</span>
+                    <div className="flex-1">
+                      <div className="font-label-lg text-label-lg font-bold text-on-surface">{complaint.category}</div>
+                      <p className="font-body-sm text-body-sm text-on-surface-variant">{complaint.description}</p>
+                      <div className="flex items-center gap-2 mt-2 text-label-sm">
+                        <span className={`px-2 py-0.5 rounded ${complaint.status === 'SUBMITTED' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
+                          {complaint.status}
+                        </span>
+                        <span className="text-outline">{complaint.relatedBus}</span>
                       </div>
-                      <span className={`px-2 py-1 rounded text-label-sm font-bold whitespace-nowrap ${
-                        complaint.status === 'SUBMITTED' ? 'bg-secondary-fixed text-on-secondary-fixed' :
-                        complaint.status === 'IN_REVIEW' ? 'bg-tertiary-fixed text-on-tertiary-fixed' :
-                        'bg-tertiary-container text-on-tertiary'
-                      }`}>
-                        {complaint.status}
-                      </span>
                     </div>
-                    <p className="text-label-sm text-outline">{new Date(complaint.createdAt).toLocaleString()}</p>
                   </div>
                 ))}
-              </div>
-            ) : (
-              <div className="text-center py-space-lg text-on-surface-variant">
-                <p className="text-body-sm">No complaints submitted yet</p>
               </div>
             )}
           </div>

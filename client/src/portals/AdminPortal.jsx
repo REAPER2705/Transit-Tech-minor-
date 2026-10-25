@@ -415,13 +415,13 @@ export default function AdminPortal() {
                       </span>
                       {bus.id}
                     </td>
-                    <td className="px-space-md py-3 font-mono font-semibold text-on-surface">{row.registration}</td>
+                    <td className="px-space-md py-3 font-mono font-semibold text-on-surface">MH-RTO-{bus.id.replace('G-', '00')}</td>
                     <td className="px-space-md py-3">
                       <span className="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">
-                        {row.capacity}
+                        {bus.capacity} Seats
                       </span>
                     </td>
-                    <td className="px-space-md py-3 text-on-surface-variant">{row.route}</td>
+                    <td className="px-space-md py-3 text-on-surface-variant">{bus.assignedRoute || 'Main Route'}</td>
                     <td className="px-space-md py-3">
                       <span className="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">
                         ✓ Verified
