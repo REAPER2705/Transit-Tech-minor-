@@ -1,13 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
+import AdminManagementPanel from '../components/admin/AdminManagementPanel';
+import IncidentManagement from '../components/admin/IncidentManagement';
+import ScheduleConflictDetector from '../components/admin/ScheduleConflictDetector';
+
+const API_BASE = 'http://localhost:5000/api/v1';
 
 export default function AdminPortal() {
   const [activeShift, setActiveShift] = useState('shift1');
-  const { buses, complaints, incidents, getStats, updateComplaintStatus, updateIncidentStatus } = useAppStore();
+  const [loading, setLoading] = useState(true);
+  const [reportData, setReportData] = useState(null);
+  const [error, setError] = useState(null);
+  const { buses, complaints, incidents, getStats } = useAppStore();
+
+  // Fetch timetable report on component mount
+  useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${API_BASE}/admin/timetable-report`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch report: ${response.status}`);
+        }
+
+        const json = await response.json();
+        setReportData(json.data);
+      } catch (err) {
+        console.error('Error fetching timetable report:', err);
+        setError(err.message);
+        // Fallback to mock data if API fails
+        setReportData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReport();
+  }, []);
 
   const stats = getStats();
   const activeBuses = buses.filter(b => b.status === 'ACTIVE').length;
 
+  // Build KPIs from real data or fallback to local state
   const kpis = [
     {
       title: 'Active Fleet Network',
@@ -44,15 +86,15 @@ export default function AdminPortal() {
     },
     {
       title: 'Total Routes',
-      value: stats.totalRoutes,
-      metric: `${stats.totalStops} Campus Stops`,
+      value: reportData?.totalRoutes || stats.totalRoutes,
+      metric: `${reportData?.totalStops || stats.totalStops} Campus Stops`,
       icon: 'route',
       bgColor: 'bg-primary-fixed',
       textColor: 'text-on-primary-fixed',
     },
     {
       title: 'Unverified Schedules',
-      value: stats.unverifiedTimetables,
+      value: reportData?.unverifiedRoutes || stats.unverifiedTimetables,
       metric: 'Pending Verification',
       icon: 'schedule',
       bgColor: 'bg-tertiary-fixed',
@@ -61,7 +103,70 @@ export default function AdminPortal() {
     },
   ];
 
-  // Use actual bus data from store instead of mock fleetData
+  // Import state management
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState(null);
+  const [importSuccess, setImportSuccess] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  // Handle file upload
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    try {
+      setImportLoading(true);
+      setImportError(null);
+      setImportSuccess(null);
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('importType', 'schedules'); // Default to schedules
+      formData.append('shiftCode', activeShift === 'shift1' ? 'SHIFT-1' : 'SHIFT-2');
+
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${API_BASE}/admin/imports/validate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || `Upload failed: ${response.status}`);
+      }
+
+      const json = await response.json();
+      setImportSuccess(`File validated successfully. ${json.data.importJob.validCount} rows ready to import.`);
+    } catch (err) {
+      console.error('Error uploading file:', err);
+      setImportError(err.message);
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+  // Drag and drop handlers
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  };
 
   return (
     <div className="w-full pt-16 bg-surface min-h-[calc(100vh-14rem)]">
@@ -290,19 +395,47 @@ export default function AdminPortal() {
           {/* Import Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-stretch">
             {/* Drag & Drop Area */}
-            <div className="lg:col-span-5 p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-center items-center text-center group cursor-pointer hover:bg-surface-container transition-all">
-              <div className="w-14 h-14 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center mb-space-sm group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-[28px]">upload_file</span>
-              </div>
-              <span className="font-label-lg text-label-lg font-bold text-on-surface">Drop Master CSV / Excel Timetable</span>
-              <span className="font-body-sm text-body-sm text-outline mt-1">Accepts UTF-8 formatted CSV or XLSX exports from Institutional ERP</span>
-              <div className="mt-space-md flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm">ISO-2015 SCHEMA</span>
-                <span className="px-2.5 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">MAX 5MB</span>
-              </div>
-              <p className="mt-space-md font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1">
-                <span className="material-symbols-outlined text-[16px]">lock</span> Currently Targeting: {activeShift === 'shift1' ? 'Shift 1' : 'Shift 2'} Routing Matrix
-              </p>
+            <div 
+              className={`lg:col-span-5 p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-center items-center text-center group cursor-pointer hover:bg-surface-container transition-all ${dragActive ? 'bg-primary-container' : ''}`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              <input
+                type="file"
+                id="file-upload"
+                className="hidden"
+                accept=".csv,.xlsx"
+                onChange={(e) => handleFileUpload(e.target.files?.[0])}
+                disabled={importLoading}
+              />
+              <label htmlFor="file-upload" className="w-full h-full flex flex-col justify-center items-center cursor-pointer">
+                <div className="w-14 h-14 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center mb-space-sm group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-[28px]">upload_file</span>
+                </div>
+                <span className="font-label-lg text-label-lg font-bold text-on-surface">
+                  {importLoading ? 'Uploading...' : 'Drop Master CSV / Excel Timetable'}
+                </span>
+                <span className="font-body-sm text-body-sm text-outline mt-1">Accepts UTF-8 formatted CSV or XLSX exports from Institutional ERP</span>
+                <div className="mt-space-md flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm">ISO-2015 SCHEMA</span>
+                  <span className="px-2.5 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">MAX 5MB</span>
+                </div>
+                {importError && (
+                  <p className="mt-space-md font-label-sm text-label-sm text-error flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px]">error</span> {importError}
+                  </p>
+                )}
+                {importSuccess && (
+                  <p className="mt-space-md font-label-sm text-label-sm text-tertiary flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px]">check_circle</span> {importSuccess}
+                  </p>
+                )}
+                <p className="mt-space-md font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]">lock</span> Currently Targeting: {activeShift === 'shift1' ? 'Shift 1' : 'Shift 2'} Routing Matrix
+                </p>
+              </label>
             </div>
 
             {/* Validation Buffer & Fleet Table */}
@@ -438,6 +571,33 @@ export default function AdminPortal() {
             </table>
           </div>
         </section>
+      </div>
+
+      {/* Admin Management Panel */}
+      <div className="w-full px-margin-desktop py-space-lg">
+        <div className="mb-space-md">
+          <h2 className="font-headline-lg text-headline-lg text-on-surface mb-space-sm">Fleet & Route Management</h2>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
+            Create and manage buses, routes, stops, and shift schedules.
+          </p>
+        </div>
+        <AdminManagementPanel />
+      </div>
+
+      {/* Schedule Conflict Detector */}
+      <div className="w-full px-margin-desktop py-space-lg">
+        <ScheduleConflictDetector />
+      </div>
+
+      {/* Incident & Complaint Management */}
+      <div className="w-full px-margin-desktop py-space-lg pb-space-xl">
+        <div className="mb-space-md">
+          <h2 className="font-headline-lg text-headline-lg text-on-surface mb-space-sm">Incident & Complaint Tracking</h2>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
+            Manage operational incidents, passenger complaints, and audit trail.
+          </p>
+        </div>
+        <IncidentManagement />
       </div>
     </div>
   );
