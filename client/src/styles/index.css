@@ -24,113 +24,251 @@
 }
 
 * {
-  @apply box-border;
+  box-sizing: border-box;
 }
 
 body {
-  @apply bg-surface font-body-md text-on-surface antialiased;
+  background-color: #faf8ff;
+  color: #131b2e;
   font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Selection styling */
 ::selection {
-  @apply bg-primary-fixed text-on-primary-fixed;
+  background-color: #dbe1ff;
+  color: #00174b;
 }
 
 /* Material Design 3 Button Styles */
 .btn-primary {
-  @apply px-space-md py-3 bg-primary hover:bg-primary-container text-on-primary font-label-lg rounded-lg shadow-sm transition-all;
+  padding: 0.75rem 1rem;
+  background-color: #004ac6;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
 }
 
 .btn-secondary {
-  @apply px-space-md py-3 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg rounded-lg transition-colors;
+  padding: 0.75rem 1rem;
+  background-color: #e2e7ff;
+  color: #131b2e;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #dae2fd;
 }
 
 .btn-tertiary {
-  @apply px-space-md py-3 bg-tertiary hover:bg-tertiary-container text-on-tertiary font-label-lg rounded-lg transition-all;
+  padding: 0.75rem 1rem;
+  background-color: #006242;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-tertiary:hover {
+  background-color: #007d55;
 }
 
 .btn-danger {
-  @apply px-space-md py-3 bg-error hover:bg-error-container text-on-error font-label-lg rounded-lg transition-all;
+  padding: 0.75rem 1rem;
+  background-color: #ba1a1a;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #ffdad6;
 }
 
 /* Icon Button */
 .btn-icon {
-  @apply w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface shadow-md flex items-center justify-center hover:bg-surface-container transition-colors;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #131b2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-icon:hover {
+  background-color: #eaedff;
 }
 
 /* Form elements */
 .input-field {
-  @apply w-full px-3 py-2 border border-outline rounded-lg bg-surface-container-lowest text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #737686;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #131b2e;
+  font-size: 0.9375rem;
+  transition: outline 0.3s ease, ring 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #004ac6;
+}
+
+.input-field::placeholder {
+  color: #434655;
 }
 
 .label {
-  @apply block text-label-md font-label-md text-on-surface-variant mb-1;
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #434655;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 /* Material Design 3 Cards */
 .card {
-  @apply rounded-xl bg-surface-container-lowest p-space-lg shadow-sm;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .card-secondary {
-  @apply rounded-xl bg-surface-container-low p-space-md shadow-sm;
+  border-radius: 0.75rem;
+  background-color: #f2f3ff;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .card-elevated {
-  @apply rounded-xl bg-surface-container-lowest p-space-lg shadow-md;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Badges & Chips */
 .badge {
-  @apply inline-flex items-center px-space-md py-space-xs rounded-full text-label-sm font-label-sm;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
 .badge-primary {
-  @apply badge bg-primary-fixed text-on-primary-fixed;
+  background-color: #dbe1ff;
+  color: #00174b;
 }
 
 .badge-secondary {
-  @apply badge bg-secondary-fixed text-on-secondary-fixed;
+  background-color: #e2dfff;
+  color: #0f0069;
 }
 
 .badge-tertiary {
-  @apply badge bg-tertiary-fixed text-on-tertiary-fixed;
+  background-color: #6ffbbe;
+  color: #002113;
 }
 
 .badge-error {
-  @apply badge bg-error-container text-on-error-container;
+  background-color: #ffdad6;
+  color: #93000a;
 }
 
 .badge-success {
-  @apply badge bg-tertiary-fixed text-on-tertiary-fixed;
+  background-color: #6ffbbe;
+  color: #002113;
 }
 
 /* Navigation */
 .nav-item {
-  @apply px-space-md py-space-xs rounded-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #434655;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  color: #131b2e;
+  background-color: #eaedff;
 }
 
 .nav-item.active {
-  @apply bg-primary-container text-on-primary font-label-lg rounded-lg shadow-sm;
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Modal */
 .modal-overlay {
-  @apply fixed inset-0 bg-inverse-surface/50 flex items-center justify-center z-50 backdrop-blur-md;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(40, 48, 68, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(8px);
 }
 
 .modal-content {
-  @apply bg-surface rounded-xl shadow-xl max-w-md w-full mx-4 p-space-lg;
+  background-color: #faf8ff;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 1rem;
+  padding: 1.5rem;
 }
 
 /* Progress Bar */
 .progress-bar {
-  @apply w-full bg-surface-container-highest rounded-full h-3 overflow-hidden flex;
+  width: 100%;
+  background-color: #dae2fd;
+  border-radius: 9999px;
+  height: 0.75rem;
+  overflow: hidden;
+  display: flex;
 }
 
 .progress-fill {
-  @apply bg-primary h-full transition-all duration-500;
+  background-color: #004ac6;
+  height: 100%;
+  transition: width 0.5s ease;
 }
 
 /* Scrollbar styling */
@@ -157,3 +295,4 @@ body {
   white-space: nowrap;
   direction: ltr;
 }
+
