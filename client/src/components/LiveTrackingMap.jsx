@@ -1,74 +1,28 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import L from 'leaflet';
-import realtimeStore from '../store/realtimeStore';
 import { passengerAPI } from '../utils/api';
 
-// Custom bus icon
-const busIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI0IiBmaWxsPSIjRkZCODAwIi8+PHBhdGggZD0iTTcgOEgxNVY2SDdWOFpNMTUgMThWOEgyNVYxOEgxNVpNOCAxOEg5VjIwSDhWMThaTTIzIDE4SDI0VjIwSDIzVjE4WiIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==',
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-      popupAnchor: [0, -16],
-  });
-
-const defaultIcon = new L.Icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-});
-
 export default function LiveTrackingMap() {
-  const { currentTripId, tripLocation, joinTrip, leaveTrip } = realtimeStore();
   const [assignment, setAssignment] = useState(null);
-  const [trip, setTrip] = useState(null);
-  const [route, setRoute] = useState(null);
+  const [timetableInfo, setTimetableInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [locationUpdatedAt, setLocationUpdatedAt] = useState(null);
 
   useEffect(() => {
     loadData();
-
-    return () => {
-      if (currentTripId) {
-        leaveTrip(currentTripId);
-      }
-    };
   }, []);
-
-  useEffect(() => {
-    if (tripLocation) {
-      setLocationUpdatedAt(new Date());
-    }
-  }, [tripLocation]);
 
   const loadData = async () => {
     try {
-      const res = await passengerAPI.getBus();
-      if (res.data.data?.assignment) {
-        const { assignment: assign, trip: tripData } = res.data.data;
-        setAssignment(assign);
-        setTrip(tripData);
-        
-        if (tripData?._id) {
-          joinTrip(tripData._id);
-        }
+      const [assignRes, infoRes] = await Promise.all([
+        passengerAPI.getAssignments().catch(() => ({ data: { data: [] } })),
+        passengerAPI.getTimetableInfo().catch(() => ({ data: { data: {} } })),
+      ]);
 
-        // Load route details
-        // For now, mock route data
-        setRoute({
-          name: 'Palasia Square → AITR Campus',
-          stops: [
-            { id: '1', name: 'Palasia Square', lat: 23.1815, lng: 75.8483 },
-            { id: '2', name: 'Tribunal Square', lat: 23.1842, lng: 75.8508 },
-            { id: '3', name: 'Central Library', lat: 23.1898, lng: 75.8531 },
-            { id: '4', name: 'AITR Campus', lat: 23.1942, lng: 75.8654 },
-          ],
-        });
+      if (assignRes.data.data?.length > 0) {
+        setAssignment(assignRes.data.data[0]);
       }
+      setTimetableInfo(infoRes.data.data);
     } catch (error) {
-      console.error('Error loading tracking data:', error);
+      console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
@@ -78,153 +32,125 @@ export default function LiveTrackingMap() {
     return (
       <div className="glass p-8 text-center">
         <div className="animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-r-transparent rounded-full"></div>
-        <p className="mt-4 text-gray-600">Loading live tracking...</p>
+        <p className="mt-4 text-gray-600">Loading...</p>
       </div>
     );
   }
-
-  if (!assignment) {
-    return (
-      <div className="glass p-8 text-center">
-        <p className="text-gray-600">No active assignment found</p>
-      </div>
-    );
-  }
-
-  const currentLocation = tripLocation
-    ? [tripLocation.coordinates[1], tripLocation.coordinates[0]]
-    : null;
-  const secondsAgo = locationUpdatedAt
-    ? Math.floor((Date.now() - locationUpdatedAt.getTime()) / 1000)
-    : null;
 
   return (
     <div className="space-y-6">
-      {/* Map */}
-      <div className="glass p-4">
-        <div className="map-container">
-          <MapContainer
-            center={[23.19, 75.86]}
-            zoom={14}
-            style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; OpenStreetMap contributors'
-            />
-
-            {/* Route polyline */}
-            {route?.stops && route.stops.length > 1 && (
-              <Polyline
-                positions={route.stops.map(s => [s.lat, s.lng])}
-                color="blue"
-                weight={3}
-                opacity={0.7}
-              />
-            )}
-
-            {/* Stops */}
-            {route?.stops?.map(stop => (
-              <Marker key={stop.id} position={[stop.lat, stop.lng]} icon={defaultIcon}>
-                <Popup>{stop.name}</Popup>
-              </Marker>
-            ))}
-
-            {/* Current bus location */}
-            {currentLocation && (
-              <Marker position={currentLocation} icon={busIcon}>
-                <Popup>
-                  <div>
-                    <p className="font-bold">Bus G-47</p>
-                    <p className="text-sm">
-                      Update: {secondsAgo}s ago
-                    </p>
-                  </div>
-                </Popup>
-              </Marker>
-            )}
-          </MapContainer>
+      {/* Live Tracking Status */}
+      <div className="glass p-6 bg-amber-50 border-l-4 border-amber-600">
+        <div className="flex items-start gap-4">
+          <svg className="w-8 h-8 text-amber-600 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-amber-900 mb-2">📍 Live Location Tracking Unavailable</h2>
+            <p className="text-amber-800 mb-3">
+              GPS-based real-time bus location tracking is not currently available. Please refer to the published timetable for bus schedules and estimated arrival times.
+            </p>
+            <div className="space-y-2 text-sm text-amber-800">
+              <p>
+                <strong>What you can do:</strong>
+              </p>
+              <ul className="list-disc list-inside ml-2 space-y-1">
+                <li>Use the Timetable & Routes section to view published bus schedules</li>
+                <li>Plan your journey based on scheduled stop arrival times</li>
+                <li>Arrive 10 minutes early at your stop as recommended</li>
+                <li>Check for service updates and incident reports</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Route Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Assignment Info */}
+      {assignment && (
         <div className="glass p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Route Information</h3>
-          <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Your Assignment</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-gray-600">Route</p>
-              <p className="font-medium text-gray-800">{route?.name}</p>
+              <p className="text-sm text-gray-600">Assigned Bus</p>
+              <p className="text-2xl font-bold text-gray-800">{assignment.busId?.busCode}</p>
+              <p className="text-xs text-gray-500 mt-1">Capacity: {assignment.busId?.capacity} passengers</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Boarding Stop</p>
-              <p className="font-medium text-gray-800">
-                {assignment?.boardingStopId?.name}
+              <p className="text-lg font-semibold text-gray-800">{assignment.boardingStopId?.name}</p>
+              <p className="text-xs text-gray-500 mt-1">Stop Code: {assignment.boardingStopId?.stopCode}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Route</p>
+              <p className="text-lg font-semibold text-gray-800">{assignment.routeId?.name}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Status</p>
+              <p className="text-lg font-semibold text-green-600">✓ {assignment.status}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Timetable Info Card */}
+      {timetableInfo && (
+        <div className="glass p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Timetable Information</h3>
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm text-gray-600">Source</p>
+              <p className="text-sm text-gray-800">
+                {timetableInfo.sourceUrl && (
+                  <a href={timetableInfo.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                    View Source Document
+                  </a>
+                )}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Bus Unit</p>
-              <p className="font-medium text-gray-800">
-                {assignment?.busId?.busCode}
-                <span className="badge badge-success ml-2">Live GPS</span>
+              <p className="text-sm text-gray-600">Publication Date</p>
+              <p className="text-sm text-gray-800">
+                {timetableInfo.sourceDate ? new Date(timetableInfo.sourceDate).toLocaleDateString() : 'Unknown'}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Verification Status</p>
+              <p className="text-sm">
+                <span className="badge badge-warning">{timetableInfo.verificationStatus || 'Unverified'}</span>
               </p>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Real-time Telemetry */}
-        <div className="glass p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Real-time Telemetry</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Speed</span>
-              <span className="font-medium text-gray-800">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Heading</span>
-              <span className="font-medium text-gray-800">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Distance Remaining</span>
-              <span className="font-medium text-gray-800">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">ETA to Destination</span>
-              <span className="font-medium text-gray-800">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Last Update</span>
-              <span className="font-medium text-gray-800">
-                {locationUpdatedAt
-                  ? `${secondsAgo}s ago`
-                  : 'Unknown'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Timetable Advisory */}
-      <div className="glass p-4 bg-blue-50 border-l-4 border-blue-500">
-        <div className="flex space-x-3">
-          <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-          </svg>
-          <div>
-            <h4 className="font-semibold text-blue-900">Timetable Advisory Notice</h4>
-            <p className="text-sm text-blue-800 mt-1">
-              Please reach your designated campus stop 5 minutes prior to scheduled arrival to ensure uninterrupted dispatch.
-            </p>
-            <p className="text-xs text-blue-700 mt-2">Standard Shift 1 Morning</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Campus Landmarks */}
+      {/* FAQ */}
       <div className="glass p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">AITR Campus Corridor Landmarks</h3>
-        <div className="text-sm text-gray-600">
-          <p>Spatial transit landmarks captured on the Indore Bypass approach</p>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Frequently Asked Questions</h3>
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-medium text-gray-800 mb-1">How do I find when my bus arrives?</h4>
+            <p className="text-sm text-gray-600">
+              Go to the "Timetable & Routes" section to search for your stop or route and view published schedules.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-800 mb-1">What if my bus is late?</h4>
+            <p className="text-sm text-gray-600">
+              Check the "Requests & Complaints" section to report delays or service issues. Staff can help coordinate alternative arrangements.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-800 mb-1">When will live tracking be available?</h4>
+            <p className="text-sm text-gray-600">
+              Live GPS tracking integration is planned for future updates. The transport office will announce its availability.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-800 mb-1">How early should I arrive at my stop?</h4>
+            <p className="text-sm text-gray-600">
+              Arrive at least 10 minutes before the scheduled bus time to ensure you don't miss your bus.
+            </p>
+          </div>
         </div>
       </div>
     </div>

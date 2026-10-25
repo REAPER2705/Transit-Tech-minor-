@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import authStore from '../../store/authStore';
 import { passengerAPI } from '../../utils/api';
 import LiveTrackingMap from '../../components/LiveTrackingMap';
 import BusAvailability from '../../components/BusAvailability';
 import Complaints from '../../components/Complaints';
 import Notifications from '../../components/Notifications';
+import TimetablePage from './TimetablePage';
 
 export default function PassengerPortal() {
   const { user, clearAuth } = authStore();
@@ -120,6 +121,12 @@ export default function PassengerPortal() {
               🚌 My Bus & Seat Availability
             </Link>
             <Link
+              to="/passenger/timetable"
+              className={`nav-item ${isActive('/timetable') ? 'active' : ''}`}
+            >
+              📅 Timetable & Routes
+            </Link>
+            <Link
               to="/passenger/complaints"
               className={`nav-item ${isActive('/complaints') ? 'active' : ''}`}
             >
@@ -135,12 +142,11 @@ export default function PassengerPortal() {
           <Route path="/" element={<Navigate to="/passenger/live-tracking" />} />
           <Route path="live-tracking" element={<LiveTrackingMap />} />
           <Route path="bus-availability" element={<BusAvailability />} />
+          <Route path="timetable" element={<TimetablePage />} />
           <Route path="complaints" element={<Complaints />} />
           <Route path="notifications" element={<Notifications />} />
         </Routes>
       </main>
     </div>
   );
-}
-
-import { Navigate } from 'react-router-dom';
+};

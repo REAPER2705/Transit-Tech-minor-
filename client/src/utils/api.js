@@ -47,6 +47,14 @@ export const passengerAPI = {
   getNotifications: () => api.get('/passenger/notifications'),
   markNotificationRead: (id) => api.patch(`/passenger/notifications/${id}/read`),
   requestAssignmentChange: (data) => api.post('/passenger/assignment-requests', data),
+  
+  // Timetable search & browse
+  searchStops: (query) => api.get('/passenger/stops/search', { params: { query } }),
+  getStops: () => api.get('/passenger/stops'),
+  getRoutes: (shift) => api.get('/passenger/routes', { params: { shift } }),
+  getRouteDetails: (routeId, params) => api.get(`/passenger/routes/${routeId}`, { params }),
+  getStopSchedules: (stopId, params) => api.get(`/passenger/stops/${stopId}/schedules`, { params }),
+  getTimetableInfo: () => api.get('/passenger/timetable-info'),
 };
 
 export const staffAPI = {
