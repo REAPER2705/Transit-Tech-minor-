@@ -9,37 +9,63 @@ export default function PassengerPortal() {
   // Connect to store
   const { buses, complaints, addComplaint, addNotification } = useAppStore();
 
-  // Mock data
+  // Mock data - now uses authenticated Acropolis route info
   const currentBus = {
     id: 'G-47',
-    route: 'Palasia Square → AITR Campus',
-    line: 'LINE 47',
-    status: 'LIVE GPS',
+    route: 'Navlakha Bus Stand → Acropolis Institute',
+    line: 'Route 1',
+    gpsStatus: 'UNAVAILABLE',
     occupancy: 38,
     capacity: 50,
-    speed: 32,
-    heading: 'NE (42°)',
-    eta: 6,
-    distance: 1.8,
-    nextStop: 'Central Library Bay 2',
+    nextStop: 'Palasia Chouraha',
+    lastOccupancyUpdate: new Date(Date.now() - 3 * 60000),
+    dataSourceNote: 'Historical Timetable - Sept 2023 | GPS Position Simulated',
   };
 
   const handleComplaintSubmit = () => {
-    if (complaintData.category && complaintData.description) {
-      addComplaint({
-        category: complaintData.category,
-        description: complaintData.description,
-        submittedBy: 'PASSENGER',
-        relatedBus: 'G-47',
-      });
-      addNotification({
-        type: 'COMPLAINT_SUBMITTED',
-        title: 'Complaint Submitted',
-        message: `Your ${complaintData.category} complaint has been recorded.`,
-      });
-      setComplaintData({ category: '', description: '' });
-      setShowComplaintForm(false);
+    if (!complaintData.category || !complaintData.description) {
+      alert('Please select a category and describe your concern');
+      return;
     }
+
+    // Check for duplicate complaints (same category and description within last 5 minutes)
+    const recentDuplicate = complaints.find(
+      (c) =>
+        c.category === complaintData.category &&
+        c.description === complaintData.description &&
+        new Date(c.createdAt) > new Date(Date.now() - 5 * 60 * 1000)
+    );
+
+    if (recentDuplicate) {
+      alert('You already submitted this complaint recently. Please wait before resubmitting.');
+      return;
+    }
+
+    // Submit complaint to store
+    addComplaint({
+      category: complaintData.category,
+      description: complaintData.description,
+      submittedBy: 'PASSENGER',
+      relatedBus: currentBus.id,
+      status: 'SUBMITTED',
+      createdAt: new Date().toISOString(),
+    });
+
+    // Add notification
+    addNotification({
+      type: 'COMPLAINT_SUBMITTED',
+      title: 'Complaint Submitted',
+      message: `Your ${complaintData.category} complaint has been recorded and assigned reference ID. Our transport office will review it shortly.`,
+      read: false,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Clear form and close
+    setComplaintData({ category: '', description: '' });
+    setShowComplaintForm(false);
+
+    // Show success feedback
+    alert('Complaint submitted successfully! Reference ID will be provided via notification.');
   };
 
   const alternativeBuses = [
@@ -177,15 +203,15 @@ export default function PassengerPortal() {
               {/* Bus Marker with Telemetry */}
               <div className="absolute top-[284px] left-[520px] -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 group cursor-pointer">
                 <div className="relative flex items-center justify-center">
-                  <span className="absolute w-12 h-12 rounded-full bg-amber-400/25 animate-ping"></span>
-                  <div className="relative w-9 h-9 rounded-full bg-amber-400 text-slate-900 shadow-lg flex items-center justify-center font-bold">
+                  <span className="absolute w-12 h-12 rounded-full bg-yellow-400/25 animate-pulse"></span>
+                  <div className="relative w-9 h-9 rounded-full bg-yellow-400 text-slate-900 shadow-lg flex items-center justify-center font-bold">
                     <span className="material-symbols-outlined text-[20px]">directions_bus</span>
                   </div>
                 </div>
                 <div className="px-space-sm py-1 rounded bg-inverse-surface/90 text-inverse-on-surface backdrop-blur-md shadow-md flex items-center gap-space-xs">
-                  <span className="font-label-md text-label-md font-bold text-amber-300">BUS G-47</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
-                  <span className="font-label-sm text-label-sm">In Motion</span>
+                  <span className="font-label-md text-label-md font-bold text-yellow-300">{currentBus.id}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                  <span className="font-label-sm text-label-sm">Demo Position</span>
                 </div>
               </div>
 
@@ -193,58 +219,61 @@ export default function PassengerPortal() {
               <div className="absolute top-4 left-4 max-w-sm rounded-xl bg-surface-container-lowest/95 backdrop-blur-md p-space-md shadow-lg flex flex-col gap-space-xs">
                 <div className="flex items-center justify-between gap-space-sm">
                   <div className="flex items-center gap-1.5">
-                    <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm">PRIMARY CORRIDOR</span>
-                    <span className="font-label-md text-label-md font-bold text-on-surface">LINE 47</span>
+                    <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm">PRIMARY ROUTE</span>
+                    <span className="font-label-md text-label-md font-bold text-on-surface">{currentBus.line}</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>LIVE GPS
+                  <span className="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-error"></span>GPS UNAVAILABLE
                   </span>
                 </div>
-                <div className="font-headline-md text-headline-md text-on-surface">Palasia Square → AITR Campus</div>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Traversing Indore Bypass Corridor via Ring Road and Manglia Junction.</p>
+                <div className="font-headline-md text-headline-md text-on-surface">{currentBus.route}</div>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Verified from Acropolis Historical Timetable (Sept 2023). Real-time GPS data not available — position is simulated for demo.</p>
+                <div className="mt-2 pt-2 border-t border-surface-variant/20 text-label-sm text-on-surface-variant">
+                  <span className="italic">✓ Route verified from official source | GPS tracking unavailable</span>
+                </div>
               </div>
 
               {/* Bottom telemetry panel */}
               <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:w-[460px] rounded-xl bg-inverse-surface/95 backdrop-blur-xl text-inverse-on-surface p-space-md shadow-xl flex flex-col gap-space-sm">
                 <div className="flex items-center justify-between border-b border-surface-variant/20 pb-2">
                   <div className="flex items-center gap-space-sm">
-                    <span className="material-symbols-outlined text-tertiary-fixed text-[20px]">sensors</span>
-                    <span className="font-label-md text-label-md font-bold tracking-wide uppercase">Real-Time Telemetry Stream</span>
+                    <span className="material-symbols-outlined text-error text-[20px]">gps_off</span>
+                    <span className="font-label-md text-label-md font-bold tracking-wide uppercase">GPS Telemetry - Unavailable</span>
                   </div>
-                  <span className="font-label-sm text-label-sm text-outline-variant">Update: 8s ago</span>
+                  <span className="font-label-sm text-label-sm text-outline-variant">Simulated Demo Data</span>
                 </div>
                 <div className="grid grid-cols-4 gap-space-xs text-center py-1">
                   <div className="flex flex-col items-center justify-center p-1.5 rounded bg-surface-variant/10">
-                    <span className="font-label-sm text-label-sm text-inverse-on-surface/70">SPEED</span>
-                    <span className="font-telemetry-metric text-telemetry-metric font-bold text-inverse-on-surface">
-                      {currentBus.speed} <span className="font-label-sm text-label-sm">km/h</span>
+                    <span className="font-label-sm text-label-sm text-inverse-on-surface/70">STATUS</span>
+                    <span className="font-telemetry-metric text-telemetry-metric font-bold text-error">
+                      N/A
                     </span>
                   </div>
                   <div className="flex flex-col items-center justify-center p-1.5 rounded bg-surface-variant/10">
-                    <span className="font-label-sm text-label-sm text-inverse-on-surface/70">HEADING</span>
-                    <span className="font-telemetry-metric text-telemetry-metric font-bold text-inverse-on-surface">{currentBus.heading}</span>
+                    <span className="font-label-sm text-label-sm text-inverse-on-surface/70">SPEED</span>
+                    <span className="font-telemetry-metric text-telemetry-metric font-bold text-inverse-on-surface">—</span>
                   </div>
                   <div className="flex flex-col items-center justify-center p-1.5 rounded bg-surface-variant/10">
-                    <span className="font-label-sm text-label-sm text-inverse-on-surface/70">ETA BAY 2</span>
-                    <span className="font-telemetry-metric text-telemetry-metric font-bold text-tertiary-fixed">
-                      {currentBus.eta} <span className="font-label-sm text-label-sm">mins</span>
+                    <span className="font-label-sm text-label-sm text-inverse-on-surface/70">ETA</span>
+                    <span className="font-telemetry-metric text-telemetry-metric font-bold text-inverse-on-surface">
+                      — <span className="font-label-sm text-label-sm">mins</span>
                     </span>
                   </div>
                   <div className="flex flex-col items-center justify-center p-1.5 rounded bg-surface-variant/10">
                     <span className="font-label-sm text-label-sm text-inverse-on-surface/70">DIST</span>
                     <span className="font-telemetry-metric text-telemetry-metric font-bold text-inverse-on-surface">
-                      {currentBus.distance} <span className="font-label-sm text-label-sm">km</span>
+                      — <span className="font-label-sm text-label-sm">km</span>
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-body-sm font-body-sm pt-1 bg-surface-variant/10 px-2 py-1.5 rounded">
                   <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px] text-amber-300">pin_drop</span>
+                    <span className="material-symbols-outlined text-[16px] text-warning">info</span>
                     <span>
-                      Next Point: <strong>Central Library Bay 2</strong>
+                      Next Stop: <strong>{currentBus.nextStop}</strong>
                     </span>
                   </div>
-                  <span className="text-tertiary-fixed font-label-sm text-label-sm">ON SCHEDULE</span>
+                  <span className="text-warning font-label-sm text-label-sm">DEMO MODE</span>
                 </div>
               </div>
 
@@ -451,6 +480,111 @@ export default function PassengerPortal() {
         </div>
       </div>
 
+      {/* My Bus & Seat Availability Tab */}
+      {activeTab === 'seats' && (
+        <div className="px-margin-desktop py-space-lg">
+          <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+            <div className="flex items-center justify-between mb-space-md">
+              <div>
+                <h2 className="font-headline-lg text-headline-lg font-bold text-on-surface">My Bus & Seat Availability</h2>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Real-time occupancy of assigned and available buses on your routes</p>
+              </div>
+              <div className="text-label-sm text-on-surface-variant">
+                Last Updated: {new Date().toLocaleTimeString()}
+              </div>
+            </div>
+
+            {/* Assigned Bus Card */}
+            <div className="rounded-lg bg-primary-fixed/10 border-2 border-primary-fixed p-space-md flex flex-col gap-space-md">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-label-sm text-label-sm text-outline uppercase tracking-wider">Your Assigned Bus</span>
+                  <h3 className="font-headline-lg text-headline-lg font-bold text-on-surface mt-1">{currentBus.id}</h3>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">
+                  Assigned to You
+                </span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-space-md">
+                <div className="p-space-md rounded-lg bg-surface-container-low">
+                  <span className="font-label-sm text-label-sm text-outline uppercase">Route</span>
+                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentBus.line}</span>
+                </div>
+                <div className="p-space-md rounded-lg bg-surface-container-low">
+                  <span className="font-label-sm text-label-sm text-outline uppercase">Occupancy</span>
+                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentBus.occupancy}/{currentBus.capacity}</span>
+                </div>
+                <div className="p-space-md rounded-lg bg-surface-container-low">
+                  <span className="font-label-sm text-label-sm text-outline uppercase">% Filled</span>
+                  <span className="font-headline-md text-headline-md text-primary mt-1">{Math.round((currentBus.occupancy / currentBus.capacity) * 100)}%</span>
+                </div>
+                <div className="p-space-md rounded-lg bg-surface-container-low">
+                  <span className="font-label-sm text-label-sm text-outline uppercase">Available Seats</span>
+                  <span className="font-headline-md text-headline-md text-tertiary mt-1">{currentBus.capacity - currentBus.occupancy}</span>
+                </div>
+              </div>
+              <div className="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden flex">
+                <div className="bg-primary h-full transition-all duration-500" style={{ width: `${(currentBus.occupancy / currentBus.capacity) * 100}%` }}></div>
+                <div className="bg-tertiary h-full opacity-60" style={{ width: `${((currentBus.capacity - currentBus.occupancy) / currentBus.capacity) * 100}%` }}></div>
+              </div>
+            </div>
+
+            {/* Available Buses Table */}
+            <div className="flex flex-col gap-space-sm">
+              <h3 className="font-label-lg text-label-lg font-bold text-on-surface">Available Buses on Your Routes</h3>
+              <div className="overflow-x-auto rounded-lg border border-surface-container">
+                <table className="w-full text-left font-body-sm text-body-sm">
+                  <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <tr>
+                      <th className="px-space-md py-3">Bus ID</th>
+                      <th className="px-space-md py-3">Route</th>
+                      <th className="px-space-md py-3">Status</th>
+                      <th className="px-space-md py-3">Occupancy</th>
+                      <th className="px-space-md py-3">% Filled</th>
+                      <th className="px-space-md py-3">Available</th>
+                      <th className="px-space-md py-3">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container">
+                    {buses.map((bus) => (
+                      <tr key={bus.id} className="hover:bg-surface-container-low transition-colors">
+                        <td className="px-space-md py-3 font-bold text-primary">{bus.id}</td>
+                        <td className="px-space-md py-3">{bus.assignedRoute ? bus.assignedRoute.replace('ROUTE-', '') : 'N/A'}</td>
+                        <td className="px-space-md py-3">
+                          <span className={`px-2 py-0.5 rounded-full text-label-sm font-bold ${
+                            bus.status === 'ACTIVE' ? 'bg-tertiary-fixed text-on-tertiary-fixed' : 'bg-surface-container text-on-surface'
+                          }`}>
+                            {bus.status}
+                          </span>
+                        </td>
+                        <td className="px-space-md py-3 font-semibold">{bus.currentOccupancy}/{bus.capacity}</td>
+                        <td className="px-space-md py-3">{Math.round((bus.currentOccupancy / bus.capacity) * 100)}%</td>
+                        <td className="px-space-md py-3 font-semibold text-tertiary">{bus.capacity - bus.currentOccupancy}</td>
+                        <td className="px-space-md py-3">
+                          <button className="px-3 py-1 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:bg-on-primary-fixed-variant transition-colors">
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Occupancy Guidelines */}
+            <div className="p-space-md rounded-lg bg-surface-container-low border-l-4 border-l-warning">
+              <h4 className="font-label-lg text-label-lg font-bold text-on-surface mb-2">Seat Availability Guidelines</h4>
+              <ul className="space-y-1 text-body-sm text-on-surface-variant">
+                <li>• <strong>0-50% filled:</strong> Plenty of seats available — comfortable travel</li>
+                <li>• <strong>50-80% filled:</strong> Moderate occupancy — limited seating</li>
+                <li>• <strong>80-100% filled:</strong> High occupancy — standing room or wait for next bus</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Landmarks Section */}
       <div className="px-margin-desktop py-space-lg">
         <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
@@ -495,6 +629,115 @@ export default function PassengerPortal() {
           </div>
         </div>
       </div>
+
+      {/* Routes & Schedules Tab */}
+      {activeTab === 'schedules' && (
+        <div className="px-margin-desktop py-space-lg">
+          <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+            <div className="flex items-center justify-between mb-space-md">
+              <div>
+                <h2 className="font-headline-lg text-headline-lg font-bold text-on-surface">Routes & Schedules</h2>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Official Acropolis transit routes and verified timetables (Sept 2023)</p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-warning-container text-on-warning-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">info</span>
+                Verify current schedule
+              </span>
+            </div>
+
+            {/* Routes Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+              {[
+                {
+                  id: 'ROUTE-NAVLAKHA-ACROPOLIS',
+                  number: 'Route 1',
+                  name: 'Navlakha Bus Stand → Acropolis Institute',
+                  distance: '15.8 km',
+                  duration: '50 mins',
+                  shift1: 'Shift 1: 08:20 → 09:35',
+                  shift2: 'Shift 2: 10:30 → 11:45',
+                  status: 'VERIFIED',
+                  stops: 8,
+                },
+                {
+                  id: 'ROUTE-BYPASS-SECONDARY',
+                  number: 'Route 2',
+                  name: 'Indore Bypass → Acropolis Institute',
+                  distance: '12.3 km',
+                  duration: '40 mins',
+                  shift1: 'Shift 1: 08:45 → 09:30',
+                  shift2: 'Shift 2: 11:00 → 11:45',
+                  status: 'UNVERIFIED',
+                  stops: 5,
+                },
+              ].map((route) => (
+                <div key={route.id} className={`p-space-lg rounded-lg border-2 ${
+                  route.status === 'VERIFIED' 
+                    ? 'border-tertiary-fixed bg-tertiary-fixed/5'
+                    : 'border-warning-container bg-warning-container/5'
+                }`}>
+                  <div className="flex items-start justify-between mb-space-md">
+                    <div>
+                      <span className="font-label-md text-label-md text-on-surface-variant uppercase">{route.number}</span>
+                      <h3 className="font-headline-md text-headline-md font-bold text-on-surface mt-1">{route.name}</h3>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-label-sm font-bold ${
+                      route.status === 'VERIFIED'
+                        ? 'bg-tertiary-fixed text-on-tertiary-fixed'
+                        : 'bg-warning-container text-on-warning-container'
+                    }`}>
+                      {route.status === 'VERIFIED' ? '✓ Verified' : '⚠ Unverified'}
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-space-sm mb-space-md">
+                    <div>
+                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Distance</span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.distance}</span>
+                    </div>
+                    <div>
+                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Duration</span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.duration}</span>
+                    </div>
+                    <div>
+                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Stops</span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.stops}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-space-md border-t border-surface-variant">
+                    <div className="flex items-center gap-2 mt-space-sm">
+                      <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
+                      <span className="font-body-sm text-on-surface"><strong>{route.shift1}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
+                      <span className="font-body-sm text-on-surface"><strong>{route.shift2}</strong></span>
+                    </div>
+                  </div>
+
+                  <button className="w-full mt-space-md px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm">
+                    <span className="material-symbols-outlined text-[18px]">info</span>
+                    View Route Details
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Timetable Notes */}
+            <div className="p-space-lg rounded-lg bg-surface-container-low border-l-4 border-l-primary">
+              <h4 className="font-label-lg text-label-lg font-bold text-on-surface mb-2">Important Notes</h4>
+              <ul className="space-y-2 text-body-sm text-on-surface-variant">
+                <li>• <strong>Route 1:</strong> Verified from Acropolis Historical Timetable (September 2023)</li>
+                <li>• <strong>Route 2:</strong> Schedule not independently verified — check with transport office</li>
+                <li>• <strong>All times:</strong> Subject to change during holidays and special events</li>
+                <li>• <strong>Recommendation:</strong> Arrive 5-10 minutes early at bus stops</li>
+                <li>• For updates: Contact Acropolis Transport Office or check official website</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ACTIONS TAB */}
       {activeTab === 'actions' && (
@@ -552,21 +795,54 @@ export default function PassengerPortal() {
             {complaints.length > 0 && (
               <div className="space-y-space-sm">
                 <h3 className="text-label-lg font-bold text-on-surface">Your Complaints History</h3>
+                <div className="text-label-sm text-on-surface-variant mb-space-md">
+                  Total complaints: <strong>{complaints.length}</strong>
+                </div>
                 {complaints.map((complaint, idx) => (
-                  <div key={idx} className="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-md">
+                  <div key={idx} className="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-md hover:bg-surface-container transition-colors">
                     <span className="material-symbols-outlined text-primary text-[24px]">feedback</span>
                     <div className="flex-1">
-                      <div className="font-label-lg text-label-lg font-bold text-on-surface">{complaint.category}</div>
-                      <p className="font-body-sm text-body-sm text-on-surface-variant">{complaint.description}</p>
-                      <div className="flex items-center gap-2 mt-2 text-label-sm">
-                        <span className={`px-2 py-0.5 rounded ${complaint.status === 'SUBMITTED' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="font-label-lg text-label-lg font-bold text-on-surface">{complaint.category}</div>
+                          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">{complaint.description}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center flex-wrap gap-2 mt-2 text-label-sm">
+                        <span className={`px-2 py-0.5 rounded font-semibold ${
+                          complaint.status === 'SUBMITTED'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : complaint.status === 'OPEN'
+                            ? 'bg-orange-100 text-orange-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}>
                           {complaint.status}
                         </span>
-                        <span className="text-outline">{complaint.relatedBus}</span>
+                        <span className="text-outline flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px]">directions_bus</span>
+                          {complaint.relatedBus}
+                        </span>
+                        {complaint.createdAt && (
+                          <span className="text-on-surface-variant">
+                            {new Date(complaint.createdAt).toLocaleDateString()} {new Date(complaint.createdAt).toLocaleTimeString()}
+                          </span>
+                        )}
+                        {complaint.id && (
+                          <span className="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-mono text-xs">
+                            Ref: {complaint.id.substring(0, 8)}...
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {complaints.length === 0 && !showComplaintForm && (
+              <div className="p-space-lg rounded-lg bg-surface-container-low text-center">
+                <span className="material-symbols-outlined text-[48px] text-on-surface-variant/50 inline-block mb-2">sentiment_satisfied</span>
+                <p className="font-body-lg text-body-lg text-on-surface-variant">No complaints yet. Tap "Submit Complaint" if you need to report an issue.</p>
               </div>
             )}
           </div>
