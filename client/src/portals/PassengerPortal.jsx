@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
+import { useAppStore } from '../store/appStore';
 
 export default function PassengerPortal() {
   const [activeTab, setActiveTab] = useState('tracking');
+  const [showComplaintForm, setShowComplaintForm] = useState(false);
+  const [complaintData, setComplaintData] = useState({ category: '', description: '' });
+
+  // Connect to store
+  const { buses, complaints, addComplaint, addNotification } = useAppStore();
 
   // Mock data
   const currentBus = {
@@ -16,6 +22,24 @@ export default function PassengerPortal() {
     eta: 6,
     distance: 1.8,
     nextStop: 'Central Library Bay 2',
+  };
+
+  const handleComplaintSubmit = () => {
+    if (complaintData.category && complaintData.description) {
+      addComplaint({
+        category: complaintData.category,
+        description: complaintData.description,
+        submittedBy: 'PASSENGER',
+        relatedBus: 'G-47',
+      });
+      addNotification({
+        type: 'COMPLAINT_SUBMITTED',
+        title: 'Complaint Submitted',
+        message: `Your ${complaintData.category} complaint has been recorded.`,
+      });
+      setComplaintData({ category: '', description: '' });
+      setShowComplaintForm(false);
+    }
   };
 
   const alternativeBuses = [
@@ -412,6 +436,89 @@ export default function PassengerPortal() {
           </div>
         </div>
       </div>
+
+      {/* ACTIONS TAB */}
+      {activeTab === 'actions' && (
+        <div className="px-margin-desktop py-space-lg">
+          <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+            <div className="flex items-center justify-between mb-space-md">
+              <h2 className="text-headline-lg font-bold text-on-surface">Requests & Complaints</h2>
+              <button
+                onClick={() => setShowComplaintForm(!showComplaintForm)}
+                className="px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span>
+                Submit Complaint
+              </button>
+            </div>
+
+            {showComplaintForm && (
+              <div className="p-space-md rounded-lg bg-surface-container-low mb-space-md border-2 border-primary-fixed space-y-space-sm">
+                <h3 className="text-label-lg font-bold text-on-surface mb-space-sm">Submit Complaint</h3>
+                <select
+                  value={complaintData.category}
+                  onChange={(e) => setComplaintData({ ...complaintData, category: e.target.value })}
+                  className="w-full px-space-md py-2 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">Select Category</option>
+                  <option value="DELAY">Delay</option>
+                  <option value="OCCUPANCY">Occupancy Issue</option>
+                  <option value="COMFORT">Comfort</option>
+                  <option value="OTHER">Other</option>
+                </select>
+                <textarea
+                  value={complaintData.description}
+                  onChange={(e) => setComplaintData({ ...complaintData, description: e.target.value })}
+                  placeholder="Describe your concern..."
+                  className="w-full px-space-md py-2 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary"
+                  rows="4"
+                />
+                <div className="flex gap-space-sm">
+                  <button
+                    onClick={handleComplaintSubmit}
+                    className="px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors"
+                  >
+                    Submit
+                  </button>
+                  <button
+                    onClick={() => setShowComplaintForm(false)}
+                    className="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg hover:bg-surface-container-high transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {complaints.length > 0 ? (
+              <div className="space-y-space-sm">
+                {complaints.map((complaint) => (
+                  <div key={complaint.id} className="p-space-md rounded-lg bg-surface-container-low border border-surface-container">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="font-label-lg font-bold text-on-surface">{complaint.category}</p>
+                        <p className="text-body-sm text-on-surface-variant">{complaint.description}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded text-label-sm font-bold whitespace-nowrap ${
+                        complaint.status === 'SUBMITTED' ? 'bg-secondary-fixed text-on-secondary-fixed' :
+                        complaint.status === 'IN_REVIEW' ? 'bg-tertiary-fixed text-on-tertiary-fixed' :
+                        'bg-tertiary-container text-on-tertiary'
+                      }`}>
+                        {complaint.status}
+                      </span>
+                    </div>
+                    <p className="text-label-sm text-outline">{new Date(complaint.createdAt).toLocaleString()}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-space-lg text-on-surface-variant">
+                <p className="text-body-sm">No complaints submitted yet</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

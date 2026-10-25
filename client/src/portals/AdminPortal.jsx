@@ -1,59 +1,67 @@
 import React, { useState } from 'react';
+import { useAppStore } from '../store/appStore';
 
 export default function AdminPortal() {
   const [activeShift, setActiveShift] = useState('shift1');
+  const { buses, complaints, incidents, getStats, updateComplaintStatus, updateIncidentStatus } = useAppStore();
+
+  const stats = getStats();
+  const activeBuses = buses.filter(b => b.status === 'ACTIVE').length;
 
   const kpis = [
     {
       title: 'Active Fleet Network',
-      value: '38',
-      total: '42',
-      metric: '90.4% Operational Readiness',
+      value: activeBuses,
+      total: buses.length,
+      metric: `${buses.length > 0 ? ((activeBuses / buses.length) * 100).toFixed(1) : 0}% Operational`,
       icon: 'directions_bus',
       bgColor: 'bg-primary-fixed',
       textColor: 'text-on-primary-fixed',
     },
     {
-      title: 'Shift 1 Operations',
-      value: '08:20 AM – 02:40 PM',
-      status: 'Active',
-      metric: '26 Dedicated Morning Routes',
-      icon: 'schedule',
-      statusBg: 'bg-tertiary-fixed',
-      statusText: 'text-on-tertiary-fixed',
+      title: 'Active Trips',
+      value: stats.activeTrips,
+      metric: 'In Progress',
+      icon: 'trip_origin',
+      bgColor: 'bg-secondary-fixed',
+      textColor: 'text-on-secondary-fixed',
     },
     {
-      title: 'Shift 2 Standby',
-      value: '10:30 AM – 05:00 PM',
-      status: 'Armed',
-      metric: '16 Afternoon Rotations',
-      icon: 'departure_board',
-      statusBg: 'bg-surface-container-highest',
-      statusText: 'text-on-surface',
-    },
-    {
-      title: 'Stop-Change Requests',
-      value: '7',
-      metric: 'Pending Review',
-      icon: 'alt_route',
-      valueColor: 'text-error',
-    },
-    {
-      title: 'Legacy Verification',
-      value: '14',
-      status: 'Unverified',
-      metric: 'Source: July 2015 Transit Ledger',
+      title: 'Open Incidents',
+      value: stats.openIncidents,
+      metric: 'Require Action',
       icon: 'warning',
+      bgColor: 'bg-error-fixed',
+      textColor: 'text-on-error-fixed',
+    },
+    {
+      title: 'Pending Complaints',
+      value: complaints.filter(c => c.status === 'SUBMITTED').length,
+      metric: 'Awaiting Review',
+      icon: 'feedback',
+      bgColor: 'bg-tertiary-fixed',
+      textColor: 'text-on-tertiary-fixed',
+    },
+    {
+      title: 'Total Routes',
+      value: stats.totalRoutes,
+      metric: `${stats.totalStops} Campus Stops`,
+      icon: 'route',
+      bgColor: 'bg-primary-fixed',
+      textColor: 'text-on-primary-fixed',
+    },
+    {
+      title: 'Unverified Schedules',
+      value: stats.unverifiedTimetables,
+      metric: 'Pending Verification',
+      icon: 'schedule',
+      bgColor: 'bg-tertiary-fixed',
+      textColor: 'text-on-tertiary-fixed',
       hasBorder: true,
     },
   ];
 
-  const fleetData = [
-    { bus: 'G-47', registration: 'MP-09-FA-2811', capacity: '50 + 2 Pax', route: 'Mhow Naka (07:15)', terminus: 'AITR Gate 1', status: 'Validated' },
-    { bus: 'G-39', registration: 'MP-09-FA-2812', capacity: '50 + 2 Pax', route: 'Rajwada Circle (07:25)', terminus: 'AITR Gate 2', status: 'Validated' },
-    { bus: 'G-34', registration: 'MP-09-FA-2813', capacity: '50 + 2 Pax', route: 'Annapurna Temple (07:10)', terminus: 'AITR Gate 1', status: 'Validated' },
-    { bus: 'G-41', registration: 'MP-09-FA-2814', capacity: '50 + 2 Pax', route: 'Bengali Square (07:35)', terminus: 'AITR Main Square', status: 'Validated' },
-  ];
+  // Use actual bus data from store instead of mock fleetData
 
   return (
     <div className="w-full pt-16 bg-surface min-h-[calc(100vh-14rem)]">
@@ -315,21 +323,27 @@ export default function AdminPortal() {
                   <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                     <tr>
                       <th className="px-space-sm py-2">Bus Identifier</th>
-                      <th className="px-space-sm py-2">Stated Capacity</th>
-                      <th className="px-space-sm py-2">Route Origin</th>
-                      <th className="px-space-sm py-2">Terminus</th>
-                      <th className="px-space-sm py-2">Conflict Status</th>
+                      <th className="px-space-sm py-2">Status</th>
+                      <th className="px-space-sm py-2">Route</th>
+                      <th className="px-space-sm py-2">Occupancy</th>
+                      <th className="px-space-sm py-2">Last Update</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y-0 text-on-surface font-body-sm">
-                    {fleetData.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-surface-container-low transition-colors">
-                        <td className="px-space-sm py-2 font-bold font-mono text-primary">{row.bus}</td>
-                        <td className="px-space-sm py-2">{row.capacity}</td>
-                        <td className="px-space-sm py-2">{row.route}</td>
-                        <td className="px-space-sm py-2">{row.terminus}</td>
-                        <td className="px-space-sm py-2 text-tertiary font-bold flex items-center gap-1">
-                          <span className="w-2 h-2 rounded-full bg-tertiary"></span> {row.status}
+                    {buses.map((bus) => (
+                      <tr key={bus.id} className="hover:bg-surface-container-low transition-colors">
+                        <td className="px-space-sm py-2 font-bold font-mono text-primary">{bus.id}</td>
+                        <td className="px-space-sm py-2">
+                          <span className={`px-2 py-0.5 rounded text-label-sm font-bold ${
+                            bus.status === 'ACTIVE' ? 'bg-tertiary-fixed text-on-tertiary-fixed' : 'bg-surface-container text-on-surface'
+                          }`}>
+                            {bus.status}
+                          </span>
+                        </td>
+                        <td className="px-space-sm py-2">{bus.assignedRoute || 'Unassigned'}</td>
+                        <td className="px-space-sm py-2">{bus.currentOccupancy}/{bus.capacity}</td>
+                        <td className="px-space-sm py-2 text-on-surface-variant">
+                          {bus.lastOccupancyUpdate ? new Date(bus.lastOccupancyUpdate).toLocaleTimeString() : 'Never'}
                         </td>
                       </tr>
                     ))}
@@ -393,13 +407,13 @@ export default function AdminPortal() {
                 </tr>
               </thead>
               <tbody className="divide-y-0 text-on-surface font-body-sm" id="legacy-table-body">
-                {fleetData.slice(0, 3).map((row, idx) => (
+                {buses.slice(0, 3).map((bus, idx) => (
                   <tr key={idx} className="hover:bg-surface-container-low transition-colors">
                     <td className="px-space-md py-3 font-bold font-mono text-primary flex items-center gap-2">
                       <span className="w-7 h-7 rounded bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">
-                        {row.bus.split('-')[1]}
+                        {bus.id.split('-')[1]}
                       </span>
-                      {row.bus}
+                      {bus.id}
                     </td>
                     <td className="px-space-md py-3 font-mono font-semibold text-on-surface">{row.registration}</td>
                     <td className="px-space-md py-3">

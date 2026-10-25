@@ -1,11 +1,40 @@
 import React, { useState } from 'react';
+import { useAppStore } from '../store/appStore';
 
 export default function StaffPortal() {
   const [passengerCount, setPassengerCount] = useState(38);
   const [activeWaypoint, setActiveWaypoint] = useState(4);
 
+  // Connect to store
+  const { buses, updateBusOccupancy, addIncident, addNotification } = useAppStore();
+
   const handleAdjustCount = (delta) => {
     setPassengerCount(Math.max(0, Math.min(50, passengerCount + delta)));
+  };
+
+  const handleConfirmOccupancy = () => {
+    updateBusOccupancy('G-47', passengerCount);
+    addNotification({
+      type: 'OCCUPANCY_CONFIRMED',
+      title: 'Occupancy Confirmed',
+      message: `Bus G-47 occupancy updated to ${passengerCount} passengers`,
+    });
+  };
+
+  const handleReportIncident = (category, label) => {
+    addIncident({
+      category,
+      description: label,
+      location: 'Bypass Hub',
+      routeId: 'ROUTE-01',
+      busId: 'G-47',
+      reportedBy: 'STAFF',
+    });
+    addNotification({
+      type: 'INCIDENT_REPORTED',
+      title: 'Incident Reported',
+      message: `${label} incident has been reported`,
+    });
   };
 
   const waypoints = [
@@ -331,7 +360,7 @@ export default function StaffPortal() {
               </div>
 
               {/* Confirm Button */}
-              <button className="w-full py-3.5 px-space-md rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors shadow-sm">
+              <button onClick={handleConfirmOccupancy} className="w-full py-3.5 px-space-md rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors shadow-sm">
                 <span className="material-symbols-outlined text-tertiary text-[20px]">verified</span>
                 <span className="font-bold">Quick Confirm Capacity Broadcast</span>
               </button>
@@ -367,6 +396,7 @@ export default function StaffPortal() {
                 {incidentOptions.map((incident) => (
                   <button
                     key={incident.id}
+                    onClick={() => handleReportIncident(incident.label, incident.label)}
                     className={`p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md flex flex-col items-center gap-2 transition-colors`}
                   >
                     <span className={`material-symbols-outlined text-[24px]`}>{incident.icon}</span>
