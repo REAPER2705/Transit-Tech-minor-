@@ -129,7 +129,7 @@ All data is local, frontend-only:
 - **Shifts**: Shift 1 (08:20-14:40), Shift 2 (10:30-17:00)
 - **Timetable**: July 2015 source marked "Needs Verification"
 
-### State Management
+### State Managementt
 
 **Zustand** store maintains:
 
