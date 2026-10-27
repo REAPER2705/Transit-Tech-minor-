@@ -16,12 +16,13 @@ export default function Header() {
     setActiveNavTab,
   } = useAppStore();
 
+  const [showPortalMenu, setShowPortalMenu] = useState(false);
+
   const unreadCount = getUnreadNotifications().length;
 
   const handleResetDemo = () => {
     if (window.confirm('Reset all demo data to initial state? This will clear all changes.')) {
       resetDemoData();
-      setShowProfileMenu(false);
     }
   };
 
