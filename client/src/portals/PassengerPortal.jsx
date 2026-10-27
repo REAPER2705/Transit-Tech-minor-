@@ -5,22 +5,54 @@ export default function PassengerPortal() {
   const [activeTab, setActiveTab] = useState('tracking');
   const [showComplaintForm, setShowComplaintForm] = useState(false);
   const [complaintData, setComplaintData] = useState({ category: '', description: '' });
+  const [selectedBusId, setSelectedBusId] = useState('G-47'); // Track which bus is selected
+  const [filterRoute, setFilterRoute] = useState('all'); // Filter buses by route
 
   // Connect to store
-  const { buses, complaints, addComplaint, addNotification } = useAppStore();
+  const { buses, routes, complaints, addComplaint, addNotification } = useAppStore();
 
-  // Mock data - now uses authenticated Acropolis route info
-  const currentBus = {
+  // Get selected bus from store, or default to G-47
+  const currentBus = buses.find(b => b.id === selectedBusId) || buses.find(b => b.id === 'G-47') || {
     id: 'G-47',
     route: 'Navlakha Bus Stand → Acropolis Institute',
     line: 'Route 1',
     gpsStatus: 'UNAVAILABLE',
-    occupancy: 38,
+    currentOccupancy: 38,
     capacity: 50,
     nextStop: 'Palasia Chouraha',
     lastOccupancyUpdate: new Date(Date.now() - 3 * 60000),
     dataSourceNote: 'Historical Timetable - Sept 2023 | GPS Position Simulated',
   };
+
+  // Get route info for current bus
+  const currentRoute = routes.find(r => r.id === currentBus.assignedRoute) || {
+    id: 'ROUTE-NAVLAKHA-ACROPOLIS',
+    name: 'Navlakha Bus Stand → Acropolis Institute',
+    number: 'Route 1',
+  };
+
+  // Get all ACTIVE buses, filtered by route if filter is applied
+  const activeBuses = filterRoute === 'all' 
+    ? buses.filter(b => b.status === 'ACTIVE')
+    : buses.filter(b => b.status === 'ACTIVE' && b.assignedRoute === filterRoute);
+
+  // Get alternative buses on the same route as currently selected bus (excluding selected bus)
+  const alternativeBuses = buses
+    .filter(b => 
+      b.id !== selectedBusId && 
+      b.status === 'ACTIVE' && 
+      b.assignedRoute === currentBus.assignedRoute
+    )
+    .map(bus => ({
+      id: bus.id,
+      name: `Bus Unit ${bus.id}`,
+      eta: Math.floor(Math.random() * 20) + 5, // Random 5-25 mins for demo
+      seats: Math.max(0, bus.capacity - bus.currentOccupancy),
+      occupancy: bus.currentOccupancy,
+      capacity: bus.capacity,
+    }))
+    .sort((a, b) => a.eta - b.eta) // Sort by ETA
+    .slice(0, 2); // Show top 2 alternatives
 
   const handleComplaintSubmit = () => {
     if (!complaintData.category || !complaintData.description) {
@@ -46,7 +78,7 @@ export default function PassengerPortal() {
       category: complaintData.category,
       description: complaintData.description,
       submittedBy: 'PASSENGER',
-      relatedBus: currentBus.id,
+      relatedBus: selectedBusId,
       status: 'SUBMITTED',
       createdAt: new Date().toISOString(),
     });
@@ -68,10 +100,7 @@ export default function PassengerPortal() {
     alert('Complaint submitted successfully! Reference ID will be provided via notification.');
   };
 
-  const alternativeBuses = [
-    { id: 'G-39', name: 'Bus Unit G-39', eta: 14, seats: 19, occupancy: 31, capacity: 50 },
-    { id: 'G-34', name: 'Bus Unit G-34', eta: 22, seats: 8, occupancy: 42, capacity: 50 },
-  ];
+
 
   return (
     <div className="w-full pt-16 bg-surface min-h-screen">
@@ -200,37 +229,74 @@ export default function PassengerPortal() {
                 </svg>
               </div>
 
-              {/* Bus Marker with Telemetry */}
-              <div className="absolute top-[284px] left-[520px] -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 group cursor-pointer">
-                <div className="relative flex items-center justify-center">
-                  <span className="absolute w-12 h-12 rounded-full bg-yellow-400/25 animate-pulse"></span>
-                  <div className="relative w-9 h-9 rounded-full bg-yellow-400 text-slate-900 shadow-lg flex items-center justify-center font-bold">
-                    <span className="material-symbols-outlined text-[20px]">directions_bus</span>
+              {/* Dynamic Bus Markers - Show all active buses on map */}
+              {activeBuses.map((bus, idx) => {
+                const positions = [
+                  { top: '284px', left: '520px' }, // Main position
+                  { top: '220px', left: '620px' }, // Alt 1
+                  { top: '380px', left: '400px' }, // Alt 2
+                  { top: '300px', left: '700px' }, // Alt 3
+                ];
+                const pos = positions[idx % positions.length];
+                const isSelected = bus.id === selectedBusId;
+                
+                return (
+                  <div 
+                    key={bus.id}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 group cursor-pointer transition-all ${isSelected ? 'z-20' : 'z-10'}`}
+                    style={{ top: pos.top, left: pos.left }}
+                    onClick={() => setSelectedBusId(bus.id)}
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <span className={`absolute w-12 h-12 rounded-full animate-pulse ${isSelected ? 'bg-yellow-400/40' : 'bg-blue-400/25'}`}></span>
+                      <div className={`relative w-9 h-9 rounded-full shadow-lg flex items-center justify-center font-bold text-white ${isSelected ? 'bg-yellow-400 text-slate-900' : 'bg-blue-500'}`}>
+                        <span className="material-symbols-outlined text-[20px]">directions_bus</span>
+                      </div>
+                    </div>
+                    <div className={`px-space-sm py-1 rounded backdrop-blur-md shadow-md flex items-center gap-space-xs ${isSelected ? 'bg-inverse-surface/90 text-inverse-on-surface' : 'bg-surface-container/80 text-on-surface'}`}>
+                      <span className={`font-label-md text-label-md font-bold ${isSelected ? 'text-yellow-300' : 'text-on-surface'}`}>{bus.id}</span>
+                      <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-warning' : 'bg-primary'}`}></span>
+                      <span className="font-label-sm text-label-sm">
+                        {bus.currentOccupancy}/{bus.capacity}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="px-space-sm py-1 rounded bg-inverse-surface/90 text-inverse-on-surface backdrop-blur-md shadow-md flex items-center gap-space-xs">
-                  <span className="font-label-md text-label-md font-bold text-yellow-300">{currentBus.id}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-warning"></span>
-                  <span className="font-label-sm text-label-sm">Demo Position</span>
-                </div>
-              </div>
+                );
+              })}
 
-              {/* Top-left info card */}
-              <div className="absolute top-4 left-4 max-w-sm rounded-xl bg-surface-container-lowest/95 backdrop-blur-md p-space-md shadow-lg flex flex-col gap-space-xs">
-                <div className="flex items-center justify-between gap-space-sm">
-                  <div className="flex items-center gap-1.5">
-                    <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm">PRIMARY ROUTE</span>
-                    <span className="font-label-md text-label-md font-bold text-on-surface">{currentBus.line}</span>
+              {/* Top-left info card with route selector */}
+              <div className="absolute top-4 left-4 max-w-sm rounded-xl bg-surface-container-lowest/95 backdrop-blur-md p-space-md shadow-lg flex flex-col gap-space-md">
+                <div className="flex flex-col gap-space-sm">
+                  <div className="flex items-center justify-between gap-space-sm">
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm uppercase">Route</span>
+                      <span className="font-label-md text-label-md font-bold text-on-surface">{currentRoute.number}</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-error"></span>GPS UNAVAILABLE
+                    </span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-error"></span>GPS UNAVAILABLE
-                  </span>
+                  <div className="font-headline-md text-headline-md text-on-surface text-sm">{currentRoute.name}</div>
                 </div>
-                <div className="font-headline-md text-headline-md text-on-surface">{currentBus.route}</div>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Verified from Acropolis Historical Timetable (Sept 2023). Real-time GPS data not available — position is simulated for demo.</p>
-                <div className="mt-2 pt-2 border-t border-surface-variant/20 text-label-sm text-on-surface-variant">
-                  <span className="italic">✓ Route verified from official source | GPS tracking unavailable</span>
+                
+                {/* Route filter dropdown */}
+                <div className="flex flex-col gap-space-xs">
+                  <label className="font-label-sm text-label-sm text-outline uppercase tracking-wider">Filter by Route:</label>
+                  <select
+                    value={filterRoute}
+                    onChange={(e) => setFilterRoute(e.target.value)}
+                    className="px-space-sm py-1.5 rounded-lg bg-surface-container text-on-surface border border-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="all">All Active Routes</option>
+                    {routes.map(r => (
+                      <option key={r.id} value={r.id}>{r.number} - {r.name}</option>
+                    ))}
+                  </select>
                 </div>
+                
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  {activeBuses.length} active bus{activeBuses.length !== 1 ? 'es' : ''} on {filterRoute === 'all' ? 'all routes' : 'this route'}. Click marker to select.
+                </p>
               </div>
 
               {/* Bottom telemetry panel */}
@@ -328,12 +394,16 @@ export default function PassengerPortal() {
             <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <span className="font-label-sm text-label-sm text-outline uppercase tracking-wider">Assigned Fleet Unit</span>
-                  <span className="font-headline-lg text-headline-lg font-bold text-on-surface">Bus Unit G-47</span>
+                  <span className="font-label-sm text-label-sm text-outline uppercase tracking-wider">Selected Fleet Unit</span>
+                  <span className="font-headline-lg text-headline-lg font-bold text-on-surface">Bus Unit {currentBus.id}</span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-label-sm text-label-sm font-bold flex items-center gap-1.5 shadow-sm">
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-                  Live Conductor Verified
+                <span className={`px-3 py-1 rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1.5 shadow-sm ${
+                  currentBus.status === 'ACTIVE' 
+                    ? 'bg-emerald-50 text-emerald-800' 
+                    : 'bg-amber-50 text-amber-800'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${currentBus.status === 'ACTIVE' ? 'bg-emerald-600 animate-pulse' : 'bg-amber-600'}`}></span>
+                  {currentBus.status}
                 </span>
               </div>
 
@@ -342,16 +412,22 @@ export default function PassengerPortal() {
                 <div className="flex items-center justify-between text-body-sm font-body-sm">
                   <span className="text-on-surface-variant">Confirmed Occupancy:</span>
                   <span className="font-bold text-on-surface font-headline-md text-headline-md">
-                    {currentBus.occupancy} / {currentBus.capacity} <span className="text-body-sm font-normal text-on-surface-variant">Seats</span>
+                    {currentBus.currentOccupancy} / {currentBus.capacity} <span className="text-body-sm font-normal text-on-surface-variant">Seats</span>
                   </span>
                 </div>
                 <div className="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden flex">
-                  <div className="bg-primary h-full transition-all duration-500" style={{ width: '76%' }}></div>
-                  <div className="bg-emerald-500 h-full opacity-60 transition-all duration-500" style={{ width: '24%' }}></div>
+                  <div 
+                    className="bg-primary h-full transition-all duration-500" 
+                    style={{ width: `${(currentBus.currentOccupancy / currentBus.capacity) * 100}%` }}
+                  ></div>
+                  <div 
+                    className="bg-emerald-500 h-full opacity-60 transition-all duration-500" 
+                    style={{ width: `${((currentBus.capacity - currentBus.currentOccupancy) / currentBus.capacity) * 100}%` }}
+                  ></div>
                 </div>
                 <div className="flex items-center justify-between text-label-sm font-label-sm pt-1">
-                  <span className="text-primary font-bold">76% Seating Filled</span>
-                  <span className="text-tertiary font-bold">12 Seats Remaining</span>
+                  <span className="text-primary font-bold">{Math.round((currentBus.currentOccupancy / currentBus.capacity) * 100)}% Seating Filled</span>
+                  <span className="text-tertiary font-bold">{currentBus.capacity - currentBus.currentOccupancy} Seats Remaining</span>
                 </div>
               </div>
 
@@ -359,24 +435,23 @@ export default function PassengerPortal() {
               <div className="grid grid-cols-2 gap-space-sm text-body-sm font-body-sm">
                 <div className="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-0.5">
                   <span className="font-label-sm text-label-sm text-outline uppercase">Stated Capacity</span>
-                  <span className="font-bold text-on-surface">50 Seats + 2 Officers</span>
+                  <span className="font-bold text-on-surface">{currentBus.capacity} Seats + {currentBus.staffCapacity} Officers</span>
                 </div>
                 <div className="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-0.5">
-                  <span className="font-label-sm text-label-sm text-outline uppercase">Verification Stamp</span>
-                  <span className="font-bold text-on-surface">08:14 AM (Synced)</span>
+                  <span className="font-label-sm text-label-sm text-outline uppercase">Last Update</span>
+                  <span className="font-bold text-on-surface">
+                    {currentBus.lastOccupancyUpdate 
+                      ? Math.round((Date.now() - new Date(currentBus.lastOccupancyUpdate).getTime()) / 60000) + ' mins ago'
+                      : 'N/A'
+                    }
+                  </span>
                 </div>
               </div>
 
-              {/* Crew Info */}
-              <div className="rounded-lg bg-surface-container-low p-space-sm flex items-center justify-between text-label-md font-label-md">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-outline">verified_user</span>
-                  <span className="text-on-surface">Operational Crew Units:</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-label-sm text-label-sm">Driver Unit G-47</span>
-                  <span className="px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-label-sm text-label-sm">Conductor Unit G-47</span>
-                </div>
+              {/* Route Assignment */}
+              <div className="rounded-lg bg-surface-container-low p-space-sm flex flex-col gap-1">
+                <span className="font-label-sm text-label-sm text-outline uppercase">Assigned Route</span>
+                <span className="font-bold text-on-surface">{currentRoute.number}: {currentRoute.name}</span>
               </div>
             </div>
 
@@ -529,24 +604,24 @@ export default function PassengerPortal() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-space-md">
                 <div className="p-space-md rounded-lg bg-surface-container-low">
                   <span className="font-label-sm text-label-sm text-outline uppercase">Route</span>
-                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentBus.line}</span>
+                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentRoute.number}</span>
                 </div>
                 <div className="p-space-md rounded-lg bg-surface-container-low">
                   <span className="font-label-sm text-label-sm text-outline uppercase">Occupancy</span>
-                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentBus.occupancy}/{currentBus.capacity}</span>
+                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentBus.currentOccupancy}/{currentBus.capacity}</span>
                 </div>
                 <div className="p-space-md rounded-lg bg-surface-container-low">
                   <span className="font-label-sm text-label-sm text-outline uppercase">% Filled</span>
-                  <span className="font-headline-md text-headline-md text-primary mt-1">{Math.round((currentBus.occupancy / currentBus.capacity) * 100)}%</span>
+                  <span className="font-headline-md text-headline-md text-primary mt-1">{Math.round((currentBus.currentOccupancy / currentBus.capacity) * 100)}%</span>
                 </div>
                 <div className="p-space-md rounded-lg bg-surface-container-low">
                   <span className="font-label-sm text-label-sm text-outline uppercase">Available Seats</span>
-                  <span className="font-headline-md text-headline-md text-tertiary mt-1">{currentBus.capacity - currentBus.occupancy}</span>
+                  <span className="font-headline-md text-headline-md text-tertiary mt-1">{currentBus.capacity - currentBus.currentOccupancy}</span>
                 </div>
               </div>
               <div className="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden flex">
-                <div className="bg-primary h-full transition-all duration-500" style={{ width: `${(currentBus.occupancy / currentBus.capacity) * 100}%` }}></div>
-                <div className="bg-tertiary h-full opacity-60" style={{ width: `${((currentBus.capacity - currentBus.occupancy) / currentBus.capacity) * 100}%` }}></div>
+                <div className="bg-primary h-full transition-all duration-500" style={{ width: `${(currentBus.currentOccupancy / currentBus.capacity) * 100}%` }}></div>
+                <div className="bg-tertiary h-full opacity-60" style={{ width: `${((currentBus.capacity - currentBus.currentOccupancy) / currentBus.capacity) * 100}%` }}></div>
               </div>
             </div>
 
@@ -609,51 +684,6 @@ export default function PassengerPortal() {
         </div>
       )}
 
-      {/* Landmarks Section */}
-      <div className="px-margin-desktop py-space-lg">
-        <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-space-sm">
-            <div>
-              <span className="font-headline-md text-headline-md font-bold text-on-surface">AITR Campus Corridor Landmarks</span>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Spatial transit landmarks captured on the Indore Bypass Campus approach</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-label-sm text-label-sm text-outline">Geo-tagging: Manglia, Indore</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter-desktop">
-            {[
-              {
-                id: 1,
-                title: 'Campus Administration & Lawn',
-                desc: 'Direct bus stop turnaround loop near the main academic wing.',
-                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDzjDt9jau_lDtL4orNISJJdnN3nNcDlbvVrXU8EQjEEN4wlMIPhlC3NNDy0tyZ886OI_tPjFrEMTz7OBeex_oWli74p79OOygOfPY2MD25Pr5BqH86PHfnci1r6w6dVdCfosXhZxQJV_cHAuuPExKkIq-n_RaXnTpZ_r8FyDY8e9xq7ky0btFub5uiM97Op7qo8CPTkngr0qqkQM2xxPpVPTHuVpi4vvpsUxMYAhtmSITFBkU801KpgQ',
-              },
-              {
-                id: 2,
-                title: 'Central Library Bay 2 Transit Hub',
-                desc: 'Primary disembarkation hub for Shift 1 science and engineering departments.',
-                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8oVgKdjPFHPJCUD-OZfJcbc4SiGRPa7cJSIKR7eodxQrQ7lUJ98vD3yv1cLOX0qk7KbSpys8tjJ1XdTs89jyQngQBu0qFfu1he_K5EXVvss5EoT-68lpgHM6frSFaBTcLfcw1W83RkjUILu5-240EszBGB4iv5b1-XLCg5iXV8oFT4mPwB_7T0y-jjhMLcsihrPaJNkXuNdJEeuk0KS3-B8rcREiYJVfZdroyYA2lXm3KWKbA2aVNzQ',
-              },
-              {
-                id: 3,
-                title: 'Bypass Corridor Access',
-                desc: 'Wide paved campus bypass roadway with directional lane markings.',
-                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAo7lpS_L94GPF-Ck38QRKM8rZPqZ2_mHfAD-lwh_2BykX0vcj0gq8iFsG0zCnoghr0Mx518XyXzdo1TNXXc6S9ofqhSoIS7-jp2yVIVacAr',
-              },
-            ].map((landmark) => (
-              <div key={landmark.id} className="rounded-lg overflow-hidden bg-surface-container-low shadow-sm flex flex-col">
-                <img className="w-full h-44 object-cover" src={landmark.image} alt={landmark.title} />
-                <div className="p-space-md flex flex-col gap-1">
-                  <span className="font-label-md text-label-md font-bold text-on-surface">{landmark.title}</span>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">{landmark.desc}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Routes & Schedules Tab */}
       {activeTab === 'schedules' && (
         <div className="px-margin-desktop py-space-lg">
@@ -671,32 +701,9 @@ export default function PassengerPortal() {
 
             {/* Routes Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
-              {[
-                {
-                  id: 'ROUTE-NAVLAKHA-ACROPOLIS',
-                  number: 'Route 1',
-                  name: 'Navlakha Bus Stand → Acropolis Institute',
-                  distance: '15.8 km',
-                  duration: '50 mins',
-                  shift1: 'Shift 1: 08:20 → 09:35',
-                  shift2: 'Shift 2: 10:30 → 11:45',
-                  status: 'VERIFIED',
-                  stops: 8,
-                },
-                {
-                  id: 'ROUTE-BYPASS-SECONDARY',
-                  number: 'Route 2',
-                  name: 'Indore Bypass → Acropolis Institute',
-                  distance: '12.3 km',
-                  duration: '40 mins',
-                  shift1: 'Shift 1: 08:45 → 09:30',
-                  shift2: 'Shift 2: 11:00 → 11:45',
-                  status: 'UNVERIFIED',
-                  stops: 5,
-                },
-              ].map((route) => (
+              {routes.map((route) => (
                 <div key={route.id} className={`p-space-lg rounded-lg border-2 ${
-                  route.status === 'VERIFIED' 
+                  route.verificationStatus === 'PARTIALLY_VERIFIED' || route.verificationStatus === 'VERIFIED'
                     ? 'border-tertiary-fixed bg-tertiary-fixed/5'
                     : 'border-warning-container bg-warning-container/5'
                 }`}>
@@ -706,42 +713,49 @@ export default function PassengerPortal() {
                       <h3 className="font-headline-md text-headline-md font-bold text-on-surface mt-1">{route.name}</h3>
                     </div>
                     <span className={`px-2.5 py-1 rounded-full text-label-sm font-bold ${
-                      route.status === 'VERIFIED'
+                      route.verificationStatus === 'VERIFIED' || route.verificationStatus === 'PARTIALLY_VERIFIED'
                         ? 'bg-tertiary-fixed text-on-tertiary-fixed'
                         : 'bg-warning-container text-on-warning-container'
                     }`}>
-                      {route.status === 'VERIFIED' ? '✓ Verified' : '⚠ Unverified'}
+                      {route.verificationStatus === 'VERIFIED' || route.verificationStatus === 'PARTIALLY_VERIFIED' ? '✓ Verified' : '⚠ Unverified'}
                     </span>
                   </div>
                   
                   <div className="grid grid-cols-3 gap-space-sm mb-space-md">
                     <div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Distance</span>
-                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.distance}</span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.distance} km</span>
                     </div>
                     <div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Duration</span>
-                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.duration}</span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.estimatedDuration} mins</span>
                     </div>
                     <div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Stops</span>
-                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.stops}</span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.stops.length}</span>
                     </div>
                   </div>
 
                   <div className="space-y-2 pt-space-md border-t border-surface-variant">
-                    <div className="flex items-center gap-2 mt-space-sm">
-                      <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
-                      <span className="font-body-sm text-on-surface"><strong>{route.shift1}</strong></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
-                      <span className="font-body-sm text-on-surface"><strong>{route.shift2}</strong></span>
-                    </div>
+                    {route.shift1Departure && (
+                      <div className="flex items-center gap-2 mt-space-sm">
+                        <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
+                        <span className="font-body-sm text-on-surface"><strong>Shift 1: {route.shift1Departure} → {route.shift1Arrival}</strong></span>
+                      </div>
+                    )}
+                    {route.shift2Departure && (
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
+                        <span className="font-body-sm text-on-surface"><strong>Shift 2: {route.shift2Departure} → {route.shift2Arrival}</strong></span>
+                      </div>
+                    )}
                   </div>
 
                   <button
-                    onClick={() => alert(`${route.name}\n\nRoute #: ${route.number}\nDistance: ${route.distance}\nDuration: ${route.duration}\nStops: ${route.stops}\n\nShift 1: ${route.shift1}\nShift 2: ${route.shift2}\n\nStatus: ${route.status}`)}
+                    onClick={() => {
+                      const stops = route.stops.map(stopId => stops.find(s => s.id === stopId)?.name || stopId).join(' → ');
+                      alert(`${route.name}\n\nRoute #: ${route.number}\nFrom: ${route.fromLocation}\nTo: ${route.toLocation}\nDistance: ${route.distance} km\nDuration: ${route.estimatedDuration} mins\nStops: ${route.stops.length}\n\nShift 1: ${route.shift1Departure} → ${route.shift1Arrival}\nShift 2: ${route.shift2Departure ? route.shift2Departure + ' → ' + route.shift2Arrival : 'Not available'}\n\nStatus: ${route.verificationStatus}\n\nNote: ${route.notes}`);
+                    }}
                     className="w-full mt-space-md px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm"
                   >
                     <span className="material-symbols-outlined text-[18px]">info</span>

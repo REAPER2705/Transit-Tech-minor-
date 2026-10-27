@@ -4,9 +4,12 @@ import { useAppStore } from '../store/appStore';
 export default function StaffPortal() {
   const [passengerCount, setPassengerCount] = useState(38);
   const [activeWaypoint, setActiveWaypoint] = useState(4);
+  const [activeTrip, setActiveTrip] = useState(null); // Track active trip
+  const [tripStarted, setTripStarted] = useState(false); // Track if trip is started
+  const [gpsEnabled, setGpsEnabled] = useState(false); // Track GPS broadcast
 
   // Connect to store
-  const { buses, updateBusOccupancy, addIncident, addNotification } = useAppStore();
+  const { buses, trips, updateBusOccupancy, startTrip, completeTrip, updateTripProgress, addIncident, addNotification } = useAppStore();
 
   const handleAdjustCount = (delta) => {
     setPassengerCount(Math.max(0, Math.min(50, passengerCount + delta)));
@@ -21,12 +24,53 @@ export default function StaffPortal() {
     });
   };
 
+  const handleStartTrip = () => {
+    const trip = startTrip({
+      busId: 'G-47',
+      routeId: 'ROUTE-BYPASS-SECONDARY',
+      driverId: 'STAFF-001',
+      status: 'IN_PROGRESS',
+    });
+    setTripStarted(true);
+    setActiveTrip(trip);
+    addNotification({
+      type: 'TRIP_STARTED',
+      title: 'Trip Started',
+      message: 'Trip G-47 started for route BYPASS-SECONDARY',
+    });
+  };
+
+  const handleEndTrip = () => {
+    if (activeTrip) {
+      completeTrip(activeTrip.id);
+      setTripStarted(false);
+      setActiveTrip(null);
+      addNotification({
+        type: 'TRIP_COMPLETED',
+        title: 'Trip Completed',
+        message: 'Trip G-47 completed successfully',
+      });
+    }
+  };
+
+  const handleMarkDepart = () => {
+    if (tripStarted && activeWaypoint < waypoints.length - 1) {
+      updateTripProgress(activeTrip?.id, activeWaypoint + 1);
+      setActiveWaypoint(activeWaypoint + 1);
+      addNotification({
+        type: 'WAYPOINT_MARKED',
+        title: 'Waypoint Marked',
+        message: `Departed from ${waypoints[activeWaypoint].name}`,
+      });
+    }
+  };
+
   const handleReportIncident = (category, label) => {
     addIncident({
       category,
       description: label,
       location: 'Bypass Hub',
-      routeId: 'ROUTE-01',
+      routeId: 'ROUTE-BYPASS-SECONDARY',
       busId: 'G-47',
       reportedBy: 'STAFF',
     });
@@ -34,6 +78,36 @@ export default function StaffPortal() {
       type: 'INCIDENT_REPORTED',
       title: 'Incident Reported',
       message: `${label} incident has been reported`,
+    });
+  };
+
+  const handleBusFullAlert = () => {
+    // Get all buses on the same route
+    const samRouteBuses = buses.filter(b => b.assignedRoute === 'ROUTE-BYPASS-SECONDARY' && b.id !== 'G-47');
+    
+    // Send bus-full notification to all buses on same route
+    samRouteBuses.forEach(bus => {
+      addNotification({
+        type: 'BUS_FULL_ALERT',
+        title: 'Bus Full Alert',
+        message: `Bus G-47 is at full capacity (${passengerCount}/${50}). Divert passengers to: ${samRouteBuses.map(b => b.id).join(', ')}`,
+      });
+    });
+
+    // Add incident record
+    addIncident({
+      category: 'BUS_FULL',
+      description: `Bus G-47 reached full capacity with ${passengerCount} passengers`,
+      location: 'Bypass Hub',
+      routeId: 'ROUTE-BYPASS-SECONDARY',
+      busId: 'G-47',
+      reportedBy: 'STAFF',
+    });
+
+    addNotification({
+      type: 'BUS_FULL_CONFIRMED',
+      title: 'Bus Full - Alerts Sent',
+      message: `Bus-full alert sent to ${samRouteBuses.length} buses on Bypass route`,
     });
   };
 
