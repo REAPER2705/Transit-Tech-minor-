@@ -9,6 +9,7 @@ export default function PassengerPortal() {
   const [filterRoute, setFilterRoute] = useState('all'); // Filter buses by route
   const [selectedShift, setSelectedShift] = useState('shift1'); // Track selected shift
   const [selectedScheduleBusId, setSelectedScheduleBusId] = useState('G-10'); // Track selected bus in schedules tab
+  const [expandedBusId, setExpandedBusId] = useState(null); // Track which bus is expanded showing timeline
 
   // Connect to store
   const { buses, routes, complaints, addComplaint, addNotification } = useAppStore();
@@ -519,56 +520,6 @@ export default function PassengerPortal() {
         </div>
       )}
 
-      {/* ACROPOLIS IMAGE SECTION - REPLACING THE BROKEN IMAGE */}
-      <div className="px-margin-desktop py-space-lg">
-        <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-gutter-desktop items-center">
-            {/* Acropolis Image */}
-            <div className="relative w-full h-80 lg:h-96 rounded-lg overflow-hidden shadow-md">
-              <img
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8oVgKdjPFHPJCUD-OZfJcbc4SiGRPa7cJSIKR7eodxQrQ7lUJ98vD3yv1cLOX0qk7KbSpys8tjJ1XdTs89jyQngQBu0qFfu1he_K5EXVvss5EoT-68lpgHM6frSFaBTcLfcw1W83RkjUILu5-240EszBGB4iv5b1-XLCg5iXV8oFT4mPwB_7T0y-jjhMLcsihrPaJNkXuNdJEeuk0KS3-B8rcREiYJVfZdroyYA2lXm3KWKbA2aVNzQ"
-                alt="AITR Acropolis Building"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="flex flex-col gap-space-md">
-              <div>
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm uppercase mb-space-sm">
-                  <span className="material-symbols-outlined text-[14px]">location_on</span>
-                  Academic Complex
-                </div>
-                <h2 className="font-headline-lg text-headline-lg text-on-surface">Acropolis Academic Wing</h2>
-                <p className="font-body-lg text-body-lg text-on-surface-variant mt-2">
-                  The iconic yellow and white academic complex at AITR Indore features modern classrooms, laboratories, and lecture halls designed to support interdisciplinary learning and research initiatives.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-space-md">
-                <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-container">
-                  <span className="font-label-sm text-label-sm text-outline uppercase block">Primary Route Access</span>
-                  <span className="font-headline-md text-headline-md text-on-surface mt-1">Line 47, 51, 63</span>
-                </div>
-                <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-container">
-                  <span className="font-label-sm text-label-sm text-outline uppercase block">Daily Footfall</span>
-                  <span className="font-headline-md text-headline-md text-on-surface mt-1">2,100+ Students</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => window.open('https://www.google.com/maps/place/Acropolis+Institute+of+Technology+%26+Research,+Indore/@22.705,-75.8324,15z', '_blank')}
-                className="w-full px-space-md py-3 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm"
-              >
-                <span className="material-symbols-outlined text-[20px]">directions</span>
-                Get Directions to Acropolis
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
 
       {/* Routes & Schedules Tab - NEW DESIGN */}
       {activeTab === 'schedules' && (
@@ -584,47 +535,9 @@ export default function PassengerPortal() {
                     <p className="font-body-sm text-body-sm text-on-surface-variant">Navlakha Bus Stand → Acropolis Institute</p>
                   </div>
 
-                  {/* Map Placeholder */}
-                  <div className="relative w-full h-96 rounded-lg bg-gradient-to-b from-blue-50 to-green-50 border-2 border-surface-variant overflow-hidden shadow-md flex flex-col items-center justify-center">
-                    {/* Map Grid Background */}
-                    <svg className="absolute inset-0 w-full h-full opacity-20" preserveAspectRatio="none" viewBox="0 0 400 600">
-                      <defs>
-                        <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e6ece9" strokeWidth="1"/>
-                        </pattern>
-                      </defs>
-                      <rect width="400" height="600" fill="url(#grid-pattern)"/>
-                    </svg>
-
-                    {/* Route Path - Vertical Line */}
-                    <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 600">
-                      <path d="M 200 50 L 200 550" stroke="#e0e6ed" strokeWidth="24" strokeLinecap="round"/>
-                      <path d="M 200 50 L 200 550" stroke="#4a90e2" strokeWidth="12" strokeLinecap="round" strokeDasharray="20,20"/>
-                    </svg>
-
-                    {/* Stop Markers */}
-                    <div className="absolute inset-0 flex flex-col justify-between py-8 px-0 pointer-events-none">
-                      {[
-                        { name: 'Navlakha Bus Stand', pct: 0, color: 'bg-green-500' },
-                        { name: 'Palasia Chouraha', pct: 14 },
-                        { name: 'M.Y. Chauraha', pct: 28 },
-                        { name: 'Geeta Bhawan', pct: 42 },
-                        { name: 'MGMC', pct: 56 },
-                        { name: 'Sanchar Nagar', pct: 70 },
-                        { name: 'Kanadia Road', pct: 84 },
-                        { name: 'Acropolis Campus', pct: 100, color: 'bg-red-500' }
-                      ].map((stop, idx) => (
-                        <div key={idx} className="flex items-center gap-2" style={{ marginLeft: '30%', zIndex: 10 }}>
-                          <div className={`w-4 h-4 rounded-full border-2 border-white shadow-md ${stop.color || 'bg-blue-500'}`}></div>
-                          <span className="text-xs font-label-xs text-on-surface-variant bg-white/80 px-2 py-0.5 rounded whitespace-nowrap">{stop.name}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Map Label */}
-                    <div className="absolute bottom-2 right-2 text-xs text-on-surface-variant bg-white/70 px-2 py-1 rounded">
-                      8 Stops • 12.5 km
-                    </div>
+                  {/* Leaflet Map Container */}
+                  <div className="relative w-full h-96 rounded-lg border-2 border-surface-variant overflow-hidden shadow-md bg-white">
+                    <div id="route-map" className="w-full h-full"></div>
                   </div>
 
                   {/* Stop Count Info */}
@@ -679,109 +592,70 @@ export default function PassengerPortal() {
                 {/* Bus Selection - 5 Buses */}
                 <div className="flex flex-col gap-space-sm">
                   <span className="font-label-md text-label-md font-bold text-on-surface">Select Bus Unit</span>
-                  <div className="grid grid-cols-1 gap-space-sm max-h-72 overflow-y-auto">
+                  <div className="grid grid-cols-1 gap-space-sm">
                     {['G-10', 'G-23', 'G-45', 'G-67', 'G-88'].map(busId => (
-                      <button
-                        key={busId}
-                        onClick={() => setSelectedScheduleBusId(busId)}
-                        className={`p-space-md rounded-lg font-label-lg text-label-lg text-left transition-all flex items-center justify-between ${
-                          selectedScheduleBusId === busId
-                            ? 'bg-tertiary-fixed text-on-tertiary-fixed shadow-md'
-                            : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-                        }`}
-                      >
-                        <div className="flex items-center gap-space-sm">
-                          <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
-                            selectedScheduleBusId === busId 
-                              ? 'bg-on-tertiary-fixed/20 text-tertiary' 
-                              : 'bg-surface-container-high text-primary'
-                          }`}>
-                            <span className="material-symbols-outlined text-[18px]">directions_bus</span>
-                          </span>
-                          <div>
-                            <div className="font-bold">{busId}</div>
-                            <div className={`text-xs ${selectedScheduleBusId === busId ? 'text-on-tertiary-fixed/70' : 'text-on-surface-variant'}`}>
-                              {selectedShift === 'shift1' ? '38/50 seats • On-Time' : '42/50 seats • 2 mins delay'}
+                      <div key={busId}>
+                        <button
+                          onClick={() => setExpandedBusId(expandedBusId === busId ? null : busId)}
+                          className={`w-full p-space-md rounded-lg font-label-lg text-label-lg text-left transition-all flex items-center justify-between ${
+                            expandedBusId === busId
+                              ? 'bg-tertiary-fixed text-on-tertiary-fixed shadow-md'
+                              : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                          }`}
+                        >
+                          <div className="flex items-center gap-space-sm">
+                            <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
+                              expandedBusId === busId 
+                                ? 'bg-on-tertiary-fixed/20 text-tertiary' 
+                                : 'bg-surface-container-high text-primary'
+                            }`}>
+                              <span className="material-symbols-outlined text-[18px]">directions_bus</span>
+                            </span>
+                            <div>
+                              <div className="font-bold">{busId}</div>
+                              <div className={`text-xs ${expandedBusId === busId ? 'text-on-tertiary-fixed/70' : 'text-on-surface-variant'}`}>
+                                {selectedShift === 'shift1' ? '38/50 seats • On-Time' : '42/50 seats • 2 mins delay'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        {selectedScheduleBusId === busId && (
-                          <span className="material-symbols-outlined text-[20px]">check_circle</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                          <span className={`material-symbols-outlined text-[20px] transition-transform ${expandedBusId === busId ? 'rotate-180' : ''}`}>
+                            expand_more
+                          </span>
+                        </button>
 
-                {/* Timeline Animation */}
-                <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-variant">
-                  <div className="flex items-center justify-between mb-space-md">
-                    <h4 className="font-label-lg text-label-lg font-bold text-on-surface">Bus {selectedScheduleBusId} Timeline</h4>
-                    <span className="material-symbols-outlined text-primary text-[20px]">directions_bus</span>
-                  </div>
-
-                  {/* Timeline Stops - Animated Path */}
-                  <div className="space-y-0">
-                    {[
-                      { stop: 'Navlakha Bus Stand', time: '08:20', status: 'completed', eta: '-' },
-                      { stop: 'Palasia Chouraha', time: '08:32', status: 'completed', eta: '-' },
-                      { stop: 'M.Y. Chauraha', time: '08:42', status: 'current', eta: 'Now' },
-                      { stop: 'Geeta Bhawan', time: '08:52', status: 'upcoming', eta: '10 min' },
-                      { stop: 'MGMC', time: '09:02', status: 'upcoming', eta: '20 min' },
-                      { stop: 'Sanchar Nagar', time: '09:12', status: 'upcoming', eta: '30 min' },
-                      { stop: 'Kanadia Road', time: '09:22', status: 'upcoming', eta: '40 min' },
-                      { stop: 'Acropolis Campus', time: '09:35', status: 'upcoming', eta: '53 min' }
-                    ].map((item, idx) => (
-                      <div key={idx} className="relative flex gap-space-md pb-space-md">
-                        {/* Timeline Connector */}
-                        {idx < 7 && (
-                          <div className={`absolute left-4 top-8 w-0.5 h-12 ${
-                            item.status === 'completed' 
-                              ? 'bg-primary' 
-                              : item.status === 'current'
-                              ? 'bg-warning'
-                              : 'bg-surface-variant'
-                          }`}></div>
-                        )}
-
-                        {/* Stop Marker */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative z-10 ${
-                          item.status === 'completed'
-                            ? 'bg-primary text-on-primary'
-                            : item.status === 'current'
-                            ? 'bg-warning text-on-warning animate-pulse'
-                            : 'bg-surface-container-highest text-on-surface-variant'
-                        }`}>
-                          {item.status === 'completed' ? '✓' : item.status === 'current' ? '●' : (idx + 1)}
-                        </div>
-
-                        {/* Stop Info */}
-                        <div className="flex-1 pt-1">
-                          <div className={`font-label-lg text-label-lg font-bold ${
-                            item.status === 'current' ? 'text-on-surface' : 'text-on-surface-variant'
-                          }`}>
-                            {item.stop}
+                        {/* Dropdown Timeline - Shows when bus is clicked */}
+                        {expandedBusId === busId && (
+                          <div className="mt-space-sm p-space-md rounded-lg bg-surface-container-low border border-surface-variant">
+                            <div className="stepper-box">
+                              {[
+                                { stop: 'Navlakha Bus Stand', time: '08:20', status: 'completed' },
+                                { stop: 'Palasia Chouraha', time: '08:32', status: 'completed' },
+                                { stop: 'M.Y. Chauraha', time: '08:42', status: 'active' },
+                                { stop: 'Geeta Bhawan', time: '08:52', status: 'pending' },
+                                { stop: 'MGMC', time: '09:02', status: 'pending' },
+                                { stop: 'Sanchar Nagar', time: '09:12', status: 'pending' },
+                                { stop: 'Kanadia Road', time: '09:22', status: 'pending' },
+                                { stop: 'Acropolis Campus', time: '09:35', status: 'pending' }
+                              ].map((step, idx) => (
+                                <div key={idx} className={`stepper-step stepper-${step.status}`}>
+                                  <div className="stepper-line"></div>
+                                  <div className="stepper-circle">
+                                    {step.status === 'completed' ? '✓' : idx + 1}
+                                  </div>
+                                  <div className="stepper-content">
+                                    <div className="stepper-title">{step.stop}</div>
+                                    <span className="stepper-status">
+                                      {step.status === 'completed' ? 'Completed' : step.status === 'active' ? 'Current Stop' : 'Upcoming'}
+                                    </span>
+                                    <div className="stepper-time">{step.time}</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <div className="flex items-center gap-space-md text-body-sm mt-0.5">
-                            <span className="text-on-surface-variant">{item.time}</span>
-                            <span className={`font-bold ${
-                              item.status === 'current' ? 'text-warning' : 'text-on-surface-variant'
-                            }`}>
-                              {item.eta}
-                            </span>
-                          </div>
-                        </div>
+                        )}
                       </div>
                     ))}
-                  </div>
-
-                  {/* Live Update Badge */}
-                  <div className="mt-space-md pt-space-md border-t border-surface-variant flex items-center justify-between">
-                    <span className="text-body-sm text-on-surface-variant">Next update in 30s</span>
-                    <div className="flex items-center gap-1 text-label-sm text-primary font-bold">
-                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                      Live Tracking
-                    </div>
                   </div>
                 </div>
               </div>
