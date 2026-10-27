@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store/appStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const {
@@ -38,7 +39,7 @@ export default function Header() {
       {/* Fixed Header */}
       <header className="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="h-16 w-full px-margin-desktop flex items-center justify-between gap-space-md">
-          {/* Left Section: Acropolis Logo */}
+          {/* Left Section: Acropolis Logo + Navigation */}
           <div className="flex items-center gap-space-lg">
             <div className="flex items-center gap-space-sm">
               {/* Acropolis Logo Image */}
@@ -52,9 +53,53 @@ export default function Header() {
                   AITR Campus Transit
                 </span>
                 <span className="font-label-sm text-label-sm text-outline tracking-wider uppercase mt-0.5">
-                  Passenger Network
+                  {currentPortal === 'passenger' ? 'Passenger Network' : currentPortal === 'staff' ? 'Transport Staff' : 'Admin System'}
                 </span>
               </div>
+            </div>
+
+            {/* Navigation Sections - Different for each portal */}
+            <div className="hidden lg:flex items-center gap-space-md ml-space-lg border-l border-surface-container pl-space-lg">
+              {currentPortal === 'passenger' && (
+                <>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">location_on</span>
+                    <span>Live Tracking</span>
+                  </button>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">route</span>
+                    <span>Routes & Schedules</span>
+                  </button>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">feedback</span>
+                    <span>Complaints</span>
+                  </button>
+                </>
+              )}
+              {currentPortal === 'staff' && (
+                <>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">directions_bus</span>
+                    <span>Driver</span>
+                  </button>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">groups</span>
+                    <span>Conductor</span>
+                  </button>
+                </>
+              )}
+              {currentPortal === 'admin' && (
+                <>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">dashboard</span>
+                    <span>Dashboard</span>
+                  </button>
+                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                    <span className="material-symbols-outlined text-[20px]">settings</span>
+                    <span>Management</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

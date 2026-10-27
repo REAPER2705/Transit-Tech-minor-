@@ -7,6 +7,7 @@ export default function StaffPortal() {
   const [activeTrip, setActiveTrip] = useState(null); // Track active trip
   const [tripStarted, setTripStarted] = useState(false); // Track if trip is started
   const [gpsEnabled, setGpsEnabled] = useState(false); // Track GPS broadcast
+  const [staffRole, setStaffRole] = useState(null); // Track selected staff role
 
   // Connect to store
   const { buses, trips, updateBusOccupancy, startTrip, completeTrip, updateTripProgress, addIncident, addNotification } = useAppStore();
