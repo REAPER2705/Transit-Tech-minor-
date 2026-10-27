@@ -106,52 +106,53 @@ export default function PassengerPortal() {
 
 
   return (
-    <div className="w-full pt-16 bg-surface min-h-screen">
-      {/* HERO SECTION WITH AITR BUILDING IMAGE & CIRCULAR NAVIGATION OVERLAY */}
-      <div
-        className="w-full h-96 bg-cover bg-center relative shadow-lg"
-        style={{
-          backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuufXekciwjl6pejt5EuQzj4S4VIVgQuaJ-vEgHsryQYsXXAyIit_Xk41X3yv8jfd8-ZRPO5fIVm8K_4lrAMW1SYnpTfmlzWSuzKy5i632o_WUShbKnCJufHcpxf8yfek7D5LybC3Dc6UgOGutV9N4FfVdemKAjAkQBcoxByRlSoKlyV3Yrl5Atkyy-TMJ3qgYwO0vvZ2q3STrmDVhG7lm5bvU23mxDxBtW7IvbT82xHDLPQfpNKYiVg')`,
-          backgroundPosition: 'center center',
-        }}
-      >
-        <div className="absolute inset-0 bg-black/40"></div>
-        
-        {/* CIRCULAR NAVIGATION TABS - Overlay on Hero */}
-        <div className="absolute top-8 left-0 right-0 flex justify-center z-20">
-          <div className="navigation-card">
-            <button
-              onClick={() => setActiveTab('tracking')}
-              className={`navigation-tab ${activeTab === 'tracking' ? 'bg-primary/30' : 'bg-white/90'}`}
-              title="Live Tracking Map"
-            >
-              <span className="material-symbols-outlined">near_me</span>
-              <span>Live Tracking Map</span>
-            </button>
+    <div className="w-full bg-surface min-h-screen">
+      {/* CIRCULAR NAVIGATION TABS - Topmost */}
+      <div className="w-full flex justify-center py-space-lg bg-surface sticky top-0 z-50">
+        <div className="navigation-card">
+          <button
+            onClick={() => setActiveTab('tracking')}
+            className={`navigation-tab ${activeTab === 'tracking' ? 'bg-primary/20' : ''}`}
+            title="Live Tracking Map"
+          >
+            <span className="material-symbols-outlined">near_me</span>
+            <span>Live Tracking Map</span>
+          </button>
 
-            <button
-              onClick={() => setActiveTab('schedules')}
-              className={`navigation-tab ${activeTab === 'schedules' ? 'bg-primary/30' : 'bg-white/90'}`}
-              title="Routes & Schedules"
-            >
-              <span className="material-symbols-outlined">calendar_month</span>
-              <span>Routes & Schedules</span>
-            </button>
+          <button
+            onClick={() => setActiveTab('schedules')}
+            className={`navigation-tab ${activeTab === 'schedules' ? 'bg-primary/20' : ''}`}
+            title="Routes & Schedules"
+          >
+            <span className="material-symbols-outlined">calendar_month</span>
+            <span>Routes & Schedules</span>
+          </button>
 
-            <button
-              onClick={() => setActiveTab('actions')}
-              className={`navigation-tab ${activeTab === 'actions' ? 'bg-primary/30' : 'bg-white/90'}`}
-              title="Requests & Complaints"
-            >
-              <span className="material-symbols-outlined">assignment_turned_in</span>
-              <span>Requests & Complaints</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setActiveTab('actions')}
+            className={`navigation-tab ${activeTab === 'actions' ? 'bg-primary/20' : ''}`}
+            title="Requests & Complaints"
+          >
+            <span className="material-symbols-outlined">assignment_turned_in</span>
+            <span>Requests & Complaints</span>
+          </button>
         </div>
+      </div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-          <h1 className="font-headline-lg text-headline-lg md:text-4xl font-bold mb-4">AITR Campus Transit Network</h1>
-          <p className="font-body-lg text-body-lg md:text-xl max-w-2xl">Real-time tracking for seamless campus mobility across Indore</p>
+      {/* HERO SECTION WITH AITR BUILDING IMAGE */}
+      <div className="pt-16">
+        <div
+          className="w-full h-96 bg-cover bg-center relative shadow-lg"
+          style={{
+            backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuufXekciwjl6pejt5EuQzj4S4VIVgQuaJ-vEgHsryQYsXXAyIit_Xk41X3yv8jfd8-ZRPO5fIVm8K_4lrAMW1SYnpTfmlzWSuzKy5i632o_WUShbKnCJufHcpxf8yfek7D5LybC3Dc6UgOGutV9N4FfVdemKAjAkQBcoxByRlSoKlyV3Yrl5Atkyy-TMJ3qgYwO0vvZ2q3STrmDVhG7lm5bvU23mxDxBtW7IvbT82xHDLPQfpNKYiVg')`,
+            backgroundPosition: 'center center',
+          }}
+        >
+          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+            <h1 className="font-headline-lg text-headline-lg md:text-4xl font-bold mb-4">AITR Campus Transit Network</h1>
+            <p className="font-body-lg text-body-lg md:text-xl max-w-2xl">Real-time tracking for seamless campus mobility across Indore</p>
+          </div>
         </div>
       </div>
 
