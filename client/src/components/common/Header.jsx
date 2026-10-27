@@ -13,7 +13,6 @@ export default function Header() {
     resetDemoData,
   } = useAppStore();
 
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showPortalMenu, setShowPortalMenu] = useState(false);
 
   const unreadCount = getUnreadNotifications().length;
@@ -57,7 +56,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right Section: Portal Menu, Notifications, Profile */}
+          {/* Right Section: Portal Menu, Notifications */}
           <div className="flex items-center gap-space-md">
             {/* Portal Selector Dropdown */}
             <div className="relative">
@@ -204,71 +203,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-
-            {/* Profile & Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-space-sm pl-space-xs hover:bg-surface-container-low rounded-lg transition-colors p-1"
-              >
-                <div className="hidden sm:flex flex-col items-end">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-primary-fixed-variant uppercase tracking-wider text-xs">
-                    {currentPortal === 'passenger' && 'Passenger'}
-                    {currentPortal === 'staff' && 'Staff'}
-                    {currentPortal === 'admin' && 'Admin'}
-                  </span>
-                </div>
-                <img
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover ring-1 ring-surface-container-highest"
-                  src="https://lh3.googleusercontent.com/aida/AEtjO1Vdh_2i6-ypCuO_DrFRnRtqbUdO9N7FQV1H_vClIaEcZAS7qSvmcTVYVSK2orFHc3RIPYMPtU1EOerBtfUpPcqxpdZTcZeOncSICWtuzVmUpeuvhDdiHSid5Pon6bhjzUzwrhxuhUC21GdPFomd1nxHh5siVav2It53HUVvqZr7YhoDEzcbHDMeuc6pbSKPmkxgt1FpTkCydOqxtA26a_FOoMCaVA9Xc3s4n65RILNrKg7ksolY5LDDuRw22oI1vqPHECrEd_XqlhQ"
-                />
-              </button>
-
-              {/* Profile Menu */}
-              {showProfileMenu && (
-                <div className="absolute right-0 top-full mt-2 w-64 rounded-xl bg-surface-container-lowest shadow-lg border border-surface-container overflow-hidden z-50">
-                  {/* Profile Info */}
-                  <div className="px-space-md py-space-lg border-b border-surface-container bg-surface-container-low">
-                    <p className="font-label-lg text-label-lg font-bold text-on-surface">Demo User</p>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
-                      {currentPortal === 'passenger' && 'Campus Passenger'}
-                      {currentPortal === 'staff' && 'Transport Staff'}
-                      {currentPortal === 'admin' && 'System Administrator'}
-                    </p>
-                    <p className="font-label-sm text-label-sm text-outline mt-2 uppercase tracking-wider">
-                      Demo Mode Active
-                    </p>
-                  </div>
-
-                  {/* Menu Items */}
-                  <div className="py-space-sm">
-                    <a
-                      href="#"
-                      className="px-space-md py-space-sm flex items-center gap-space-sm text-on-surface hover:bg-surface-container-low transition-colors font-body-sm"
-                    >
-                      <span className="material-symbols-outlined text-[18px] text-outline">settings</span>
-                      Demo Settings
-                    </a>
-                    <button
-                      onClick={() => {
-                        setShowProfileMenu(false);
-                        handleResetDemo();
-                      }}
-                      className="w-full text-left px-space-md py-space-sm flex items-center gap-space-sm text-error hover:bg-error-container/20 transition-colors font-body-sm"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">restart_alt</span>
-                      Reset Demo Data
-                    </button>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="px-space-md py-space-sm border-t border-surface-container bg-surface-container-low text-center text-label-sm text-on-surface-variant">
-                    <p>AITR Transit • v1.0 Demo</p>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </header>
@@ -278,13 +212,6 @@ export default function Header() {
         <div
           className="fixed inset-0 z-40 bg-transparent"
           onClick={() => setNotificationPanelOpen(false)}
-        />
-      )}
-
-      {showProfileMenu && (
-        <div
-          className="fixed inset-0 z-40 bg-transparent"
-          onClick={() => setShowProfileMenu(false)}
         />
       )}
 
