@@ -7,6 +7,8 @@ export default function PassengerPortal() {
   const [complaintData, setComplaintData] = useState({ category: '', description: '' });
   const [selectedBusId, setSelectedBusId] = useState('G-47'); // Track which bus is selected
   const [filterRoute, setFilterRoute] = useState('all'); // Filter buses by route
+  const [selectedShift, setSelectedShift] = useState('shift1'); // Track selected shift
+  const [selectedScheduleBusId, setSelectedScheduleBusId] = useState('G-10'); // Track selected bus in schedules tab
 
   // Connect to store
   const { buses, routes, complaints, addComplaint, addNotification } = useAppStore();
@@ -134,17 +136,7 @@ export default function PassengerPortal() {
               <span className="material-symbols-outlined text-[18px]">near_me</span>
               <span>Live Tracking Map</span>
             </button>
-            <button
-              onClick={() => setActiveTab('seats')}
-              className={`tab-btn px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
-                activeTab === 'seats'
-                  ? 'bg-primary-container text-on-primary shadow-sm'
-                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[18px]">airline_seat_recline_normal</span>
-              <span>My Bus & Seat Availability</span>
-            </button>
+
             <button
               onClick={() => setActiveTab('schedules')}
               className={`tab-btn px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
@@ -576,205 +568,223 @@ export default function PassengerPortal() {
         </div>
       </div>
 
-      {/* My Bus & Seat Availability Tab */}
-      {activeTab === 'seats' && (
-        <div className="px-margin-desktop py-space-lg">
-          <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
-            <div className="flex items-center justify-between mb-space-md">
-              <div>
-                <h2 className="font-headline-lg text-headline-lg font-bold text-on-surface">My Bus & Seat Availability</h2>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Real-time occupancy of assigned and available buses on your routes</p>
-              </div>
-              <div className="text-label-sm text-on-surface-variant">
-                Last Updated: {new Date().toLocaleTimeString()}
-              </div>
-            </div>
 
-            {/* Assigned Bus Card */}
-            <div className="rounded-lg bg-primary-fixed/10 border-2 border-primary-fixed p-space-md flex flex-col gap-space-md">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-label-sm text-label-sm text-outline uppercase tracking-wider">Your Assigned Bus</span>
-                  <h3 className="font-headline-lg text-headline-lg font-bold text-on-surface mt-1">{currentBus.id}</h3>
-                </div>
-                <span className="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">
-                  Assigned to You
-                </span>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-space-md">
-                <div className="p-space-md rounded-lg bg-surface-container-low">
-                  <span className="font-label-sm text-label-sm text-outline uppercase">Route</span>
-                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentRoute.number}</span>
-                </div>
-                <div className="p-space-md rounded-lg bg-surface-container-low">
-                  <span className="font-label-sm text-label-sm text-outline uppercase">Occupancy</span>
-                  <span className="font-headline-md text-headline-md text-on-surface mt-1">{currentBus.currentOccupancy}/{currentBus.capacity}</span>
-                </div>
-                <div className="p-space-md rounded-lg bg-surface-container-low">
-                  <span className="font-label-sm text-label-sm text-outline uppercase">% Filled</span>
-                  <span className="font-headline-md text-headline-md text-primary mt-1">{Math.round((currentBus.currentOccupancy / currentBus.capacity) * 100)}%</span>
-                </div>
-                <div className="p-space-md rounded-lg bg-surface-container-low">
-                  <span className="font-label-sm text-label-sm text-outline uppercase">Available Seats</span>
-                  <span className="font-headline-md text-headline-md text-tertiary mt-1">{currentBus.capacity - currentBus.currentOccupancy}</span>
-                </div>
-              </div>
-              <div className="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden flex">
-                <div className="bg-primary h-full transition-all duration-500" style={{ width: `${(currentBus.currentOccupancy / currentBus.capacity) * 100}%` }}></div>
-                <div className="bg-tertiary h-full opacity-60" style={{ width: `${((currentBus.capacity - currentBus.currentOccupancy) / currentBus.capacity) * 100}%` }}></div>
-              </div>
-            </div>
 
-            {/* Available Buses Table */}
-            <div className="flex flex-col gap-space-sm">
-              <h3 className="font-label-lg text-label-lg font-bold text-on-surface">Available Buses on Your Routes</h3>
-              <div className="overflow-x-auto rounded-lg border border-surface-container">
-                <table className="w-full text-left font-body-sm text-body-sm">
-                  <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <tr>
-                      <th className="px-space-md py-3">Bus ID</th>
-                      <th className="px-space-md py-3">Route</th>
-                      <th className="px-space-md py-3">Status</th>
-                      <th className="px-space-md py-3">Occupancy</th>
-                      <th className="px-space-md py-3">% Filled</th>
-                      <th className="px-space-md py-3">Available</th>
-                      <th className="px-space-md py-3">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-surface-container">
-                    {buses.map((bus) => (
-                      <tr key={bus.id} className="hover:bg-surface-container-low transition-colors">
-                        <td className="px-space-md py-3 font-bold text-primary">{bus.id}</td>
-                        <td className="px-space-md py-3">{bus.assignedRoute ? bus.assignedRoute.replace('ROUTE-', '') : 'N/A'}</td>
-                        <td className="px-space-md py-3">
-                          <span className={`px-2 py-0.5 rounded-full text-label-sm font-bold ${
-                            bus.status === 'ACTIVE' ? 'bg-tertiary-fixed text-on-tertiary-fixed' : 'bg-surface-container text-on-surface'
-                          }`}>
-                            {bus.status}
-                          </span>
-                        </td>
-                        <td className="px-space-md py-3 font-semibold">{bus.currentOccupancy}/{bus.capacity}</td>
-                        <td className="px-space-md py-3">{Math.round((bus.currentOccupancy / bus.capacity) * 100)}%</td>
-                        <td className="px-space-md py-3 font-semibold text-tertiary">{bus.capacity - bus.currentOccupancy}</td>
-                        <td className="px-space-md py-3">
-                          <button
-                            onClick={() => alert(`Bus ${bus.id} Details:\n\nRoute: ${bus.assignedRoute}\nStatus: ${bus.status}\nOccupancy: ${bus.currentOccupancy}/${bus.capacity}\nRegistration: ${bus.registrationNumber}`)}
-                            className="px-3 py-1 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:bg-on-primary-fixed-variant transition-colors"
-                          >
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Occupancy Guidelines */}
-            <div className="p-space-md rounded-lg bg-surface-container-low border-l-4 border-l-warning">
-              <h4 className="font-label-lg text-label-lg font-bold text-on-surface mb-2">Seat Availability Guidelines</h4>
-              <ul className="space-y-1 text-body-sm text-on-surface-variant">
-                <li>• <strong>0-50% filled:</strong> Plenty of seats available — comfortable travel</li>
-                <li>• <strong>50-80% filled:</strong> Moderate occupancy — limited seating</li>
-                <li>• <strong>80-100% filled:</strong> High occupancy — standing room or wait for next bus</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Routes & Schedules Tab */}
+      {/* Routes & Schedules Tab - NEW DESIGN */}
       {activeTab === 'schedules' && (
         <div className="px-margin-desktop py-space-lg">
-          <div className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
-            <div className="flex items-center justify-between mb-space-md">
-              <div>
-                <h2 className="font-headline-lg text-headline-lg font-bold text-on-surface">Routes & Schedules</h2>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Official Acropolis transit routes and verified timetables (Sept 2023)</p>
-              </div>
-              <span className="px-3 py-1 rounded-full bg-warning-container text-on-warning-container font-label-sm text-label-sm font-bold flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">info</span>
-                Verify current schedule
-              </span>
-            </div>
-
-            {/* Routes Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
-              {routes.map((route) => (
-                <div key={route.id} className={`p-space-lg rounded-lg border-2 ${
-                  route.verificationStatus === 'PARTIALLY_VERIFIED' || route.verificationStatus === 'VERIFIED'
-                    ? 'border-tertiary-fixed bg-tertiary-fixed/5'
-                    : 'border-warning-container bg-warning-container/5'
-                }`}>
-                  <div className="flex items-start justify-between mb-space-md">
-                    <div>
-                      <span className="font-label-md text-label-md text-on-surface-variant uppercase">{route.number}</span>
-                      <h3 className="font-headline-md text-headline-md font-bold text-on-surface mt-1">{route.name}</h3>
-                    </div>
-                    <span className={`px-2.5 py-1 rounded-full text-label-sm font-bold ${
-                      route.verificationStatus === 'VERIFIED' || route.verificationStatus === 'PARTIALLY_VERIFIED'
-                        ? 'bg-tertiary-fixed text-on-tertiary-fixed'
-                        : 'bg-warning-container text-on-warning-container'
-                    }`}>
-                      {route.verificationStatus === 'VERIFIED' || route.verificationStatus === 'PARTIALLY_VERIFIED' ? '✓ Verified' : '⚠ Unverified'}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-space-sm mb-space-md">
-                    <div>
-                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Distance</span>
-                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.distance} km</span>
-                    </div>
-                    <div>
-                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Duration</span>
-                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.estimatedDuration} mins</span>
-                    </div>
-                    <div>
-                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Stops</span>
-                      <span className="font-headline-sm text-headline-sm text-on-surface">{route.stops.length}</span>
-                    </div>
+          <div className="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden">
+            {/* Main Content - Two Column Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
+              {/* LEFT: Map Placeholder with Stops - 2 cols */}
+              <div className="lg:col-span-2 p-space-lg bg-surface-container-low">
+                <div className="flex flex-col gap-space-md">
+                  <div>
+                    <h3 className="font-headline-md text-headline-md font-bold text-on-surface">Route Map</h3>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">Navlakha Bus Stand → Acropolis Institute</p>
                   </div>
 
-                  <div className="space-y-2 pt-space-md border-t border-surface-variant">
-                    {route.shift1Departure && (
-                      <div className="flex items-center gap-2 mt-space-sm">
-                        <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
-                        <span className="font-body-sm text-on-surface"><strong>Shift 1: {route.shift1Departure} → {route.shift1Arrival}</strong></span>
-                      </div>
-                    )}
-                    {route.shift2Departure && (
-                      <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px] text-primary">schedule</span>
-                        <span className="font-body-sm text-on-surface"><strong>Shift 2: {route.shift2Departure} → {route.shift2Arrival}</strong></span>
-                      </div>
-                    )}
+                  {/* Map Placeholder */}
+                  <div className="relative w-full h-96 rounded-lg bg-gradient-to-b from-blue-50 to-green-50 border-2 border-surface-variant overflow-hidden shadow-md flex flex-col items-center justify-center">
+                    {/* Map Grid Background */}
+                    <svg className="absolute inset-0 w-full h-full opacity-20" preserveAspectRatio="none" viewBox="0 0 400 600">
+                      <defs>
+                        <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e6ece9" strokeWidth="1"/>
+                        </pattern>
+                      </defs>
+                      <rect width="400" height="600" fill="url(#grid-pattern)"/>
+                    </svg>
+
+                    {/* Route Path - Vertical Line */}
+                    <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 600">
+                      <path d="M 200 50 L 200 550" stroke="#e0e6ed" strokeWidth="24" strokeLinecap="round"/>
+                      <path d="M 200 50 L 200 550" stroke="#4a90e2" strokeWidth="12" strokeLinecap="round" strokeDasharray="20,20"/>
+                    </svg>
+
+                    {/* Stop Markers */}
+                    <div className="absolute inset-0 flex flex-col justify-between py-8 px-0 pointer-events-none">
+                      {[
+                        { name: 'Navlakha Bus Stand', pct: 0, color: 'bg-green-500' },
+                        { name: 'Palasia Chouraha', pct: 14 },
+                        { name: 'M.Y. Chauraha', pct: 28 },
+                        { name: 'Geeta Bhawan', pct: 42 },
+                        { name: 'MGMC', pct: 56 },
+                        { name: 'Sanchar Nagar', pct: 70 },
+                        { name: 'Kanadia Road', pct: 84 },
+                        { name: 'Acropolis Campus', pct: 100, color: 'bg-red-500' }
+                      ].map((stop, idx) => (
+                        <div key={idx} className="flex items-center gap-2" style={{ marginLeft: '30%', zIndex: 10 }}>
+                          <div className={`w-4 h-4 rounded-full border-2 border-white shadow-md ${stop.color || 'bg-blue-500'}`}></div>
+                          <span className="text-xs font-label-xs text-on-surface-variant bg-white/80 px-2 py-0.5 rounded whitespace-nowrap">{stop.name}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Map Label */}
+                    <div className="absolute bottom-2 right-2 text-xs text-on-surface-variant bg-white/70 px-2 py-1 rounded">
+                      8 Stops • 12.5 km
+                    </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      const stops = route.stops.map(stopId => stops.find(s => s.id === stopId)?.name || stopId).join(' → ');
-                      alert(`${route.name}\n\nRoute #: ${route.number}\nFrom: ${route.fromLocation}\nTo: ${route.toLocation}\nDistance: ${route.distance} km\nDuration: ${route.estimatedDuration} mins\nStops: ${route.stops.length}\n\nShift 1: ${route.shift1Departure} → ${route.shift1Arrival}\nShift 2: ${route.shift2Departure ? route.shift2Departure + ' → ' + route.shift2Arrival : 'Not available'}\n\nStatus: ${route.verificationStatus}\n\nNote: ${route.notes}`);
-                    }}
-                    className="w-full mt-space-md px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-space-sm"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">info</span>
-                    View Route Details
-                  </button>
+                  {/* Stop Count Info */}
+                  <div className="grid grid-cols-3 gap-space-sm">
+                    <div className="p-space-sm rounded-lg bg-surface-container-lowest text-center">
+                      <div className="font-headline-sm text-headline-sm text-primary font-bold">8</div>
+                      <div className="font-label-xs text-label-xs text-on-surface-variant uppercase">Total Stops</div>
+                    </div>
+                    <div className="p-space-sm rounded-lg bg-surface-container-lowest text-center">
+                      <div className="font-headline-sm text-headline-sm text-tertiary font-bold">12.5</div>
+                      <div className="font-label-xs text-label-xs text-on-surface-variant uppercase">Distance (km)</div>
+                    </div>
+                    <div className="p-space-sm rounded-lg bg-surface-container-lowest text-center">
+                      <div className="font-headline-sm text-headline-sm text-on-surface font-bold">35</div>
+                      <div className="font-label-xs text-label-xs text-on-surface-variant uppercase">Duration (min)</div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Timetable Notes */}
-            <div className="p-space-lg rounded-lg bg-surface-container-low border-l-4 border-l-primary">
-              <h4 className="font-label-lg text-label-lg font-bold text-on-surface mb-2">Important Notes</h4>
-              <ul className="space-y-2 text-body-sm text-on-surface-variant">
-                <li>• <strong>Route 1:</strong> Verified from Acropolis Historical Timetable (September 2023)</li>
-                <li>• <strong>Route 2:</strong> Schedule not independently verified — check with transport office</li>
-                <li>• <strong>All times:</strong> Subject to change during holidays and special events</li>
-                <li>• <strong>Recommendation:</strong> Arrive 5-10 minutes early at bus stops</li>
-                <li>• For updates: Contact Acropolis Transport Office or check official website</li>
-              </ul>
+              {/* RIGHT: Shifts & Buses - 3 cols */}
+              <div className="lg:col-span-3 p-space-lg flex flex-col gap-space-lg">
+                {/* Header */}
+                <div>
+                  <h2 className="font-headline-lg text-headline-lg font-bold text-on-surface">Live Fleet Schedule</h2>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">Select shift and bus to view real-time route animation</p>
+                </div>
+
+                {/* Shift Selector */}
+                <div className="flex gap-space-sm">
+                  {[
+                    { id: 'shift1', label: 'Shift 1', time: '08:20 - 09:40' },
+                    { id: 'shift2', label: 'Shift 2', time: '10:30 - 11:50' }
+                  ].map(shift => (
+                    <button
+                      key={shift.id}
+                      onClick={() => setSelectedShift(shift.id)}
+                      className={`flex-1 p-space-md rounded-lg font-label-lg text-label-lg transition-all ${
+                        selectedShift === shift.id
+                          ? 'bg-primary text-on-primary shadow-md'
+                          : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                      }`}
+                    >
+                      <div className="font-bold">{shift.label}</div>
+                      <div className={`text-xs mt-1 ${selectedShift === shift.id ? 'text-on-primary/80' : 'text-on-surface-variant'}`}>
+                        {shift.time}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Bus Selection - 5 Buses */}
+                <div className="flex flex-col gap-space-sm">
+                  <span className="font-label-md text-label-md font-bold text-on-surface">Select Bus Unit</span>
+                  <div className="grid grid-cols-1 gap-space-sm max-h-72 overflow-y-auto">
+                    {['G-10', 'G-23', 'G-45', 'G-67', 'G-88'].map(busId => (
+                      <button
+                        key={busId}
+                        onClick={() => setSelectedScheduleBusId(busId)}
+                        className={`p-space-md rounded-lg font-label-lg text-label-lg text-left transition-all flex items-center justify-between ${
+                          selectedScheduleBusId === busId
+                            ? 'bg-tertiary-fixed text-on-tertiary-fixed shadow-md'
+                            : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                        }`}
+                      >
+                        <div className="flex items-center gap-space-sm">
+                          <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
+                            selectedScheduleBusId === busId 
+                              ? 'bg-on-tertiary-fixed/20 text-tertiary' 
+                              : 'bg-surface-container-high text-primary'
+                          }`}>
+                            <span className="material-symbols-outlined text-[18px]">directions_bus</span>
+                          </span>
+                          <div>
+                            <div className="font-bold">{busId}</div>
+                            <div className={`text-xs ${selectedScheduleBusId === busId ? 'text-on-tertiary-fixed/70' : 'text-on-surface-variant'}`}>
+                              {selectedShift === 'shift1' ? '38/50 seats • On-Time' : '42/50 seats • 2 mins delay'}
+                            </div>
+                          </div>
+                        </div>
+                        {selectedScheduleBusId === busId && (
+                          <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Timeline Animation */}
+                <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-variant">
+                  <div className="flex items-center justify-between mb-space-md">
+                    <h4 className="font-label-lg text-label-lg font-bold text-on-surface">Bus {selectedScheduleBusId} Timeline</h4>
+                    <span className="material-symbols-outlined text-primary text-[20px]">directions_bus</span>
+                  </div>
+
+                  {/* Timeline Stops - Animated Path */}
+                  <div className="space-y-0">
+                    {[
+                      { stop: 'Navlakha Bus Stand', time: '08:20', status: 'completed', eta: '-' },
+                      { stop: 'Palasia Chouraha', time: '08:32', status: 'completed', eta: '-' },
+                      { stop: 'M.Y. Chauraha', time: '08:42', status: 'current', eta: 'Now' },
+                      { stop: 'Geeta Bhawan', time: '08:52', status: 'upcoming', eta: '10 min' },
+                      { stop: 'MGMC', time: '09:02', status: 'upcoming', eta: '20 min' },
+                      { stop: 'Sanchar Nagar', time: '09:12', status: 'upcoming', eta: '30 min' },
+                      { stop: 'Kanadia Road', time: '09:22', status: 'upcoming', eta: '40 min' },
+                      { stop: 'Acropolis Campus', time: '09:35', status: 'upcoming', eta: '53 min' }
+                    ].map((item, idx) => (
+                      <div key={idx} className="relative flex gap-space-md pb-space-md">
+                        {/* Timeline Connector */}
+                        {idx < 7 && (
+                          <div className={`absolute left-4 top-8 w-0.5 h-12 ${
+                            item.status === 'completed' 
+                              ? 'bg-primary' 
+                              : item.status === 'current'
+                              ? 'bg-warning'
+                              : 'bg-surface-variant'
+                          }`}></div>
+                        )}
+
+                        {/* Stop Marker */}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative z-10 ${
+                          item.status === 'completed'
+                            ? 'bg-primary text-on-primary'
+                            : item.status === 'current'
+                            ? 'bg-warning text-on-warning animate-pulse'
+                            : 'bg-surface-container-highest text-on-surface-variant'
+                        }`}>
+                          {item.status === 'completed' ? '✓' : item.status === 'current' ? '●' : (idx + 1)}
+                        </div>
+
+                        {/* Stop Info */}
+                        <div className="flex-1 pt-1">
+                          <div className={`font-label-lg text-label-lg font-bold ${
+                            item.status === 'current' ? 'text-on-surface' : 'text-on-surface-variant'
+                          }`}>
+                            {item.stop}
+                          </div>
+                          <div className="flex items-center gap-space-md text-body-sm mt-0.5">
+                            <span className="text-on-surface-variant">{item.time}</span>
+                            <span className={`font-bold ${
+                              item.status === 'current' ? 'text-warning' : 'text-on-surface-variant'
+                            }`}>
+                              {item.eta}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Live Update Badge */}
+                  <div className="mt-space-md pt-space-md border-t border-surface-variant flex items-center justify-between">
+                    <span className="text-body-sm text-on-surface-variant">Next update in 30s</span>
+                    <div className="flex items-center gap-1 text-label-sm text-primary font-bold">
+                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                      Live Tracking
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
