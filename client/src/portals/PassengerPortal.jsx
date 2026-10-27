@@ -12,7 +12,12 @@ export default function PassengerPortal() {
   const [expandedBusId, setExpandedBusId] = useState(null); // Track which bus is expanded showing timeline
 
   // Connect to store
-  const { buses, routes, complaints, addComplaint, addNotification } = useAppStore();
+  const { buses, routes, complaints, addComplaint, addNotification, activeNavTab, setActiveNavTab } = useAppStore();
+
+  // Sync activeTab with store
+  React.useEffect(() => {
+    setActiveTab(activeNavTab);
+  }, [activeNavTab]);
 
   // Get selected bus from store, or default to G-47
   const currentBus = buses.find(b => b.id === selectedBusId) || buses.find(b => b.id === 'G-47') || {

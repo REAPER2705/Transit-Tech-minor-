@@ -12,9 +12,9 @@ export default function Header() {
     getUnreadNotifications,
     markNotificationRead,
     resetDemoData,
+    activeNavTab,
+    setActiveNavTab,
   } = useAppStore();
-
-  const [showPortalMenu, setShowPortalMenu] = useState(false);
 
   const unreadCount = getUnreadNotifications().length;
 
@@ -62,15 +62,36 @@ export default function Header() {
             <div className="hidden lg:flex items-center gap-space-md ml-space-lg border-l border-surface-container pl-space-lg">
               {currentPortal === 'passenger' && (
                 <>
-                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                  <button 
+                    onClick={() => setActiveNavTab('tracking')}
+                    className={`flex items-center gap-space-xs px-space-md py-space-xs rounded-lg transition-colors font-label-md text-label-md ${
+                      activeNavTab === 'tracking' 
+                        ? 'text-on-surface bg-surface-container' 
+                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+                    }`}
+                  >
                     <span className="material-symbols-outlined text-[20px]">location_on</span>
                     <span>Live Tracking</span>
                   </button>
-                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                  <button 
+                    onClick={() => setActiveNavTab('schedules')}
+                    className={`flex items-center gap-space-xs px-space-md py-space-xs rounded-lg transition-colors font-label-md text-label-md ${
+                      activeNavTab === 'schedules' 
+                        ? 'text-on-surface bg-surface-container' 
+                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+                    }`}
+                  >
                     <span className="material-symbols-outlined text-[20px]">route</span>
                     <span>Routes & Schedules</span>
                   </button>
-                  <button className="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md">
+                  <button 
+                    onClick={() => setActiveNavTab('complaints')}
+                    className={`flex items-center gap-space-xs px-space-md py-space-xs rounded-lg transition-colors font-label-md text-label-md ${
+                      activeNavTab === 'complaints' 
+                        ? 'text-on-surface bg-surface-container' 
+                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+                    }`}
+                  >
                     <span className="material-symbols-outlined text-[20px]">feedback</span>
                     <span>Complaints</span>
                   </button>

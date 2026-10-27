@@ -90,6 +90,7 @@ export const useAppStore = create((set, get) => {
     selectedRoute: 'ROUTE-01',
     selectedStop: null,
     notificationPanelOpen: false,
+    activeNavTab: 'tracking', // Track active navigation tab
 
     // ===== PERSISTENCE HELPER =====
     persistState: () => {
@@ -137,6 +138,7 @@ export const useAppStore = create((set, get) => {
     setCurrentPortal: (portal) => set({ currentPortal: portal }),
     setUserRole: (role) => set({ userRole: role }),
     setNotificationPanelOpen: (open) => set({ notificationPanelOpen: open }),
+    setActiveNavTab: (tab) => set({ activeNavTab: tab }),
 
     // ===== BUS OPERATIONS =====
     updateBusOccupancy: (busId, newOccupancy) => {
