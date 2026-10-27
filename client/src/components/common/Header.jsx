@@ -41,10 +41,12 @@ export default function Header() {
           {/* Left Section: Acropolis Logo */}
           <div className="flex items-center gap-space-lg">
             <div className="flex items-center gap-space-sm">
-              {/* Acropolis Logo */}
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-white shadow-md font-bold text-lg">
-                A
-              </div>
+              {/* Acropolis Logo Image */}
+              <img
+                src="/images/acropolis.jpg"
+                alt="Acropolis Institute"
+                className="w-11 h-11 rounded-lg object-cover shadow-md border border-surface-container"
+              />
               <div className="flex flex-col">
                 <span className="font-headline-md text-headline-md tracking-tight text-on-surface leading-none">
                   AITR Campus Transit
