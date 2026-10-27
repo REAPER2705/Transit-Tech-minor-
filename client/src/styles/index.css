@@ -410,3 +410,52 @@ body {
   direction: ltr;
 }
 
+
+
+/* Navigation Card - From Uiverse.io by Zamora1998 */
+.navigation-card {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  background-color: rgb(255, 255, 255);
+  padding: 15px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.navigation-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  background-color: rgb(252, 252, 252);
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all 0.3s;
+  color: inherit;
+  font-size: 0;
+}
+
+.navigation-tab:hover {
+  background-color: rgb(227, 223, 223);
+  transform: scale(1.1);
+}
+
+.navigation-tab .material-symbols-outlined {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.navigation-tab span {
+  display: none;
+}

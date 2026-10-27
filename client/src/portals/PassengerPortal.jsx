@@ -107,6 +107,38 @@ export default function PassengerPortal() {
 
   return (
     <div className="w-full pt-16 bg-surface min-h-screen">
+      {/* CIRCULAR NAVIGATION TABS - Above Hero */}
+      <div className="w-full flex justify-center py-space-lg bg-surface">
+        <div className="navigation-card">
+          <button
+            onClick={() => setActiveTab('tracking')}
+            className={`navigation-tab ${activeTab === 'tracking' ? 'bg-primary/20' : ''}`}
+            title="Live Tracking Map"
+          >
+            <span className="material-symbols-outlined">near_me</span>
+            <span>Live Tracking Map</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('schedules')}
+            className={`navigation-tab ${activeTab === 'schedules' ? 'bg-primary/20' : ''}`}
+            title="Routes & Schedules"
+          >
+            <span className="material-symbols-outlined">calendar_month</span>
+            <span>Routes & Schedules</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('actions')}
+            className={`navigation-tab ${activeTab === 'actions' ? 'bg-primary/20' : ''}`}
+            title="Requests & Complaints"
+          >
+            <span className="material-symbols-outlined">assignment_turned_in</span>
+            <span>Requests & Complaints</span>
+          </button>
+        </div>
+      </div>
+
       {/* HERO SECTION WITH AITR BUILDING IMAGE */}
       <div
         className="w-full h-96 bg-cover bg-center relative shadow-lg"
