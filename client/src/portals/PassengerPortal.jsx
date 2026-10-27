@@ -107,39 +107,7 @@ export default function PassengerPortal() {
 
   return (
     <div className="w-full pt-16 bg-surface min-h-screen">
-      {/* CIRCULAR NAVIGATION TABS - Above Hero */}
-      <div className="w-full flex justify-center py-space-lg bg-surface">
-        <div className="navigation-card">
-          <button
-            onClick={() => setActiveTab('tracking')}
-            className={`navigation-tab ${activeTab === 'tracking' ? 'bg-primary/20' : ''}`}
-            title="Live Tracking Map"
-          >
-            <span className="material-symbols-outlined">near_me</span>
-            <span>Live Tracking Map</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('schedules')}
-            className={`navigation-tab ${activeTab === 'schedules' ? 'bg-primary/20' : ''}`}
-            title="Routes & Schedules"
-          >
-            <span className="material-symbols-outlined">calendar_month</span>
-            <span>Routes & Schedules</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('actions')}
-            className={`navigation-tab ${activeTab === 'actions' ? 'bg-primary/20' : ''}`}
-            title="Requests & Complaints"
-          >
-            <span className="material-symbols-outlined">assignment_turned_in</span>
-            <span>Requests & Complaints</span>
-          </button>
-        </div>
-      </div>
-
-      {/* HERO SECTION WITH AITR BUILDING IMAGE */}
+      {/* HERO SECTION WITH AITR BUILDING IMAGE & CIRCULAR NAVIGATION OVERLAY */}
       <div
         className="w-full h-96 bg-cover bg-center relative shadow-lg"
         style={{
@@ -148,60 +116,42 @@ export default function PassengerPortal() {
         }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-          <h1 className="font-headline-lg text-headline-lg md:text-4xl font-bold mb-4">AITR Campus Transit Network</h1>
-          <p className="font-body-lg text-body-lg md:text-xl max-w-2xl">Real-time tracking for seamless campus mobility across Indore</p>
-        </div>
-      </div>
-
-      {/* Top Navigation Bar */}
-      <div className="px-margin-desktop py-space-md bg-surface-container-low shadow-sm sticky top-20 z-40">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-md">
-          <div className="flex flex-wrap items-center gap-space-xs">
+        
+        {/* CIRCULAR NAVIGATION TABS - Overlay on Hero */}
+        <div className="absolute top-8 left-0 right-0 flex justify-center z-20">
+          <div className="navigation-card">
             <button
               onClick={() => setActiveTab('tracking')}
-              className={`tab-btn px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
-                activeTab === 'tracking'
-                  ? 'bg-primary-container text-on-primary shadow-sm'
-                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-              }`}
+              className={`navigation-tab ${activeTab === 'tracking' ? 'bg-primary/30' : 'bg-white/90'}`}
+              title="Live Tracking Map"
             >
-              <span className="material-symbols-outlined text-[18px]">near_me</span>
+              <span className="material-symbols-outlined">near_me</span>
               <span>Live Tracking Map</span>
             </button>
 
             <button
               onClick={() => setActiveTab('schedules')}
-              className={`tab-btn px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
-                activeTab === 'schedules'
-                  ? 'bg-primary-container text-on-primary shadow-sm'
-                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-              }`}
+              className={`navigation-tab ${activeTab === 'schedules' ? 'bg-primary/30' : 'bg-white/90'}`}
+              title="Routes & Schedules"
             >
-              <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+              <span className="material-symbols-outlined">calendar_month</span>
               <span>Routes & Schedules</span>
             </button>
+
             <button
               onClick={() => setActiveTab('actions')}
-              className={`tab-btn px-space-md py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-space-xs transition-all ${
-                activeTab === 'actions'
-                  ? 'bg-primary-container text-on-primary shadow-sm'
-                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-              }`}
+              className={`navigation-tab ${activeTab === 'actions' ? 'bg-primary/30' : 'bg-white/90'}`}
+              title="Requests & Complaints"
             >
-              <span className="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+              <span className="material-symbols-outlined">assignment_turned_in</span>
               <span>Requests & Complaints</span>
             </button>
           </div>
-          <div className="flex items-center gap-space-md text-label-sm font-label-sm">
-            <div className="flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-highest text-on-primary-fixed-variant">
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
-              <span>TELEMETRY ACTIVE: DUAL BAND L1/L5</span>
-            </div>
-            <div className="text-on-surface-variant hidden sm:block">
-              Campus Geo-Zone: <span className="font-bold text-on-surface">AITR Indore Central</span>
-            </div>
-          </div>
+        </div>
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+          <h1 className="font-headline-lg text-headline-lg md:text-4xl font-bold mb-4">AITR Campus Transit Network</h1>
+          <p className="font-body-lg text-body-lg md:text-xl max-w-2xl">Real-time tracking for seamless campus mobility across Indore</p>
         </div>
       </div>
 
