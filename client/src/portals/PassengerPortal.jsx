@@ -659,109 +659,7 @@ export default function PassengerPortal() {
                   </div>
                 </div>
 
-                {/* Available Buses Table - Full Width */}
-                <div className="flex flex-col gap-space-md mt-space-lg">
-                  <div className="rounded-xl bg-gradient-to-r from-primary to-primary-fixed p-space-lg shadow-lg">
-                    <div className="flex items-center gap-space-md">
-                      <span className="material-symbols-outlined text-[32px] text-on-primary">directions_bus</span>
-                      <div>
-                        <h2 className="font-headline-lg text-headline-lg font-bold text-on-primary">Available Buses on Your Routes</h2>
-                        <p className="font-body-sm text-body-sm text-on-primary/80 mt-1">Real-time fleet information and occupancy details</p>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="overflow-x-auto rounded-xl border border-surface-container shadow-md">
-                    <table className="w-full text-left font-body-sm text-body-sm bg-surface-container-lowest">
-                      <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase sticky top-0">
-                        <tr>
-                          <th className="px-space-md py-4 font-bold">Bus ID</th>
-                          <th className="px-space-md py-4 font-bold">Route</th>
-                          <th className="px-space-md py-4 font-bold">Shift</th>
-                          <th className="px-space-md py-4 font-bold">Driver</th>
-                          <th className="px-space-md py-4 font-bold">Conductor</th>
-                          <th className="px-space-md py-4 font-bold">Occupancy</th>
-                          <th className="px-space-md py-4 font-bold">% Filled</th>
-                          <th className="px-space-md py-4 font-bold">Available Seats</th>
-                          <th className="px-space-md py-4 font-bold">Status</th>
-                          <th className="px-space-md py-4 font-bold">Duration</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-surface-container">
-                        {[
-                          { busId: 'G32', route: 'Navlakha → Acropolis', shift: 'Shift 1', driver: 'Rohit Sharma', conductor: 'Amit Verma', occupancy: 46, capacity: 50, status: 'On Trip', duration: '60 min' },
-                          { busId: 'G71', route: 'Geeta Bhawan → Acropolis', shift: 'Shift 1', driver: 'Vikas Patel', conductor: 'Sandeep Yadav', occupancy: 50, capacity: 50, status: 'Full', duration: '55 min' },
-                          { busId: 'G80', route: 'Bengali Square → Acropolis', shift: 'Shift 1', driver: 'Manoj Singh', conductor: 'Deepak Joshi', occupancy: 32, capacity: 45, status: 'On Trip', duration: '60 min' },
-                          { busId: 'G32', route: 'Acropolis → Navlakha', shift: 'Shift 2', driver: 'Rohit Sharma', conductor: 'Amit Verma', occupancy: 28, capacity: 50, status: 'Scheduled', duration: '60 min' },
-                          { busId: 'G71', route: 'Acropolis → Geeta Bhawan', shift: 'Shift 2', driver: 'Vikas Patel', conductor: 'Sandeep Yadav', occupancy: 35, capacity: 50, status: 'Scheduled', duration: '55 min' },
-                          { busId: 'G80', route: 'Acropolis → Bengali Square', shift: 'Shift 2', driver: 'Manoj Singh', conductor: 'Deepak Joshi', occupancy: 20, capacity: 45, status: 'Scheduled', duration: '60 min' },
-                        ].map((bus, idx) => (
-                          <tr key={idx} className="hover:bg-surface-container-low transition-colors">
-                            <td className="px-space-md py-4 font-bold text-primary text-[15px]">{bus.busId}</td>
-                            <td className="px-space-md py-4 text-on-surface">{bus.route}</td>
-                            <td className="px-space-md py-4">
-                              <span className={`px-2.5 py-1 rounded-full text-label-xs font-semibold ${
-                                bus.shift === 'Shift 1'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-purple-100 text-purple-800'
-                              }`}>
-                                {bus.shift}
-                              </span>
-                            </td>
-                            <td className="px-space-md py-4">{bus.driver}</td>
-                            <td className="px-space-md py-4">{bus.conductor}</td>
-                            <td className="px-space-md py-4 font-semibold">{bus.occupancy}/{bus.capacity}</td>
-                            <td className="px-space-md py-4">
-                              <div className="flex items-center gap-space-sm">
-                                <div className="w-16 h-2 rounded-full bg-surface-container-highest overflow-hidden">
-                                  <div 
-                                    className={`h-full transition-all ${
-                                      bus.occupancy / bus.capacity > 0.8 
-                                        ? 'bg-error' 
-                                        : bus.occupancy / bus.capacity > 0.5
-                                        ? 'bg-warning'
-                                        : 'bg-tertiary'
-                                    }`}
-                                    style={{ width: `${(bus.occupancy / bus.capacity) * 100}%` }}
-                                  ></div>
-                                </div>
-                                <span className="font-semibold text-on-surface-variant">{Math.round((bus.occupancy / bus.capacity) * 100)}%</span>
-                              </div>
-                            </td>
-                            <td className="px-space-md py-4 font-semibold text-tertiary">{bus.capacity - bus.occupancy}</td>
-                            <td className="px-space-md py-4">
-                              <span className={`px-3 py-1.5 rounded-full text-label-xs font-bold whitespace-nowrap ${
-                                bus.status === 'Full'
-                                  ? 'bg-error-container text-on-error-container'
-                                  : bus.status === 'On Trip'
-                                  ? 'bg-warning-container text-on-warning-container'
-                                  : 'bg-surface-container text-on-surface'
-                              }`}>
-                                {bus.status}
-                              </span>
-                            </td>
-                            <td className="px-space-md py-4 text-on-surface-variant">{bus.duration}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="p-space-md rounded-lg bg-surface-container-low border border-surface-variant flex items-start gap-space-md">
-                    <span className="material-symbols-outlined text-primary text-[20px] mt-0.5">info</span>
-                    <div>
-                      <p className="text-label-sm text-on-surface font-bold">📌 Demo Mode Information</p>
-                      <p className="text-body-sm text-on-surface-variant mt-1">
-                        All records displayed are illustrative sample data for development and demonstration purposes. This is not verified official Acropolis Institute fleet information. 
-                      </p>
-                      <div className="mt-2 text-label-xs text-on-surface-variant space-y-1">
-                        <p>• Occupancy: Real-time capacity indicators</p>
-                        <p>• Green: &lt;50% filled | Orange: 50-80% filled | Red: &gt;80% (Full)</p>
-                        <p>• For official schedules contact: Transport Office</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -877,6 +775,111 @@ export default function PassengerPortal() {
           </div>
         </div>
       )}
+
+      {/* FULL-WIDTH DATE & BUSES TABLE SECTION AT BOTTOM */}
+      <div className="w-full bg-surface py-space-lg">
+        {/* Date Section */}
+        <div className="px-0 py-space-md">
+          <div className="flex items-center justify-center gap-space-md">
+            <span className="material-symbols-outlined text-primary text-[28px]">calendar_today</span>
+            <div className="text-center">
+              <p className="font-label-md text-label-md text-on-surface-variant uppercase">Today's Schedule</p>
+              <h2 className="font-headline-lg text-headline-lg font-bold text-on-surface">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        {/* Available Buses Table - Full Width */}
+        <div className="w-full flex flex-col gap-space-md px-0">
+          <div className="bg-gradient-to-r from-primary to-primary-fixed p-space-lg shadow-lg">
+            <div className="flex items-center gap-space-md px-margin-desktop">
+              <span className="material-symbols-outlined text-[32px] text-on-primary">directions_bus</span>
+              <div>
+                <h2 className="font-headline-lg text-headline-lg font-bold text-on-primary">Available Buses on Your Routes</h2>
+                <p className="font-body-sm text-body-sm text-on-primary/80 mt-1">Real-time fleet information and occupancy details</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-margin-desktop overflow-x-auto rounded-xl border border-surface-container shadow-md">
+            <table className="w-full text-left font-body-sm text-body-sm bg-surface-container-lowest">
+              <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase sticky top-0">
+                <tr>
+                  <th className="px-space-md py-4 font-bold">Bus ID</th>
+                  <th className="px-space-md py-4 font-bold">Route</th>
+                  <th className="px-space-md py-4 font-bold">Shift</th>
+                  <th className="px-space-md py-4 font-bold">Driver</th>
+                  <th className="px-space-md py-4 font-bold">Conductor</th>
+                  <th className="px-space-md py-4 font-bold">Occupancy</th>
+                  <th className="px-space-md py-4 font-bold">% Filled</th>
+                  <th className="px-space-md py-4 font-bold">Available Seats</th>
+                  <th className="px-space-md py-4 font-bold">Status</th>
+                  <th className="px-space-md py-4 font-bold">Duration</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-surface-container">
+                {[
+                  { busId: 'G32', route: 'Navlakha → Acropolis', shift: 'Shift 1', driver: 'Rohit Sharma', conductor: 'Amit Verma', occupancy: 46, capacity: 50, status: 'On Trip', duration: '60 min' },
+                  { busId: 'G71', route: 'Geeta Bhawan → Acropolis', shift: 'Shift 1', driver: 'Vikas Patel', conductor: 'Sandeep Yadav', occupancy: 50, capacity: 50, status: 'Full', duration: '55 min' },
+                  { busId: 'G80', route: 'Bengali Square → Acropolis', shift: 'Shift 1', driver: 'Manoj Singh', conductor: 'Deepak Joshi', occupancy: 32, capacity: 45, status: 'On Trip', duration: '60 min' },
+                  { busId: 'G32', route: 'Acropolis → Navlakha', shift: 'Shift 2', driver: 'Rohit Sharma', conductor: 'Amit Verma', occupancy: 28, capacity: 50, status: 'Scheduled', duration: '60 min' },
+                  { busId: 'G71', route: 'Acropolis → Geeta Bhawan', shift: 'Shift 2', driver: 'Vikas Patel', conductor: 'Sandeep Yadav', occupancy: 35, capacity: 50, status: 'Scheduled', duration: '55 min' },
+                  { busId: 'G80', route: 'Acropolis → Bengali Square', shift: 'Shift 2', driver: 'Manoj Singh', conductor: 'Deepak Joshi', occupancy: 20, capacity: 45, status: 'Scheduled', duration: '60 min' },
+                ].map((bus, idx) => (
+                  <tr key={idx} className="hover:bg-surface-container-low transition-colors">
+                    <td className="px-space-md py-4 font-bold text-primary text-[15px]">{bus.busId}</td>
+                    <td className="px-space-md py-4 text-on-surface">{bus.route}</td>
+                    <td className="px-space-md py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-label-xs font-semibold ${
+                        bus.shift === 'Shift 1'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        {bus.shift}
+                      </span>
+                    </td>
+                    <td className="px-space-md py-4">{bus.driver}</td>
+                    <td className="px-space-md py-4">{bus.conductor}</td>
+                    <td className="px-space-md py-4 font-semibold">{bus.occupancy}/{bus.capacity}</td>
+                    <td className="px-space-md py-4">
+                      <div className="flex items-center gap-space-sm">
+                        <div className="w-16 h-2 rounded-full bg-surface-container-highest overflow-hidden">
+                          <div 
+                            className={`h-full transition-all ${
+                              bus.occupancy / bus.capacity > 0.8 
+                                ? 'bg-error' 
+                                : bus.occupancy / bus.capacity > 0.5
+                                ? 'bg-warning'
+                                : 'bg-tertiary'
+                            }`}
+                            style={{ width: `${(bus.occupancy / bus.capacity) * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className="font-semibold text-on-surface-variant">{Math.round((bus.occupancy / bus.capacity) * 100)}%</span>
+                      </div>
+                    </td>
+                    <td className="px-space-md py-4 font-semibold text-tertiary">{bus.capacity - bus.occupancy}</td>
+                    <td className="px-space-md py-4">
+                      <span className={`px-3 py-1.5 rounded-full text-label-xs font-bold whitespace-nowrap ${
+                        bus.status === 'Full'
+                          ? 'bg-error-container text-on-error-container'
+                          : bus.status === 'On Trip'
+                          ? 'bg-warning-container text-on-warning-container'
+                          : 'bg-surface-container text-on-surface'
+                      }`}>
+                        {bus.status}
+                      </span>
+                    </td>
+                    <td className="px-space-md py-4 text-on-surface-variant">{bus.duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
