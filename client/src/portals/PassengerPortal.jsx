@@ -658,6 +658,63 @@ export default function PassengerPortal() {
                     ))}
                   </div>
                 </div>
+
+                {/* Available Buses Table */}
+                <div className="flex flex-col gap-space-sm mt-space-lg">
+                  <span className="font-label-md text-label-md font-bold text-on-surface">Available Buses on Your Routes</span>
+                  <div className="overflow-x-auto rounded-lg border border-surface-container shadow-sm">
+                    <table className="w-full text-left font-body-sm text-body-sm">
+                      <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase sticky top-0">
+                        <tr>
+                          <th className="px-space-md py-3 font-bold">Bus ID</th>
+                          <th className="px-space-md py-3 font-bold">Route</th>
+                          <th className="px-space-md py-3 font-bold">Driver</th>
+                          <th className="px-space-md py-3 font-bold">Conductor</th>
+                          <th className="px-space-md py-3 font-bold">Occupancy</th>
+                          <th className="px-space-md py-3 font-bold">Available</th>
+                          <th className="px-space-md py-3 font-bold">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-surface-container">
+                        {[
+                          { busId: 'G32', route: 'Navlakha → Acropolis', driver: 'Rohit Sharma', conductor: 'Amit Verma', occupancy: 46, capacity: 50, status: 'On Trip' },
+                          { busId: 'G71', route: 'Geeta Bhawan → Acropolis', driver: 'Vikas Patel', conductor: 'Sandeep Yadav', occupancy: 50, capacity: 50, status: 'Full' },
+                          { busId: 'G80', route: 'Bengali Square → Acropolis', driver: 'Manoj Singh', conductor: 'Deepak Joshi', occupancy: 32, capacity: 45, status: 'On Trip' },
+                        ].map((bus, idx) => (
+                          <tr key={idx} className="hover:bg-surface-container-low transition-colors">
+                            <td className="px-space-md py-3 font-bold text-primary">{bus.busId}</td>
+                            <td className="px-space-md py-3 text-on-surface-variant">{bus.route}</td>
+                            <td className="px-space-md py-3">{bus.driver}</td>
+                            <td className="px-space-md py-3">{bus.conductor}</td>
+                            <td className="px-space-md py-3 font-semibold">
+                              {bus.occupancy}/{bus.capacity}
+                              <span className="text-label-xs text-on-surface-variant ml-1">
+                                ({Math.round((bus.occupancy / bus.capacity) * 100)}%)
+                              </span>
+                            </td>
+                            <td className="px-space-md py-3 font-semibold text-tertiary">
+                              {bus.capacity - bus.occupancy}
+                            </td>
+                            <td className="px-space-md py-3">
+                              <span className={`px-2.5 py-0.5 rounded-full text-label-xs font-bold ${
+                                bus.status === 'Full'
+                                  ? 'bg-error-container text-on-error-container'
+                                  : bus.status === 'On Trip'
+                                  ? 'bg-warning-container text-on-warning-container'
+                                  : 'bg-tertiary-fixed text-on-tertiary-fixed'
+                              }`}>
+                                {bus.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-label-xs text-on-surface-variant mt-space-sm">
+                    📌 <strong>Demo Mode:</strong> All records above are illustrative sample data for development. Not verified official Acropolis fleet information.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
